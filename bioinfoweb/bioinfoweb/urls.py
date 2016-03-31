@@ -16,8 +16,10 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from portal import urls as portal_urls
+from services import urls as services_urls
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^portal/', include(portal_urls)),
+    url(r'^services/', include(services_urls)),
 ]
