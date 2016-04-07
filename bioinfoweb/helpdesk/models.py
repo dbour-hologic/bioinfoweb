@@ -308,7 +308,6 @@ class Queue(models.Model):
             except ObjectDoesNotExist:
                 pass
 
-
 class Ticket(models.Model):
     """
     To allow a ticket to be entered as quickly as possible, only the
@@ -356,6 +355,20 @@ class Ticket(models.Model):
     queue = models.ForeignKey(
         Queue,
         verbose_name=_('Queue'),
+        )
+
+    request_firstname = models.CharField(
+        _('First Name'),
+        max_length=200,
+        null=True,
+        blank=True,
+        )
+
+    request_lastname = models.CharField(
+        _('Last Name'),
+        max_length=200,
+        null=True,
+        blank=True,
         )
 
     created = models.DateTimeField(
@@ -562,14 +575,12 @@ class Ticket(models.Model):
 
         super(Ticket, self).save(*args, **kwargs)
 
-
 class FollowUpManager(models.Manager):
     def private_followups(self):
         return self.filter(public=False)
 
     def public_followups(self):
         return self.filter(public=True)
-
 
 @python_2_unicode_compatible
 class FollowUp(models.Model):

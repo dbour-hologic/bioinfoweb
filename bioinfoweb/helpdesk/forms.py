@@ -324,12 +324,25 @@ class TicketForm(CustomFieldMixin, forms.Form):
 
         return t
 
-
 class PublicTicketForm(CustomFieldMixin, forms.Form):
     queue = forms.ChoiceField(
         label=_('Queue'),
         required=True,
         choices=()
+        )
+
+    request_firstname = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(),
+        label=_('First Name'),
+        )
+
+    request_lastname = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(),
+        label=_('Last Name'),
         )
 
     title = forms.CharField(
@@ -496,7 +509,6 @@ class PublicTicketForm(CustomFieldMixin, forms.Form):
                 )
 
         return t
-
 
 class UserSettingsForm(forms.Form):
     login_view_ticketlist = forms.BooleanField(
