@@ -225,6 +225,8 @@ class TicketForm(CustomFieldMixin, forms.Form):
         q = Queue.objects.get(id=int(self.cleaned_data['queue']))
 
         t = Ticket( title = self.cleaned_data['title'],
+                    request_firstname = self.cleaned_data['request_firstname'],
+                    request_lastname = self.cleaned_data['request_lastname'],
                     submitter_email = self.cleaned_data['submitter_email'],
                     created = timezone.now(),
                     status = Ticket.OPEN_STATUS,
@@ -423,6 +425,8 @@ class PublicTicketForm(CustomFieldMixin, forms.Form):
 
         t = Ticket(
             title = self.cleaned_data['title'],
+            request_firstname = self.cleaned_data['request_firstname'],
+            request_lastname = self.cleaned_data['request_lastname'],
             submitter_email = self.cleaned_data['submitter_email'],
             created = timezone.now(),
             status = Ticket.OPEN_STATUS,
