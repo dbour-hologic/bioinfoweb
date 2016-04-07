@@ -466,7 +466,7 @@ class Ticket(models.Model):
         """ A user-friendly ticket ID, which is a combination of ticket ID
         and queue slug. This is generally used in e-mail subjects. """
 
-        return u"[%s]" % (self.ticket_for_url)
+        return u"%s" % (self.ticket_for_url)
     ticket = property(_get_ticket)
 
     def _get_ticket_for_url(self):
