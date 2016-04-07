@@ -1284,7 +1284,6 @@ class CustomFieldManager(models.Manager):
     def get_queryset(self):
         return super(CustomFieldManager, self).get_queryset().order_by('ordering')
 
-
 @python_2_unicode_compatible
 class CustomField(models.Model):
     """

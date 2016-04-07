@@ -28,6 +28,13 @@ with open("secrets.json") as f:
 
 SECRET_KEY = secret["SECRET_KEY"]
 
+# EMAIL SETTINGS
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'hologic.bioinfo@gmail.com'
+EMAIL_HOST_PASSWORD = secret["EMAILPW"]
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 

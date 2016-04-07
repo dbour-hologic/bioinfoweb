@@ -115,7 +115,6 @@ class EditTicketForm(CustomFieldMixin, forms.ModelForm):
         
         return super(EditTicketForm, self).save(*args, **kwargs)
 
-
 class EditFollowUpForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         "Filter not openned tickets here."
@@ -130,6 +129,20 @@ class TicketForm(CustomFieldMixin, forms.Form):
         label=_('Queue'),
         required=True,
         choices=()
+        )
+
+    request_firstname = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(),
+        label=_('First Name'),
+        )
+
+    request_lastname = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(),
+        label=_('Last Name'),
         )
 
     title = forms.CharField(
