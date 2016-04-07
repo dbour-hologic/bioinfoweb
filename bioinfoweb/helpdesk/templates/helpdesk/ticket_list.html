@@ -222,19 +222,29 @@ $(document).ready(function() {
 <table class="table table-hover table-bordered table-striped">
 <caption>{% trans "Tickets" %}</caption>
 <thead>
-<tr><th>#</th><th>&nbsp;</th><th>{% trans "Pr" %}</th><th>{% trans "Title" %}</th><th>{% trans "Queue" %}</th><th>{% trans "Status" %}</th><th>{% trans "Created" %}</th><th>{% trans "Owner" %}</th></tr>
+<tr>
+    <th>&nbsp;</th>
+    <th>{% trans "Ticket ID" %}</th>
+    <th>{% trans "Priority" %}</th>
+    <th>{% trans "Requester" %}</th>
+    <th>{% trans "Title" %}</th>
+    <th>{% trans "Queue" %}</th>
+    <th>{% trans "Status" %}</th>
+    <th>{% trans "Created" %}</th>
+    <th>{% trans "Owner" %}</th></tr>
 </thead>
 <tbody>
 {% for ticket in tickets.object_list %}
 <tr class="{{ ticket.get_priority_css_class }}">
-<th><a href='{{ ticket.get_absolute_url }}'>{{ ticket.ticket }}</a></th>
-<td><input type='checkbox' name='ticket_id' value='{{ ticket.id }}' class='ticket_multi_select' /></td>
-<td>{{ ticket.priority }}</td>
-<th><a href='{{ ticket.get_absolute_url }}'>{{ ticket.title }}</a></th>
-<td>{{ ticket.queue }}</td>
-<td>{{ ticket.get_status }}</td>
-<td><span title='{{ ticket.created|date:"r" }}'>{{ ticket.created|naturaltime }}</span></td>
-<td>{{ ticket.get_assigned_to }}</td>
+    <td><input type='checkbox' name='ticket_id' value='{{ ticket.id }}' class='ticket_multi_select' /></td>
+    <th><a href='{{ ticket.get_absolute_url }}'>{{ ticket.ticket }}</a></th>
+    <td>{{ ticket.request_firstname }} {{ ticket.request_lastname }}</td>
+    <td>{{ ticket.priority }}</td>
+    <th><a href='{{ ticket.get_absolute_url }}'>{{ ticket.title }}</a></th>
+    <td>{{ ticket.queue }}</td>
+    <td>{{ ticket.get_status }}</td>
+    <td><span title='{{ ticket.created|date:"r" }}'>{{ ticket.created|naturaltime }}</span></td>
+    <td>{{ ticket.get_assigned_to }}</td>
 </tr>
 {% empty %}
 <tr><td colspan='5'>{% trans "No Tickets Match Your Selection" %}</td></tr>

@@ -3,8 +3,8 @@
 <caption>{{ ticket_list_caption }}</caption>{% endif %}
 <thead>
 <tr>
-	<th>#</th>
-	<th>{% trans "Pr" %}</th>
+	<th>{% trans "Ticket ID" %}</th>
+	<th>{% trans "Priority" %}</th>
 	<th>{% trans "Requester" %}</th>
 	<th>{% trans "Title" %}</th>
 	<th>{% trans "Queue" %}</th>
@@ -17,7 +17,7 @@
 	<tr class="{{ ticket.get_priority_css_class }}">
 			<th><a href='{{ ticket.get_absolute_url }}'>{{ ticket.ticket }}</a></th>
 			<td>{{ ticket.priority }}</td>
-			<td>{{ ticket.request_firstname }}</td>
+			<td>{{ ticket.request_firstname }} {{ ticket.request_lastname }}</td>
 			<th><a href='{{ ticket.get_absolute_url }}'>{{ ticket.title }}</a></th>
 			<td>{{ ticket.queue }}</td>
 			<td>{{ ticket.get_status }}</td>

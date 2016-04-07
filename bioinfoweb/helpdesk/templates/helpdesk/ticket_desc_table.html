@@ -40,6 +40,11 @@
 </tr>
 
 <tr>
+    <th>{% trans "Requester " %}</th>
+    <td>{{ ticket.request_firstname }} {{ ticket.request_lastname }}</td>
+</tr>
+
+<tr>
     <th>{% trans "Submitter E-Mail" %}</th>
     <td>{{ ticket.submitter_email }}{% if user.is_superuser %} <strong><a href='{% url 'helpdesk_email_ignore_add' %}?email={{ ticket.submitter_email }}'>{% trans "Ignore" %}</a></strong>{% endif %}</td>
 </tr>
