@@ -5,7 +5,7 @@
 {% block helpdesk_body %}
 
 <table class="table table-hover table-bordered table-striped">
-<caption>{{ ticket.ticket }} . {{ ticket.title }} [{{ ticket.get_status }}]</caption>
+<caption>Ticket: {{ ticket.ticket }} | {{ ticket.title }} [{{ ticket.get_status }}]</caption>
 <thead>
 <tr><th colspan='2'>{% blocktrans with ticket.queue as queue_name %}Queue: {{ queue_name }}{% endblocktrans %}</th></tr>
 </thead>
@@ -13,6 +13,16 @@
 <tr>
     <th>{% trans "Submitted On" %}</th>
     <td>{{ ticket.created|date:"r" }} ({{ ticket.created|naturaltime }})</td>
+</tr>
+
+<tr>
+    <th>{% trans "Ticket ID" %}</th>
+    <td>{{ ticket.ticket }}</td>
+</tr>
+
+<tr>
+    <th>{% trans "Status" %}</th>
+    <td>{{ ticket.get_status }} </td>
 </tr>
 
 <tr>
