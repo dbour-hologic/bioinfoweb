@@ -43,8 +43,16 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',				# Required for elapsed time formatting
     'portal',
     'services',
+)
+
+# Third Party Apps & Dependicies
+INSTALLED_APPS += (
+	'markdown_deux',						# Required for helpdesk knowledge base item formatting
+	'bootstrapform',						# Required for helpdesk templating 
+	'helpdesk',								# Third party app for service request (django-helpdesk)
 )
 
 MIDDLEWARE_CLASSES = (
@@ -85,7 +93,7 @@ WSGI_APPLICATION = 'bioinfoweb.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'test1',
+        'NAME': 'test2',
         'USER':'test1',
         'PASSWORD':'test1',
         'HOST':'localhost',
