@@ -1,3 +1,4 @@
 *.pyc
 venv/
 secrets.json
+django-helpdesk/
