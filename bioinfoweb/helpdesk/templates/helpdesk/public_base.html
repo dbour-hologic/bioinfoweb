@@ -4,8 +4,9 @@
 {% with request|load_helpdesk_settings as helpdesk_settings %}
 <html>
 <head>
-<title>{% block helpdesk_title %}{% trans "Helpdesk" %}{% endblock %}</title>
+<title>{% block helpdesk_title %}{% trans "Bioinformatics Service Request" %}{% endblock %}</title>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src='{% static "helpdesk/ticketform.js" %}' type='text/javascript' language='javascript'></script>
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
 <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" rel="stylesheet">
 <link rel='stylesheet' href='{% static "helpdesk/helpdesk-extend.css" %}' type='text/css' />
@@ -16,7 +17,7 @@
     <div id='header' class="row">
         <!-- Put your logo here if necessary: -->
         <!-- <img class="brand pull-right" src="/media/logo.png"> -->
-        <h1>{% trans "Helpdesk" %}</h1>
+        <h1>{% trans "Bioinformatics Service Request" %}</h1>
         {% include "helpdesk/navigation.html" %}
     </div>
     <div id='body' class="row">
