@@ -73,8 +73,15 @@ $(document).ready(function() {
 
 		$("#forpresubmit").click(function() {
 			if (current_selected != "default") {
-				var sentence = $(current_selected).serialize();
-				$("#id_body").val(sentence);
+				var sentenceTxt = "";
+				var sentenceObj = $(current_selected).serializeArray();
+				jQuery.each(sentenceObj, function(i, sentenceObj) {
+					sentenceTxt += sentenceObj.name + "\n" +
+								  sentenceObj.value + "\n" +
+								  "-----------" + "\n"
+				});
+				$("#id_body").val(sentenceTxt);
+				console.log(sentenceTxt);
 			};
 		});
 
