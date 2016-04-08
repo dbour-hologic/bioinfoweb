@@ -1,5 +1,7 @@
 $(document).ready(function() {	
 
+		$("#id_body").val("");
+
 		// Keeps track of which form is showing
 		var current_selected = "default";
 
