@@ -27,5 +27,5 @@ urlpatterns = [
 
 # Third party applications
 urlpatterns += [
-    url(r'helpdesk/', include(helpdesk_urls)),
+    url(r'^helpdesk/', include(helpdesk_urls)),
 ]

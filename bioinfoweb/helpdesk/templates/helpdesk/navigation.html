@@ -64,7 +64,7 @@
                     <li><a href='{% url 'helpdesk_dashboard' %}'>{% trans "Dashboard" %}</a></li>
                     <li><a href='{% url 'helpdesk_submit' %}'>{% trans "Submit a Ticket" %}</a></li>
                 {% else %}
-                    <li><a href="#">{% trans "Home" %}</a></li>
+                    <li><a href="/portal">{% trans "Home" %}</a></li>
                     {% if helpdesk_settings.HELPDESK_SUBMIT_A_TICKET_PUBLIC %}
                         <li><a href='{% url 'helpdesk_home' %}'>{% trans "Submit a Ticket" %}</a></li>
                     {% endif %}
