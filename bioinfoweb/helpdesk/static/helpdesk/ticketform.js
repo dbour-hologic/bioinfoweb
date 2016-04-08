@@ -5,9 +5,10 @@ $(document).ready(function() {
 		// Keeps track of which form is showing
 		var current_selected = "default";
 
-		// Assign the IDs of the custom fields for different categories
+		// Assign the IDs of the custom fields/sections for different categories
 		var sequencing_form = $("#seq_request_form");
 		var training_form = $("#type_training_form");
+		var insilico_form = $("#insilico_form_section");
 
 		// Declare the targetted forms
 		sequencing_form.hide();
@@ -28,18 +29,22 @@ $(document).ready(function() {
 				current_selected = training_form;
 				training_form.show();
 				sequencing_form.hide();
+				insilico_form.hide();
 			} else if ((selected === "Sequencing Requests")) {
 				current_selected = sequencing_form;
 				training_form.hide();
 				sequencing_form.show();
+				insilico_form.hide();
 			} else if ((selected === "In-Silico Analysis")) {
-				current_selected = "default";
+				current_selected = "default";	
 				training_form.hide();
 				sequencing_form.hide();
+				insilico_form.show();
 			} else {
 				current_selected = "default";
 				training_form.hide();
 				sequencing_form.hide();
+				insilico_form.hide();
 			}
 			
 		});	
@@ -55,18 +60,22 @@ $(document).ready(function() {
 				current_selected = training_form;
 				training_form.show();
 				sequencing_form.hide();
+				insilico_form.hide();
 			} else if ((selected === "Sequencing Requests")) {
 				current_selected = sequencing_form;
 				training_form.hide();
 				sequencing_form.show();
+				insilico_form.hide();
 			} else if ((selected === "In-Silico Analysis")) {
 				current_selected = "default";
 				training_form.hide();
 				sequencing_form.hide();
+				insilico_form.show();
 			} else {
 				current_selected = "default";
 				training_form.hide();
 				sequencing_form.hide();
+				insilico_form.hide();
 			}
 		// _______________________________________________________________
 
