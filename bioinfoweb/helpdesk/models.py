@@ -513,7 +513,7 @@ class Ticket(models.Model):
         try:
             site = Site.objects.get_current()
         except:
-            site = Site(domain='configure-django-sites.com')
+            site = Site(domain='bioinfoweb')
         return u"http://%s%s?ticket=%s&email=%s" % (
             site.domain,
             reverse('helpdesk_public_view'),
