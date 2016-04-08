@@ -131,6 +131,13 @@ class TicketForm(CustomFieldMixin, forms.Form):
         choices=()
         )
 
+    title = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(attrs={'size':'60'}),
+        label=_('Subject of Request'),
+        )
+
     request_firstname = forms.CharField(
         max_length=100,
         required=True,
@@ -143,13 +150,6 @@ class TicketForm(CustomFieldMixin, forms.Form):
         required=True,
         widget=forms.TextInput(),
         label=_('Last Name'),
-        )
-
-    title = forms.CharField(
-        max_length=100,
-        required=True,
-        widget=forms.TextInput(attrs={'size':'60'}),
-        label=_('Summary of the problem'),
         )
 
     submitter_email = forms.EmailField(
@@ -346,6 +346,13 @@ class PublicTicketForm(CustomFieldMixin, forms.Form):
         choices=()
         )
 
+    title = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(),
+        label=_('Subject of Request'),
+        )
+
     request_firstname = forms.CharField(
         max_length=100,
         required=True,
@@ -358,13 +365,6 @@ class PublicTicketForm(CustomFieldMixin, forms.Form):
         required=True,
         widget=forms.TextInput(),
         label=_('Last Name'),
-        )
-
-    title = forms.CharField(
-        max_length=100,
-        required=True,
-        widget=forms.TextInput(),
-        label=_('Summary of your query'),
         )
 
     submitter_email = forms.EmailField(

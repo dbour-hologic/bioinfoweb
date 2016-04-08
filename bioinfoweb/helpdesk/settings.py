@@ -29,7 +29,7 @@ HAS_TAG_SUPPORT = False
 HELPDESK_REDIRECT_TO_LOGIN_BY_DEFAULT = getattr(settings, 'HELPDESK_REDIRECT_TO_LOGIN_BY_DEFAULT', False)
 
 # show knowledgebase links?
-HELPDESK_KB_ENABLED = getattr(settings, 'HELPDESK_KB_ENABLED', True)
+HELPDESK_KB_ENABLED = getattr(settings, 'HELPDESK_KB_ENABLED', False)
 
 # show extended navigation by default, to all users, irrespective of staff status?
 HELPDESK_NAVIGATION_ENABLED = getattr(settings, 'HELPDESK_NAVIGATION_ENABLED', False)
@@ -97,6 +97,7 @@ QUEUE_EMAIL_BOX_SSL = getattr(settings, 'QUEUE_EMAIL_BOX_SSL', None)
 QUEUE_EMAIL_BOX_HOST = getattr(settings, 'QUEUE_EMAIL_BOX_HOST', None)
 QUEUE_EMAIL_BOX_USER = getattr(settings, 'QUEUE_EMAIL_BOX_USER', None)
 QUEUE_EMAIL_BOX_PASSWORD = getattr(settings, 'QUEUE_EMAIL_BOX_PASSWORD', None)
+
 
 
 # only allow users to access queues that they are members of?
