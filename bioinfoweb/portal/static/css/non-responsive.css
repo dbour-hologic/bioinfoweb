@@ -71,19 +71,14 @@ body {
 
 /* Asthetics */
 
-body {
-	background-color: white;
-	color: black;
-}
-
-.custom-header {
+/*.custom-header {
 	background: white !important;
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: 70px;
 	padding-top: 250px;
 	padding-bottom: 250px;
 	color: black;
-}
+}*/
 
 .navbar {
 	background: #333;
@@ -97,7 +92,7 @@ body {
 
 
 .navbar-default .navbar-nav > li > a:hover,
-.navbar-default .navbar-nav > li > a:focus {
+.navbar-default .navbar-nav > li > a:focus{
 	color: white;
 }
 
@@ -105,7 +100,7 @@ body {
 /* Changes background color of nav */
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,
-.navbar-default .navbar-nav > .active > a:focus {
+.navbar-default .navbar-nav > .active > a:focus{
 	color: white;
 	background: #333;
 }

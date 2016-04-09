@@ -35,17 +35,17 @@
 }
 
 .fullstretch {
-/*	position: relative;*/
-	background: white;
+	position: relative;
+	background: red;
 	color: black;
 	width: 100%;
 	height: 100%;
 	display: table;
 	text-align: center;
 
-	position: absolute;
+/*	position: absolute;
 	top: 0;
-	left: 0;	
+	left: 0;*/	
 }
 
 .btn-portal-style {
