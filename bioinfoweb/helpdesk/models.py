@@ -19,6 +19,7 @@ from django import VERSION
 from django.utils.encoding import python_2_unicode_compatible
 
 from helpdesk import settings as helpdesk_settings
+from helpdesk.project_codes.getprojectcode import get_code_list
 
 try:
     from django.utils import timezone
@@ -347,6 +348,9 @@ class Ticket(models.Model):
         (5, _('5. Very Low')),
     )
 
+    PROJECT_CODES = get_code_list() + \
+                    (("Other", "Other"),)    
+
     title = models.CharField(
         _('Title'),
         max_length=200,
@@ -389,6 +393,13 @@ class Ticket(models.Model):
         null=True,
         help_text=_('The submitter will receive an email for all public '
             'follow-ups left for this task.'),
+        )
+
+    project_codes = models.CharField(
+        max_length=400,
+        choices=PROJECT_CODES,
+        default="Other",
+        help_text=_('Please select your project code, if "Other", please specify'),
         )
 
     assigned_to = models.ForeignKey(
