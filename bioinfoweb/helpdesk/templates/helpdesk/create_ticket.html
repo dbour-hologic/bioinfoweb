@@ -26,11 +26,67 @@
         {% endcomment %}
 
     <div class='buttons form-group'>
-        <input type='submit' class="btn btn-primary" value='{% trans "Submit Ticket" %}' />
+        <input id='forpresubmit' type='submit' class="btn btn-primary" value='{% trans "Submit Ticket" %}' />
     </div>
 </fieldset>
 
 {% csrf_token %}</form>
+</div>
+</div>
+</div>
+
+<div class="col-xs-6">
+<div class="panel panel-default">
+<div class="panel-body">
+    <div id=type_training_form_section>
+        <form method='#' action='' id=type_training_form>
+            <fieldset>
+                <div class="form-group">
+                    <label for='id_type_training'>Type of Training</label>
+                    <div>
+                        <select name="Type_of_Training">
+                            <option value="General_Editor_Training">General Editor Training(basic setup, functions, navigation)</option>
+                            <option value="Advanced_Editor_Training">Advanced Editor Training(importing files, querying ODB)</option>
+                            <option value="General_Design">General TMA/HPA/ETC Design Help</option>
+                            <option value="Other">Other/Misc: Please describe in comments</option>
+                        </select>
+                    </div>
+                </div>              
+            </fieldset>
+        </form>
+    </div>
+    <div id="seq_request_form_section">
+        <form method='#' action='' id=seq_request_form>
+            <fieldset>
+                <div class="form-group">
+                    <label for='id_seq_primers'>Primers(5'-3' if any)</label>
+                    <div><textarea name='seq_primers_sequence'></textarea></div>
+                </div>
+                <div class="form-group">
+                    <label for='id_seq_primers'>Desired Length in base pairs</label>
+                    <div><input type='text' name='seq_primers_length'/></div>
+                </div>
+                <div>
+                    <label for='id_type_output'>Format Output</label>
+                     <select name="Format_Output">
+                         <option value="text_only">Text Only(.txt file via E-mail)</option>
+                         <option value="text_electro">Text + Electropherogram (Interoffice mail&email)</option>
+                         <option value="alignmentfile">MSAE Preferred</option>
+                         <option value="all">All of the above</option>
+                     </select>
+                </div>         
+            </fieldset>
+    </div>
+    <div id="insilico_form_section">
+        <b>Description:</b>
+        <p>In-Silico Analysis (Computational Biological Analysis)</p>
+        <p>We offer a range of analysis which commonly includes:</p>
+        <ul>
+            <li>Assay Specificity/Cross Reactivity</li>
+            <li>Oligonucleotide Secondary Structures</li>
+            <li>Oligonucleotide Interactions</li>
+        </ul>
+    </div>
 </div>
 </div>
 </div>

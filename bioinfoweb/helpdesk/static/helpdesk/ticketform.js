@@ -21,6 +21,7 @@ $(document).ready(function() {
 		// Holds the selected dropdown of Queue
 		var selected;
 
+
 		$("#id_queue").change(function() {
 
 			selected = $("#id_queue option:selected").text();
@@ -83,17 +84,19 @@ $(document).ready(function() {
 		// Appends the extra fields into description of issue before sending off
 
 		$("#forpresubmit").click(function() {
+
+			var sentenceTxt = $("#id_body").val();
+
 			if (current_selected != "default") {
-				var sentenceTxt = "";
 				var sentenceObj = $(current_selected).serializeArray();
 				jQuery.each(sentenceObj, function(i, sentenceObj) {
-					sentenceTxt += sentenceObj.name + "\n" +
+					sentenceTxt += "\n\n" + sentenceObj.name + "\n" +
 								  sentenceObj.value + "\n" +
 								  "-----------" + "\n"
 				});
 
 				$("#id_body").val(sentenceTxt);
-				console.log(sentenceTxt);
+				
 			};
 		}); 
 	});
