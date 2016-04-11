@@ -405,6 +405,14 @@ class Ticket(models.Model):
         help_text=_('Please select your project code, if "Other", please specify'),
         )
 
+    project_code_alt = models.CharField(
+        max_length=400,
+        default="",
+        blank=True,
+        null=True,
+        help_text=_('Please indicate which project this is for'),
+        )
+
     assigned_to = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name='assigned_to',

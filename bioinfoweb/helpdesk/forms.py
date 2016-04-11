@@ -167,6 +167,13 @@ class TicketForm(CustomFieldMixin, forms.Form):
     	help_text =_('Please select your project code, if "Other", please specify')
     	)
 
+    project_code_alt = forms.CharField(
+    	max_length=400,
+    	required=True,
+    	label=_('Other'),
+    	help_text = _('Please specificy project code'),
+    	)
+
     body = forms.CharField(
         widget=forms.Textarea(attrs={'cols': 47, 'rows': 15}),
         label=_('Description of Issue'),
@@ -236,6 +243,7 @@ class TicketForm(CustomFieldMixin, forms.Form):
                     request_lastname = self.cleaned_data['request_lastname'],
                     submitter_email = self.cleaned_data['submitter_email'],
                     project_code = self.cleaned_data['project_code'],
+                    project_code_alt = self.cleaned_data['project_code_alt'],
                     created = timezone.now(),
                     status = Ticket.OPEN_STATUS,
                     queue = q,
@@ -388,6 +396,13 @@ class PublicTicketForm(CustomFieldMixin, forms.Form):
     	help_text =_('Please select your project code, if "Other", please specify')
     	)
 
+    project_code_alt = forms.CharField(
+    	max_length=400,
+    	required=True,
+    	label=_('Other'),
+    	help_text = _('Please specificy project code'),
+    	)
+
     body = forms.CharField(
         widget=forms.Textarea(),
         label=_('Description of your issue'),
@@ -444,6 +459,7 @@ class PublicTicketForm(CustomFieldMixin, forms.Form):
             request_lastname = self.cleaned_data['request_lastname'],
             submitter_email = self.cleaned_data['submitter_email'],
             project_code = self.cleaned_data['project_code'],
+            project_code_alt = self.cleaned_data['project_code_alt'],
             created = timezone.now(),
             status = Ticket.OPEN_STATUS,
             queue = q,
