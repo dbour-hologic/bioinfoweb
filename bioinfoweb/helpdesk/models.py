@@ -348,8 +348,10 @@ class Ticket(models.Model):
         (5, _('5. Very Low')),
     )
 
+    PROJECT_OTHER_FIELD = "Other"
     PROJECT_CODES = get_code_list() + \
-                    (("Other", "Other"),)    
+                    ((PROJECT_OTHER_FIELD, PROJECT_OTHER_FIELD),)    
+
 
     title = models.CharField(
         _('Title'),
@@ -395,10 +397,11 @@ class Ticket(models.Model):
             'follow-ups left for this task.'),
         )
 
-    project_codes = models.CharField(
+
+    project_code = models.CharField(
         max_length=400,
         choices=PROJECT_CODES,
-        default="Other",
+        default=PROJECT_OTHER_FIELD,
         help_text=_('Please select your project code, if "Other", please specify'),
         )
 

@@ -22,6 +22,8 @@ def get_code_list():
 			for itemcode in tsv_file:
 
 				itemcode_concat = itemcode[0] + " " + itemcode[1]
+				itemcode_concat = itemcode_concat.decode('utf-8')
+				
 				build_project_tuple = (itemcode_concat, itemcode_concat)
 				project_tuple_data = ((build_project_tuple),)
 				project_code_list += project_tuple_data

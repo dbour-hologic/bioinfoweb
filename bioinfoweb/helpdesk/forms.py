@@ -160,6 +160,13 @@ class TicketForm(CustomFieldMixin, forms.Form):
             'updates to this ticket.'),
         )
 
+    project_code = forms.ChoiceField(
+    	choices=Ticket.PROJECT_CODES,
+    	required=True,
+    	label=_('Project Code'),
+    	help_text =_('Please select your project code, if "Other", please specify')
+    	)
+
     body = forms.CharField(
         widget=forms.Textarea(attrs={'cols': 47, 'rows': 15}),
         label=_('Description of Issue'),
@@ -228,6 +235,7 @@ class TicketForm(CustomFieldMixin, forms.Form):
                     request_firstname = self.cleaned_data['request_firstname'],
                     request_lastname = self.cleaned_data['request_lastname'],
                     submitter_email = self.cleaned_data['submitter_email'],
+                    project_code = self.cleaned_data['project_code'],
                     created = timezone.now(),
                     status = Ticket.OPEN_STATUS,
                     queue = q,
@@ -373,6 +381,13 @@ class PublicTicketForm(CustomFieldMixin, forms.Form):
         help_text=_('We will e-mail you when your ticket is updated.'),
         )
 
+    project_code = forms.ChoiceField(
+    	choices=Ticket.PROJECT_CODES,
+    	required=True,
+    	label=_('Project Code'),
+    	help_text =_('Please select your project code, if "Other", please specify')
+    	)
+
     body = forms.CharField(
         widget=forms.Textarea(),
         label=_('Description of your issue'),
@@ -428,6 +443,7 @@ class PublicTicketForm(CustomFieldMixin, forms.Form):
             request_firstname = self.cleaned_data['request_firstname'],
             request_lastname = self.cleaned_data['request_lastname'],
             submitter_email = self.cleaned_data['submitter_email'],
+            project_code = self.cleaned_data['project_code'],
             created = timezone.now(),
             status = Ticket.OPEN_STATUS,
             queue = q,
