@@ -91,9 +91,36 @@ $(document).ready(function() {
 								  sentenceObj.value + "\n" +
 								  "-----------" + "\n"
 				});
+
 				$("#id_body").val(sentenceTxt);
 				console.log(sentenceTxt);
 			};
-		});
+		}); 
+	});
 
+
+$(document).ready(function() {
+
+
+	// The following instructions are used for hiding/showing
+	// the "OTHER" field in the list of project codes. The
+	// "OTHER" field will only appear if there's a selection to "OTHER"
+	// otherwise the "OTHER" field will be directly linked to whatever is selected
+
+	initial_selected_project = $("#id_project_code option:selected").text();
+	$("#id_project_code_alt").val(initial_selected_project)
+	$("#id_project_code_alt").parent().parent().hide();
+
+	$("#id_project_code").change(function() {
+
+		selected_project = $("#id_project_code option:selected").text();
+
+		if (selected_project !="Other") {
+			$("#id_project_code_alt").parent().parent().hide();
+			$("#id_project_code_alt").val(selected_project)
+		} else {
+			$("#id_project_code_alt").parent().parent().show();
+			$("#id_project_code_alt").val("");
+		}
+	});
 });
