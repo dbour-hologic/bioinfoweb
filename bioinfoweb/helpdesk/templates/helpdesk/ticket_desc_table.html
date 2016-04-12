@@ -44,6 +44,18 @@
     <td>{{ ticket.request_firstname }} {{ ticket.request_lastname }}</td>
 </tr>
 
+<script>
+    window.onload = function() {
+        var get_code = ( "{{ticket.project_code}}" === "Other" ) ? "{{ ticket.project_code }}" : "{{ ticket.project_code_alt }}";
+        var pro_code = document.getElementById("project_code").innerHTML = get_code;
+    }
+</script>
+
+<tr>
+    <th>{% trans "Project # " %}</th>
+    <td id="project_code"></td>
+</tr>
+
 <tr>
     <th>{% trans "Submitter E-Mail" %}</th>
     <td>{{ ticket.submitter_email }}{% if user.is_superuser %} <strong><a href='{% url 'helpdesk_email_ignore_add' %}?email={{ ticket.submitter_email }}'>{% trans "Ignore" %}</a></strong>{% endif %}</td>
