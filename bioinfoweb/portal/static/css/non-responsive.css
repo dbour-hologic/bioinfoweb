@@ -4,8 +4,8 @@
 /* Account for fixed navbar */
 body {
 	min-width: 970px;
-	padding-top: 50px;
-	padding-bottom: 40px;
+	padding-top: 0px;
+	padding-bottom: 0px;	
 }
 
 
@@ -68,17 +68,6 @@ body {
 .navbar-nav > li > a {
 	padding: 15px;
 }
-
-/* Asthetics */
-
-/*.custom-header {
-	background: white !important;
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: 70px;
-	padding-top: 250px;
-	padding-bottom: 250px;
-	color: black;
-}*/
 
 .navbar {
 	background: #333;
