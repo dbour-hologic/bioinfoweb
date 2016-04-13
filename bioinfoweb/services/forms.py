@@ -9,8 +9,14 @@ class msaeaccessForm(forms.ModelForm):
 	class Meta:
 
 		model = msaeaccess
-
-		fields = []
+		fields = [
+			'user_first_name', 'user_last_name', 'user_email',
+			'user_network_name', 'user_title', 'user_location',
+			'user_alt_location', 'user_status', 'user_contract_date',
+			'phone_extension', 'request_type', 'date_required',
+			'department_name', 'supervisor_name', 'supervisor_email',
+			'employee_electronic_sig', 'employee_tos_agree'
+		]
 
 	common_req_attributes = {
 		'class':'form-control input-sm required'
@@ -106,12 +112,34 @@ class msaeaccessForm(forms.ModelForm):
 		widget=forms.TextInput(attrs=common_req_attributes),
 	)
 
-	employee_signed = forms.BooleanField(
+	employee_tos_agree = forms.BooleanField(
 		label="Terms of Service",
 		widget=forms.CheckboxInput(attrs={'class':'required'}),
 		help_text="I agree to the terms of service."
+	)	
+
+class msae_supervisor_signature(forms.ModelForm):
+
+	""" If user is coming from supervisor e-mail, provide this form for view """
+
+	class Meta:
+
+		model = msaeaccess
+		fields = []
+
+	common_req_attributes = {
+		'class':'form-control input-sm required'
+	}
+
+	supervisor_electronic_sig = forms.CharField(
+		label="Supervisor E-Signature",
+		widget=forms.TextInput(attrs=common_req_attributes)
 	)
 
-
+	supervisor_date_signed = forms.DateTimeField(
+		label="Date",
+		widget=SelectDateWidget(),
+		initial=timezone.now()
+	)
 
 

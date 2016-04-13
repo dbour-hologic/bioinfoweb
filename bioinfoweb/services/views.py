@@ -11,7 +11,11 @@ def msae_access(request):
 
 	if request.method == 'POST':
 
-		hostname = request.get_host()
+		msae_access_form = msaeaccessForm(request.POST)
+		if msae_access_form.is_valid():
+			msae_access_form.save()
+			return render(request, 'services/thanks.html')
+		print "Did not pass validation"
 
 	else:
 

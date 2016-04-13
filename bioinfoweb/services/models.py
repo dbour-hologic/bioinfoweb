@@ -97,7 +97,9 @@ class msaeaccess(models.Model):
 		default=""
 	)
 
-	employee_tos_agree = models.BooleanField()
+	employee_tos_agree = models.BooleanField(
+		default=False
+	)
 
 	employee_date_signed = models.DateField(
 		auto_now_add=True
@@ -110,7 +112,9 @@ class msaeaccess(models.Model):
 		default=""
 	)
 
-	supervisor_signed = models.BooleanField()
+	supervisor_signed = models.BooleanField(
+		default=False
+	)
 
 	# Bioinformatics Admin Use Only
 
