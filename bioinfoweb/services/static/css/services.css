@@ -1,3 +1,35 @@
+.error {
+	color: red !important;
+}
+
+.msaeaccess_main {
+	text-align: left;
+	font-family: 'Noto Sans', sans-serif;
+}
+
+#m_id {
+}
+
+#a_id {
+	color: red;
+}
+
+#s_id {
+	color: green;
+}
+
+#e_id {
+	color: blue;
+}
+
+#id_user_location, #id_user_status {
+	list-style-type: none;
+	padding: 0;
+	text-align: left;
+	font-weight: lighter;
+	font-family: 'Noto Sans', sans-serif;
+}
+
 .shift_list_left {
 	text-align: left;
 	font-family: 'Noto Sans', sans-serif;
@@ -67,3 +99,4 @@ span.glyph-mod {
 	font-family: 'Noto Sans', sans-serif;
 	font-size: 1.2em;
 }
+
