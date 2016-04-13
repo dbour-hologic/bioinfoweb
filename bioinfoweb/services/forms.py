@@ -125,7 +125,7 @@ class msae_supervisor_signature(forms.ModelForm):
 	class Meta:
 
 		model = msaeaccess
-		fields = []
+		fields = ['supervisor_electronic_sig', 'supervisor_date_signed']
 
 	common_req_attributes = {
 		'class':'form-control input-sm required'
