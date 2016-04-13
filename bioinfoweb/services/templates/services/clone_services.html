@@ -1,0 +1,41 @@
+{% extends 'services/base.html' %}
+{% block content %}
+
+{% load staticfiles %}
+
+<div class="clone_main">
+	<div class="row">
+		<div class="col-xs-4">
+				
+		<span class="glyphicon glyphicon-repeat glyph-mod"></span>
+		<br/>	
+		<br/>				
+			<form action="http://bioinfo-1:8080/GPCloneInventory/">
+				<button type="submit" class="btn btn-default btn-danger btn-lg">Go to Request Portal</button>
+			</form>
+		</div>
+		<div class="col-xs-8">
+			
+		<h1 class="classy_header">Cloning/IVT Information</h1>
+		<br/>
+		<b>Some aspects of our cloning procedure:</b>
+		<br/>
+		<br/>
+		<ol class="shift_list_left">
+			<li>Host vector is <a href="http://www.genomics.agilent.com/en/home.jsp"><b>pBluescript II SK(+) from Stratagene</b></a> (AmpR, LacZ, T7/T3 promoter)</li>
+			<li>Insert is PCR or RT-PCR amplified and is between 900-1500 bp in length</li>
+			<li>Final construct can be linearized with validated enzymes including EcoRI, Ndel, BamHI (additional enzymes may be validated if necessary)</li>
+			<li>All final constructs will be delivered with a glyercol stock</li>
+		</ol>	
+		<br/>
+
+		<img src="{% static 'img/pblue.jpg' %}"/>
+		<br/>
+		<br/>
+		<img src="{% static 'img/pblueseq.jpg' %}"/>
+
+		</div>
+	</div>
+</div>
+
+{% endblock %}
