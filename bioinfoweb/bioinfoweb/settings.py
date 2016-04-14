@@ -49,6 +49,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',				# Required for elapsed time formatting
     'portal',
     'services',
+    'tech',
 )
 
 # Third Party Apps & Dependicies

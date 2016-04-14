@@ -18,11 +18,13 @@ from django.contrib import admin
 from portal import urls as portal_urls
 from services import urls as services_urls
 from helpdesk import urls as helpdesk_urls
+from tech import urls as tech_urls
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^portal/', include(portal_urls)),
     url(r'^services/', include(services_urls)),
+    url(r'^tech/', include(tech_urls)),
 ]
 
 # Third party applications
