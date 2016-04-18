@@ -50,6 +50,7 @@ INSTALLED_APPS = (
     'portal',
     'services',
     'tech',
+    'gparchives',
 )
 
 # Third Party Apps & Dependicies

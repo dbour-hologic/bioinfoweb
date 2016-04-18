@@ -1,6 +1,7 @@
 $(document).ready(function() {
-		$("a.preview").click(function()
+
+$("a.preview").click(function()
 	{
-		$("div.imageEnlarge").dialog();
+		$("div.imageEnlarge").dialog({});
 	});
-})
+});
