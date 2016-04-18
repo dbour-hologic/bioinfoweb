@@ -1,0 +1,21 @@
+{% extends 'tech/base.html' %}
+{% block content %}
+
+{% load staticfiles %}
+
+<div class="row">
+	<div class="col-xs-12">
+		<h1 class="classy_header">Invader Technologies</h1>
+	</div>
+	<div class="col-xs-4">
+		<a class="preview" href="#getImage">
+			<img alt="Invader Image" style="max-height: 100%; max-width: 100%; " src="{% static 'img/InvaderPlus.JPG' %}"/>
+			<div class="imageEnlarge">
+				<img id="getImage" alt="Invader Image" style="max-height: 100%; max-width: 100%; " src="{% static 'img/InvaderPlus.JPG' %}"/>
+			</div>
+		</a>
+	</div>
+	<div class="col-xs-8"></div>
+</div>
+
+{% endblock %}

@@ -43,11 +43,11 @@
 							Bioinformatics Service Request
 							</a>
 							</li>
-							<li><a href="/services/clone">
+							<li><a href="{% url 'clone_services' %}">
 							<span class="glyphicon glyphicon-repeat"> | </span>
 							Clone(IVT) Request
 							</a></li>
-							<li><a href="/services/msaeaccess">
+							<li><a href="{% url 'msae_access' %}">
 							<span class="glyphicon glyphicon-align-left"> | </span>
 							MSAE Access Request
 							</a>
@@ -59,12 +59,12 @@
 					Technologies
 					<span class="caret"></span>
 						<ul class="dropdown-menu">
-							<li><a href="#">
+							<li><a href="{% url 'tech_tma' %}">
 							<span class="glyphicon glyphicon-tasks"> | </span>
 							Transcription-Mediated Amplification
 							</a>
 							</li>
-							<li><a href="#">
+							<li><a href="{% url 'tech_invader' %}">
 							<span class="glyphicon glyphicon-transfer"> | </span>
 							Invader Technologies
 							</a>

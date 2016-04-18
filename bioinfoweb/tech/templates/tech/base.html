@@ -18,14 +18,14 @@
 	<nav class="navbar navbar-default navbar-fixed-top">
 		<div class="container">
 			<div class="navbar-header">
-				<a class="navbar-brand" href="#">
+				<a class="navbar-brand" href="{% url 'index' %}">
 					<img style="max-width: 120px; margin-top: -7px;" alt="Bioinformatics" src="{% static 'img/hologic_logo_top.png' %}"/>
 				</a>
 			</div>
 
 			<div id="navbar">
 				<ul class="nav navbar-nav">
-					<li><a href="/portal">Home</a></li>
+					<li><a href="{% url 'index' %}">Home</a></li>
 					<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
 					Services
@@ -53,12 +53,12 @@
 					Technologies
 					<span class="caret"></span>
 						<ul class="dropdown-menu">
-							<li><a href="#">
+							<li><a href="{% url 'tech_tma' %}">
 							<span class="glyphicon glyphicon-tasks"> | </span>
 							Transcription-Mediated Amplification
 							</a>
 							</li>
-							<li><a href="#">
+							<li><a href="{% url 'tech_invader' %}">
 							<span class="glyphicon glyphicon-transfer"> | </span>
 							Invader Technologies
 							</a>
@@ -103,6 +103,7 @@
 <!-- Placed at the end of the document for faster load times -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/tech.js' %}"></script>
 
 </body>
 
