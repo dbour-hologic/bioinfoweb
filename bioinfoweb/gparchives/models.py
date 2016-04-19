@@ -23,7 +23,6 @@ class Documents(models.Model):
 	)
 
 	year = models.IntegerField(
-		max_length=4,
 		choices=YEAR_CHOICES,
 	)
 
