@@ -1,0 +1,17 @@
+<table>
+	<th>
+		<tr>
+			<td><b>Title</b></td>
+			<td><b>Author</b></td>
+			<td><b>Path</b></td>
+		</tr>
+	</th>
+
+	{% for field in archive_list %}
+	<tr>
+		<td>{{ field.title }}</td>
+		<td>{{ field.author }}</td>
+		<td><a href="{{ MEDIA_URL }}{{ field.document }}">Download</a></td>
+	</tr>
+	{% endfor %}
+</table>

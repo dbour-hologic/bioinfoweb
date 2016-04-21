@@ -40,3 +40,6 @@ class Documents(models.Model):
 		null=True,
 		blank=True,
 	)
+
+	def __unicode__(self):
+		return self.title

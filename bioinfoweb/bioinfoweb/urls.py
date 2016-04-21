@@ -28,7 +28,7 @@ urlpatterns = [
     url(r'^portal/', include(portal_urls)),
     url(r'^services/', include(services_urls)),
     url(r'^tech/', include(tech_urls)),
-    url(r'^tech/,', include(gparchives_urls)),
+    url(r'^tech/', include(gparchives_urls)),
 ]
 
 # Third party applications
