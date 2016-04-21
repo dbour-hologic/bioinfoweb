@@ -7,33 +7,36 @@ YEAR_CHOICES = [(yr,yr) for yr in range(1960, datetime.datetime.now().year+1)]
 # Create your models here.
 class Documents(models.Model):
 	document = models.FileField(
-		upload_to='archives'
+		max_length=2000,
+		upload_to='archives',
 	)
 
 	title = models.CharField(
-		max_length=200,
+		max_length=2000,
 		null=True,
 		blank=True,
 	)
 
 	author = models.CharField(
-		max_length=200,
+		max_length=2000,
 		null=True,
 		blank=True,
 	)
 
 	year = models.IntegerField(
 		choices=YEAR_CHOICES,
+		null=True,
+		blank=True,
 	)
 
 	citation = models.CharField(
-		max_length=400,
+		max_length=2000,
 		null=True,
 		blank=True,
 	)
 
 	keywords = models.CharField(
-		max_length=200,
+		max_length=2000,
 		null=True,
 		blank=True,
 	)

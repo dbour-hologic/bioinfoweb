@@ -67,17 +67,22 @@ def file_scanner(filename):
 
 def data_factory(name, title, author, year, citation, keywords, pk):
 	
-	MODEL_NAME = "bioinfoweb.gparchives"
+	MODEL_NAME = "gparchives.Documents"
 	PATH_BUILDER = "archives"
 	FILE_PATH = PATH_BUILDER + "/" + name
 
 	dict_builder = {}
 
 	field_builder = {}
-	field_builder["name"] = FILE_PATH 		# Article File Name (PATH)
+	field_builder["document"] = FILE_PATH 		# Article File Name (PATH)
 	field_builder["title"] = title 			# Article Title
 	field_builder["author"] = author 		# Article Authors
-	field_builder["year"] = year 			# Article Year
+	
+	try:
+		field_builder["year"] = int(year) 			# Article Year
+	except ValueError:
+		print title, author
+
 	field_builder["keywords"] = keywords 	# Article Keywords
 
 	dict_builder["fields"] = field_builder
