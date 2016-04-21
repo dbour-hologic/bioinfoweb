@@ -75,15 +75,16 @@ def data_factory(name, title, author, year, citation, keywords, pk):
 
 	field_builder = {}
 	field_builder["document"] = FILE_PATH 		# Article File Name (PATH)
-	field_builder["title"] = title 			# Article Title
-	field_builder["author"] = author 		# Article Authors
-	
+	field_builder["title"] = title 						# Article Title
+	field_builder["author"] = author 					# Article Authors
+
 	try:
 		field_builder["year"] = int(year) 			# Article Year
 	except ValueError:
-		print title, author
+		field_builder["year"] = None
 
-	field_builder["keywords"] = keywords 	# Article Keywords
+	field_builder["citation"] = citation  		# Article Citation
+	field_builder["keywords"] = keywords 			# Article Keywords
 
 	dict_builder["fields"] = field_builder
 	dict_builder["model"] = MODEL_NAME
