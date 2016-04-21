@@ -1,17 +1,22 @@
-<table>
-	<th>
-		<tr>
-			<td><b>Title</b></td>
-			<td><b>Author</b></td>
-			<td><b>Path</b></td>
-		</tr>
-	</th>
+{% extends 'gparchives/base.html' %}
+{% block content %}
+
+<table class="table align_text_left">
+
+	<tr>
+			<th>Title</th>
+			<th>Author(s)</th>
+			<th>Citation</th>
+	</tr>
 
 	{% for field in archive_list %}
 	<tr>
-		<td>{{ field.title }}</td>
+		<td>
+		<a href="{{ MEDIA_URL }}{{ field.document }}">{{ field.title }}</a>
+		</td>
 		<td>{{ field.author }}</td>
-		<td><a href="{{ MEDIA_URL }}{{ field.document }}">Download</a></td>
+		<td>{{ field.citation }}</td>
 	</tr>
 	{% endfor %}
 </table>
+{% endblock %}
