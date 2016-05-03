@@ -51,6 +51,7 @@ INSTALLED_APPS = (
     'services',
     'tech',
     'gparchives',
+    'seqconversion',
 )
 
 # Third Party Apps & Dependicies
