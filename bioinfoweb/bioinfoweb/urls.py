@@ -26,6 +26,7 @@ from seqconversion import urls as seqconversion_urls
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^$', include(portal_urls)),
     url(r'^portal/', include(portal_urls)),
     url(r'^services/', include(services_urls)),
     url(r'^tech/', include(tech_urls)),
