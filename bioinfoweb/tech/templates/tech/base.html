@@ -72,7 +72,37 @@
 						</ul>
 					</a>
 					</li>
-					<li><a href="#">Tools</a></li>
+					<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+					Tools
+					<span class="caret"></span>
+						<ul class="dropdown-menu">
+							<li><a href="{% url 'tools_seqconversion' %}">
+							<span class="glyphicon glyphicon-random"> | </span>
+							Sequence Conversion
+							</a>
+							</li>
+							<li><a href="#">
+							<span class="glyphicon glyphicon-calendar"> | </span>
+							Molecular Weight Calculator
+							</a>
+							</li>
+							<li><a href="#">
+							<span class="glyphicon glyphicon-fire"> | </span>
+							TM Melting Calculator
+							| <span class='page_status_off'>Offline</span>
+							</a>
+							</li>
+							<li class="dropdown-header">Third Party</li>
+							<li><a href="#">
+							<span class="glyphicon glyphicon-erase"> | </span>
+							Bioinformatics Tools
+							| <span class='page_status_off'>Offline</span>
+							</a>
+							</li>
+						</ul>
+					</a>
+					</li>
 					<li><a href="#">Contact</a></li>
 				</ul>
 			</div>

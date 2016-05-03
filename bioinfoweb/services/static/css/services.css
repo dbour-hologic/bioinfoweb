@@ -1,3 +1,17 @@
+/* Tools Status */
+
+.page_status_on {
+	font-size: 0.8em;
+	color: green;
+}
+
+.page_status_off {
+	font-size: 0.8em;
+	color: red;
+}
+
+/*__________________*/
+
 .error {
 	color: red !important;
 }

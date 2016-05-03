@@ -1,27 +1,16 @@
-.typed-cursor {
-	opacity: 1;
-	-webkit-animation: blink 0.7s infinite;
-	-moz-animation: blink 0.7s infinite;
-	animation: blink 0.7s infinite;
+/* Tools Status */
+
+.page_status_on {
+	font-size: 0.8em;
+	color: green;
 }
 
-@keyframes blink {
-	0% { opacity: 1; }
-	50% { opacity: 0; }
-	100% { opacity: 1; }
+.page_status_off {
+	font-size: 0.8em;
+	color: red;
 }
 
-@-webkit-keyframes blink {
-	 0% { opacity: 1; }
-     50% { opacity: 0; }
-     100% { opacity: 1; }
-}
-
-@-moz-keyframes blink {
-      0% { opacity: 1; }
-     50% { opacity: 0; }
-    100% { opacity: 1; }
-}
+/*__________________*/
 
 .fullstretch {
 	position: relative;
