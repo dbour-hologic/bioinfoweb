@@ -11,7 +11,7 @@ import json, subprocess
 def ajaxtest(request):
 
 	meltform = MeltForm(auto_id=False)
-	return render(request, 'melt.html', {'meltform':meltform})
+	return render(request, 'melting/melt.html', {'meltform':meltform})
 
 @csrf_exempt
 def ajaxresponse(request):
