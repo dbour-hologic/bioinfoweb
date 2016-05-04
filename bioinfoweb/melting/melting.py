@@ -51,16 +51,27 @@ def queryBuilder(queryObject):
 	
 def meltingExec(command):
 
+	# Sets up the environmental variable to execute MELTING 5
+	base_path = "/var/www/html/bioinfoweb"
+	melt_path = os.path.join(base_path, "melting5", "MELTING5.1.1", "executable")
+	add_path = os.environ['PATH'] + ":" + melt_path
+
 	# Sets up the environmental variable NN_PATH for the melting program
 	# The NN_PATH contains the experimental values for MELTING 5
-	os.environ["NN_PATH"] = "/usr/local/share/MELTING/Data"
+	os.environ["NN_PATH"] = "/var/www/html/bioinfoweb/melting5/MELTING5.1.1/Data"
 
 	searchQuery = command
 	
 	# Sanitary check, remove all possibilities of executing further commands
 	searchQuery = searchQuery.replace(";","")
 
-	p = subprocess.Popen(searchQuery, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+	p = subprocess.Popen(
+		searchQuery, 
+		stdout=subprocess.PIPE, 
+		stderr=subprocess.PIPE, 
+		shell=True,
+		env=dict(os.environ, PATH=add_path)
+	)
 	
 	#Capture the error message
 	stdout, stderr = p.communicate()
