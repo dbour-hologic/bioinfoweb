@@ -1,0 +1,7 @@
+RhinoC	taxID:	463676
+RhinoA	taxID:	147711
+RhinoB	taxID:	147712
+
+txid147711[Organism] -> A
+txid147712[Organism] -> B
+txid463676[Organism] -> C

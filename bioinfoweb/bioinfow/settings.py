@@ -21,9 +21,11 @@ MEDIA_URL = "/media/"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
+BASE_DIR_STATIC = os.path.join(BASE_DIR, "secrets.json")
+
 
 # Placed in a .json file
-with open("secrets.json") as f:
+with open(BASE_DIR_STATIC) as f:
 	secret = json.load(f)
 
 SECRET_KEY = secret["SECRET_KEY"]
@@ -72,7 +74,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
 )
 
-ROOT_URLCONF = 'bioinfoweb.urls'
+ROOT_URLCONF = 'bioinfow.urls'
 
 TEMPLATES = [
     {
@@ -91,7 +93,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'bioinfoweb.wsgi.application'
+WSGI_APPLICATION = 'bioinfow.wsgi.application'
 
 
 # Database
