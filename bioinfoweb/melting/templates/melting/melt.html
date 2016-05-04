@@ -1,0 +1,169 @@
+{% extends 'melting/base_layout.html' %}
+{% block content %}
+
+<div id="meltTool" class="fullstretch">
+	<div class="container">
+		<div class="row" style="padding: 20px;">
+			<div class="col-xs-12">
+				<h1><b>Melting Temperature</b></h1>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-3"></div>
+			<div class="col-xs-6">
+				<p>
+					<font style="font-size: 16px;">Based on Melting 5.</font>
+				</p>
+			</div>
+			<div class="col-xs-3"></div>
+		</div>
+
+		<div class="row">
+
+			
+				Enter Sequence 5'-3' (maximum 59 bases)
+				<br><br>
+
+			<div class="col-xs-5">
+
+				<div class="row">
+					<div class="col-xs-6" style="text-align: right">
+						Hybridization Type
+					</div>
+					<div class="col-xs-6" style="text-align: left; padding: 1px">
+						{{ meltform.hybridType }}
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-xs-6" style="text-align: right">
+						Oligo Concentration
+					</div>
+					<div class="col-xs-6" style="text-align: left; padding: 1px">
+						{{ meltform.oligoConc }} uM 
+						<span class="inputErrors" id="oligoError"></span>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-xs-6" style="text-align: right">
+						Na+
+					</div>
+					<div class="col-xs-6" style="text-align: left; padding: 1px">
+						{{ meltform.sodiumConc }} mM
+						<span class="inputErrors" id="sodiumError"></span>
+					</div>
+				</div>	
+
+				<div class="row">
+					<div class="col-xs-6" style="text-align: right">
+						Mg++
+					</div>
+					<div class="col-xs-6" style="text-align: left; padding: 1px">
+						{{ meltform.magConc }} mM
+						<span class="inputErrors" id="magError"></span>
+					</div>
+				</div>
+
+				<br>
+
+				<div class="row">
+					<div class="col-xs-12">
+						<span style="color: red" id="warningLabel"></span>
+					</div>
+				</div>							
+
+			</div>
+
+			<div class="col-xs-7">
+				{{ meltform.meltSeq }}
+				<br>
+				<p>Character count: <span id="charCount"></span></p>
+				<button data-bind="click: save">Calculate TM</button>
+				<button data-bind="click: clearArray" id="clear">Clear</button>
+			</div>
+
+		</div>
+
+
+		<hr>
+
+		<div class="row">
+
+			<div class="col-xs-1">5'</div>
+			<div class="col-xs-10">
+
+			<!-- Interactive display for the sequence generated -->
+
+				<div style="display: inline-block">
+
+
+					<div data-bind="foreach: seqArray">
+						<span class="styleGuide" data-bind="text: originalBase"></span>
+					</div>
+
+
+				</div>
+
+			</div>
+			<div class="col-xs-1">3'</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-1"></div>
+			<div class="col-xs-10">
+				<div style="display: inline-block">
+					<div data-bind="foreach: comArray">
+						<span class="styleGuide" data-bind="text: $data.compBase() === $data.originalBase ? '|' : ''"></span>
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-1"></div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-1">3'</div>
+			<div class="col-xs-10">
+				<div style="display: inline-block">
+						<div data-bind="foreach: comArray">
+							<span class="styleGuide" style="cursor: pointer" data-bind="text: $data.compBase(), click: $root.openList, visible: !isVisible(), style: {color: $data.compBase() === $data.originalBase ? '#73C5E1' : '#FF7148'}"></span>
+							<select data-bind="options: $root.selectBase, optionsValue: 'basePair', value: $data.compBase, visible: isVisible, hasFocus: isVisible,  event: {change: $parent.modCheck}"></select>
+						</div>
+				</div>
+
+			</div>
+			<div class="col-xs-1">5'</div>
+		</div>
+
+		<hr>
+
+		<div class="row">
+			<div class="col-xs-5" id="resultDescription">
+			<h2>Results</h2>
+	
+				<span id="enthalpy_result"></span>
+				<br>
+				<span id="entropy_result"></span>
+				<br>
+				<span id="tm"></span>
+				<br>
+				<span id="status"></span>
+				<br>
+				<span id="message"></span>
+				<br>
+		
+			</div>
+
+			<div class="col-xs-7" id="aboutDescription">
+				<h2>About</h2>
+				<p><b>Description:</b> The Melting 5 web interface presented here is an extension of the MELTING Version 5.<br><br>
+				<b>Disclaimer:</b> Le NovA re. Melting, a free tool to compute the melting temperature of nucleic acid duplex. Bioinformatics, 17: 1226-1227. Dumousseau M, Rodriguez N, Juty N, Le NovA re N. MELTING, a flexible platform to predict the melting temperatures of nucleic acids. BMC Bioinformatics, 16;13:101, PMID 22591039.</p>
+			</div>
+
+		</div>
+
+	</div>
+
+
+{% endblock %}
