@@ -24,7 +24,7 @@ from tech import urls as tech_urls
 from gparchives import urls as gparchives_urls
 from seqconversion import urls as seqconversion_urls
 from melting import urls as melting_urls
-
+from reportbug import urls as reportbug_urls
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^tech/', include(gparchives_urls)),
     url(r'^tools/', include(seqconversion_urls)),
     url(r'^tools/', include(melting_urls)),
+    url(r'^reportbug/', include(reportbug_urls)),
 ]
 
 # Third party applications

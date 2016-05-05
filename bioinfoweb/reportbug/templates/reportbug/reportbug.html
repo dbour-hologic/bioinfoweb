@@ -1,0 +1,23 @@
+{% extends 'reportbug/base.html' %}
+{% block content %}
+
+<div class="bugreport_main">
+	<form action="" method="post" id="bugreport_id">
+			{% for field in reportBug %}
+			<div class="form-group">
+				{% csrf_token %}
+				{{ field.label_tag }} {{ field }}
+				{{ field.errors }}
+				{% if field.help_text %}
+				<div class="help_text">
+					<span>{{ field.help_text }}</span>
+				</div>
+				{% endif %}
+			</div>
+			{% endfor %}
+			<button type="Submit" class="btn btn-primary">Submit</button>
+	</form>
+</div>
+
+
+{% endblock %}

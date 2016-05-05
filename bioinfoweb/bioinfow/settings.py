@@ -55,6 +55,7 @@ INSTALLED_APPS = (
     'gparchives',
     'seqconversion',
     'melting',
+    'reportbug',
 )
 
 # Third Party Apps & Dependicies
