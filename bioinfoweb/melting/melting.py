@@ -1,6 +1,7 @@
 # Melting program to send raw bash commands
 import os
 import subprocess
+from bioinfow import settings
 
 # From DJANGO
 # ----> DJANGO will convert the JSON to string
@@ -52,13 +53,14 @@ def queryBuilder(queryObject):
 def meltingExec(command):
 
 	# Sets up the environmental variable to execute MELTING 5
-	base_path = "/var/www/html/bioinfoweb"
+	base_path = settings.BASE_DIR
 	melt_path = os.path.join(base_path, "melting5", "MELTING5.1.1", "executable")
 	add_path = os.environ['PATH'] + ":" + melt_path
 
 	# Sets up the environmental variable NN_PATH for the melting program
 	# The NN_PATH contains the experimental values for MELTING 5
-	os.environ["NN_PATH"] = "/var/www/html/bioinfoweb/melting5/MELTING5.1.1/Data"
+	nn_path = os.path.join(base_path, "melting5", "MELTING5.1.1", "Data")
+	os.environ["NN_PATH"] = nn_path
 
 	searchQuery = command
 	

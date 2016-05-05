@@ -217,7 +217,7 @@ $(document).ready(function() {
 						   ]};
 
 			$.ajax({
-				url: "/ajaxresponse/",
+				url: "/tools/meltingresponse/",
 				type: "POST",
 				dataType: 'json',
 				data: {

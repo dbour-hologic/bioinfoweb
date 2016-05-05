@@ -100,14 +100,17 @@ WSGI_APPLICATION = 'bioinfow.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
+# SET TO PRODUCTION (PRD) or TEST (TEST)
+DEPLOYMENT_TYPE = "PRD"
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'test2',
-        'USER':'test1',
-        'PASSWORD':'test1',
-        'HOST':'localhost',
-        'PORT':'',
+        'NAME': secret[DEPLOYMENT_TYPE][0],
+        'USER': secret[DEPLOYMENT_TYPE][1],
+        'PASSWORD':secret[DEPLOYMENT_TYPE][2],
+        'HOST':secret[DEPLOYMENT_TYPE][3],
+        'PORT':secret[DEPLOYMENT_TYPE][4],
     }
 }
 
