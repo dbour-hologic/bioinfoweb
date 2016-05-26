@@ -2,69 +2,106 @@
 {% block content %}
 
 	<div class="main_page">
-		<div class="row equal">
-			<div class="col-xs-2">
-				<div class="panel panel-default">
-				<div class="panel-heading panel-mod">
-					<span class="glyphicon glyphicon-cloud glyph-mod"></span>
-				</div>
-				<div class="panel-body">
-				<p><b>News Update</b></p>
-				TM Calc Beta Released <br><hr> MW Calc Beta Released			
-				</div>
-				</div>
-			</div>
 
-			<div class="col-xs-2">
-				<div class="panel panel-default">
-				<div class="panel-heading panel-mod">
-					<span class="glyphicon glyphicon-cog glyph-mod"></span>
-				</div>
-					<div class="panel-body">
-					Bioinformatics Service Request
-					<hr>
-					<a class="btn btn-danger" href="/helpdesk" role"button">
-					Request</a>
-					</div>
-				</div>
-			</div>
-			<div class="col-xs-2">
-				<div class="panel panel-default">
-				<div class="panel-heading panel-mod">
-					<span class="glyphicon glyphicon-repeat glyph-mod" ></span>
-				</div>
-					<div class="panel-body">Clone(IVT) Service Request
-					<hr>
-					<a class="btn btn-danger" href="/services/clone" role"button">Request</a>					
-					</div>
-				</div>			
-			</div>			
-			<div class="col-xs-2">
-				<div class="panel panel-default">
-				<div class="panel-heading panel-mod">
-					<span class="glyphicon glyphicon-align-left glyph-mod"></span>
-				</div>
-					<div class="panel-body">
-						MSAE Access Request
-						<hr>
-						<a class="btn btn-danger" href="/services/msaeaccess" role"button">Request</a>							
-					</div>
-				</div>			
-			</div>
-			<div class="col-xs-2">
-				<div class="panel panel-default">
-					<div class="panel-heading panel-mod">
-						<span class="glyphicon glyphicon-flag glyph-mod"/>
-					</div>
-					<div class="panel-body">
-					Training Service Requests
-					<hr>
-					<a class="btn btn-danger" href="/helpdesk" role"button">Request</a>						
-					</div>
-				</div>
-			</div>
 
+		<div class="row">
+			<div class="col-xs-9">
+				<div class="row equal">
+					<div class="col-xs-3">
+						<div class="panel panel-default">
+						<div class="panel-heading panel-mod">
+							<span class="glyphicon glyphicon-calendar glyph-mod"></span>
+						</div>
+							<div class="panel-body">
+							Molecular Weight Calculator
+							<hr>
+							<a class="btn btn-danger" href="http://yoho:28080/utils/bioinfo?action=MolWeight" role="button">> Run</a>		
+						</div>
+						</div>
+					</div>
+					<div class="col-xs-3">
+						<div class="panel panel-default">
+							<div class="panel-heading panel-mod">
+								<span class="glyphicon glyphicon-fire glyph-mod"/>
+							</div>
+							<div class="panel-body">
+							TM Melting Calculator
+							<br>
+							<br>
+							<hr>
+							<a class="btn btn-danger" href="/tools/melting" role="button">> Run</a>						
+							</div>
+						</div>
+					</div>
+					<div class="col-xs-3">
+						<div class="panel panel-default">
+						<div class="panel-heading panel-mod">
+							<span class="glyphicon glyphicon-cog glyph-mod"></span>
+						</div>
+							<div class="panel-body">
+							Bioinformatics Service Request
+							<br>
+							<hr>
+							<a class="btn btn-danger" href="/helpdesk" role="button">
+							Request
+							</a>
+							</div>
+						</div>
+					</div>
+					<div class="col-xs-3">
+						<div class="panel panel-default">
+						<div class="panel-heading panel-mod">
+							<span class="glyphicon glyphicon-repeat glyph-mod" ></span>
+						</div>
+							<div class="panel-body">Clone(IVT) Service Request
+							<br>
+							<hr>
+							<a class="btn btn-danger" href="/services/clone" role="button">Request</a>					
+							</div>
+						</div>			
+					</div>			
+				</div>
+				<div class="row equal">
+					<div class="col-xs-3">
+						<div class="panel panel-default">
+							<div class="panel-heading panel-mod">
+								<span class="glyphicon glyphicon-flag glyph-mod"/>
+							</div>
+							<div class="panel-body">
+							Training Service Requests
+							<br>
+							<hr>
+							<a class="btn btn-danger" href="/helpdesk" role="button">Request</a>
+							</div>
+						</div>
+					</div>
+					<div class="col-xs-3">
+						<div class="panel panel-default">
+						<div class="panel-heading panel-mod">
+							<span class="glyphicon glyphicon-align-left glyph-mod"></span>
+						</div>
+							<div class="panel-body">
+								MSAE Service Access Request
+								<br>
+								<hr>
+								<a class="btn btn-danger" href="/services/msaeaccess" role="button">Request</a>							
+							</div>
+						</div>			
+					</div>
+					<!-- Future Menu Options -->			
+					<div class="col-xs-3"></div>
+					<div class="col-xs-3"></div>								
+				</div>
+			</div>
+			<div class="col-xs-3">
+				<h3>Bioinformatics Feed</h3>
+				Keep up with the latest news!
+	            <a class="twitter-timeline"  href="https://twitter.com/bioinfo_hologic/lists/bioinformatics" data-widget-id="735963767188508672">Tweets from https://twitter.com/bioinfo_hologic/lists/bioinformatics</a>
+	            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+	            </script>
+			</div>
 		</div>
+
 	</div>
 {% endblock %}
 
