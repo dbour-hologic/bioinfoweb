@@ -1,0 +1,29 @@
+{% extends 'feasibility/base.html' %}
+{% block content %}
+
+<h1 class="align_text_left">Feasibility Archives</h1>
+<p class="align_text_left">Here you will find articles on many of the
+technologies we use and the research that went into creating 
+them.</p>
+
+<table class="table table-bordered align_text_left">
+
+	<tr>
+			<th>Title</th>
+			<th>Author(s)</th>
+			<th>Key Words</th>
+			<th>Year</th>
+	</tr>
+
+	{% for field in archive_list %}
+	<tr>
+		<td>
+		<a href="{{ MEDIA_URL }}{{ field.document }}">{{ field.title }}</a>
+		</td>
+		<td>{{ field.author }}</td>
+		<td>{{ field.keywords }}</td>
+		<td>{{ field.year }}</td>
+	</tr>
+	{% endfor %}
+</table>
+{% endblock %}
