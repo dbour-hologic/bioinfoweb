@@ -38,18 +38,24 @@
 					<span class="caret"></span>
 					</a>
 						<ul class="dropdown-menu">
-							<li><a href="/helpdesk">
-							<span class="glyphicon glyphicon-cog"> | </span>
-							Bioinformatics Service Request
+							<li><a href="{% url 'tech_tma' %}">
+							<span class="glyphicon glyphicon-tasks"> | </span>
+							Transcription-Mediated Amplification
 							</a>
 							</li>
-							<li><a href="{% url 'clone_services' %}">
-							<span class="glyphicon glyphicon-repeat"> | </span>
-							Clone(IVT) Request
-							</a></li>
-							<li><a href="{% url 'msae_access' %}">
-							<span class="glyphicon glyphicon-align-left"> | </span>
-							MSAE Access Request
+							<li><a href="{% url 'tech_invader' %}">
+							<span class="glyphicon glyphicon-transfer"> | </span>
+							Invader Technologies
+							</a>
+							</li>							
+							<li><a href="{% url 'tech_archives' %}">
+							<span class="glyphicon glyphicon-text-color"> | </span>
+							Gen-Probe Scientific Articles Archive
+							</a>
+							</li>
+							<li><a href="{% url 'feasibility_archives' %}">
+							<span class="glyphicon glyphicon-floppy-disk"> | </span>
+							Gen-Probe Scientific Feasibility Archives
 							</a>
 							</li>
 						</ul>
@@ -72,6 +78,11 @@
 							<li><a href="{% url 'tech_archives' %}">
 							<span class="glyphicon glyphicon-text-color"> | </span>
 							Gen-Probe Scientific Articles Archive
+							</a>
+							</li>
+							<li><a href="{% url 'feasibility_archives' %}">
+							<span class="glyphicon glyphicon-floppy-disk"> | </span>
+							Gen-Probe Scientific Feasibility Archives
 							</a>
 							</li>
 						</ul>
