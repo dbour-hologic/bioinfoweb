@@ -64,9 +64,9 @@ def file_scanner(filename):
 
 def data_factory(title, file_path, author, year, keywords, pk):
 	
-	MODEL_NAME = "feasibility.Documents"
+	MODEL_NAME = "feasibility.FeasibilityDocuments"
 	PATH_BUILDER = "feasibility"
-	FILE_PATH = PATH_BUILDER + "/" + title
+	FILE_PATH = PATH_BUILDER + "/" + file_path
 
 	dict_builder = {}
 
