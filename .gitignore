@@ -3,6 +3,7 @@ venv/
 secrets.json
 django-helpdesk/
 archives/
+feasibility/
 development/
 media/
 melting5/

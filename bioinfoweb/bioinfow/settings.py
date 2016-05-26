@@ -56,6 +56,7 @@ INSTALLED_APPS = (
     'seqconversion',
     'melting',
     'reportbug',
+    'feasibility',
 )
 
 # Third Party Apps & Dependicies
@@ -102,7 +103,7 @@ WSGI_APPLICATION = 'bioinfow.wsgi.application'
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
 # SET TO PRODUCTION (PRD) or TEST (TEST)
-DEPLOYMENT_TYPE = "PRD"
+DEPLOYMENT_TYPE = "TEST"
 
 DATABASES = {
     'default': {

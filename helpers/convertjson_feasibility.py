@@ -32,13 +32,11 @@ import codecs
 # {"model":"x", "pk":"#", "fields":{"field":"field"}}
 
 """
-0-1. Name
-1-2. Article Title
-2-3. Title
-3-4. Authors
-4-5. Year
-5-6. Citation
-6-7. Keywords
+0-1. Article Title
+1-2. File Path
+2-3. Authors
+3-4. Year
+4-5. Keywords
 """
 
 def file_scanner(filename):
@@ -53,10 +51,9 @@ def file_scanner(filename):
 				continue
 			data_property = data_factory(	datapoints[0],
 											datapoints[1],
+											datapoints[2],
 											datapoints[3],
 											datapoints[4],
-											datapoints[5],
-											datapoints[6],
 											line_number
 										)
 			data_list.append(data_property)
@@ -65,11 +62,11 @@ def file_scanner(filename):
 
 
 
-def data_factory(name, title, author, year, citation, keywords, pk):
+def data_factory(title, file_path, author, year, keywords, pk):
 	
-	MODEL_NAME = "gparchives.Documents"
-	PATH_BUILDER = "archives"
-	FILE_PATH = PATH_BUILDER + "/" + name
+	MODEL_NAME = "feasibility.Documents"
+	PATH_BUILDER = "feasibility"
+	FILE_PATH = PATH_BUILDER + "/" + title
 
 	dict_builder = {}
 
@@ -83,7 +80,6 @@ def data_factory(name, title, author, year, citation, keywords, pk):
 	except ValueError:
 		field_builder["year"] = None
 
-	field_builder["citation"] = citation  		# Article Citation
 	field_builder["keywords"] = keywords 		# Article Keywords
 
 	dict_builder["fields"] = field_builder
