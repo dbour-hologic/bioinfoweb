@@ -6,24 +6,27 @@
 technologies we use and the research that went into creating 
 them.</p>
 
-<table class="table table-bordered align_text_left">
+<table class="table table-bordered align_text_left" id="gparchivetable">
+	<thead>
+		<tr>
+				<th>Title</th>
+				<th>Author(s)</th>
+				<th>Citation</th>
+				<th>Year</th>
+		</tr>
+	</thead>
 
-	<tr>
-			<th>Title</th>
-			<th>Author(s)</th>
-			<th>Citation</th>
-			<th>Year</th>
-	</tr>
-
-	{% for field in archive_list %}
-	<tr>
-		<td>
-		<a href="{{ MEDIA_URL }}{{ field.document }}">{{ field.title }}</a>
-		</td>
-		<td>{{ field.author }}</td>
-		<td>{{ field.citation }}</td>
-		<td>{{ field.year }}</td>
-	</tr>
-	{% endfor %}
+	<tbody>
+		{% for field in archive_list %}
+		<tr>
+			<td>
+			<a href="{{ MEDIA_URL }}{{ field.document }}">{{ field.title }}</a>
+			</td>
+			<td>{{ field.author }}</td>
+			<td>{{ field.citation }}</td>
+			<td>{{ field.year }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
 </table>
 {% endblock %}

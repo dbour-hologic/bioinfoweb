@@ -6,24 +6,26 @@
 technologies we use and the research that went into creating 
 them.</p>
 
-<table class="table table-bordered align_text_left">
-
-	<tr>
-			<th>Title</th>
-			<th>Author(s)</th>
-			<th>Key Words</th>
-			<th>Year</th>
-	</tr>
-
-	{% for field in archive_list %}
-	<tr>
-		<td>
-		<a href="{{ MEDIA_URL }}{{ field.document }}">{{ field.title }}</a>
-		</td>
-		<td>{{ field.author }}</td>
-		<td>{{ field.keywords }}</td>
-		<td>{{ field.year }}</td>
-	</tr>
-	{% endfor %}
+<table class="table table-bordered align_text_left" id="feasibilitytable">
+	<thead>
+		<tr>
+				<th>Title</th>
+				<th>Author(s)</th>
+				<th>Key Words</th>
+				<th>Year</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for field in archive_list %}
+		<tr>
+			<td>
+			<a href="{{ MEDIA_URL }}{{ field.document }}">{{ field.title }}</a>
+			</td>
+			<td>{{ field.author }}</td>
+			<td>{{ field.keywords }}</td>
+			<td>{{ field.year }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
 </table>
 {% endblock %}
