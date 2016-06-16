@@ -1,5 +1,7 @@
 // DataTable library for ease of sorting
 
 $(document).ready(function() {
-	$('#feasibilitytable').DataTable();
+	$('#feasibilitytable').DataTable({
+		"aaSorting":[[3,"desc"]]
+	});
 })
