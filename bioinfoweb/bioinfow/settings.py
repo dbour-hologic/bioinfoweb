@@ -57,6 +57,7 @@ INSTALLED_APPS = (
     'melting',
     'reportbug',
     'feasibility',
+    'biomatcher',
 )
 
 # Third Party Apps & Dependicies

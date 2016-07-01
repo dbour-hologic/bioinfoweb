@@ -1,0 +1,92 @@
+{% extends 'biomatcher/base.html' %}
+{% block content %}
+
+<div id="meltTool" class="fullstretch">
+
+	<div class="container">
+		<div class="row" style="padding: 20px;">
+			<div class="col-xs-12">
+				<h1><b>Biomatcher</b></h1>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-3"></div>
+			<div class="col-xs-6">
+				<p>
+					<font style="font-size: 16px;">Pattern Matching Program</font>
+				</p>
+			</div>
+			<div class="col-xs-3"></div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="panel panel-default" style="padding: 10px">
+					<div class="panel-body">
+						<div class="row">
+						<h3 style="text-align:left">Database Selection</h3>
+						<p style="text-align:left">Database must be in FASTA format.</p>
+							<ul id="databaseTabs" class="nav nav-tabs" role="tablist">
+								<li role="presentation" class="active">
+									<a href="#use-existing-database" id="database-existing-tab" role="tab" data-toggle="tab" aria-controls="Use Existing Database" aria-expanded="true">Use Existing Database</a>
+								</li>
+								<li role="presentation">
+									<a href="#use-new-database" id="new-database-tab" role="tab" data-toggle="tab" aria-controls="Upload New Database" aria-expanded="true">Upload New Database</a>
+								</li>
+							</ul>
+							<div id="databaseSelectionMain" class="tab-content">
+								<div role="tabpanel" id="use-existing-database" class="tab-pane active">
+									<div id="existing-database-content">
+										Select Existing Database: <br>
+										{{ input_form.file_upload_selection }}
+									</div>
+								</div>
+								<div role="tabpanel" id="use-new-database" class="tab-pane">
+									<p>Como Esta</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div class="row">
+							<div class="col-xs-6">
+							Enter oligonucleotide sequences:
+							{{ input_form.patterns }}
+							</div>
+							<div class="col-xs-6">
+							<h3>Instructions</h3>
+							<p style="text-align:left">Please enter your oligonucleotide sequences in the same
+							orientation as the reference database sequences (i.e. if the reference database is 5'-3',
+							the oligonucleotide sequences also have to be 5'-3'.</p>
+							<p style="text-align: left">Sequences must be entered in FASTA format as such:
+								<br>
+								>OligonucleotideName
+								<br>
+								ATAGGGATTAAA
+								<br>
+								>OligonucleotideName2
+								<br>
+								TTAACCACAGGG
+							</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<hr>
+
+	</div>
+
+
+{% endblock %}
