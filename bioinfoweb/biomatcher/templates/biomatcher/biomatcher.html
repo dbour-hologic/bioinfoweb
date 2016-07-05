@@ -68,11 +68,17 @@
 													<td>
 														Name the database:
 														{{ upload_form.biomatcher_filename }}
+														{% if upload_form.biomatcher_filename.errors %}
+															<span style="color: red">{{ upload_form.biomatcher_filename.errors }}</span>
+														{% endif %}
 													</td>
 												</tr>												
 												<tr>
 													<td>
 														{{ upload_form.biomatcher_fileupload }}
+														{% if upload_form.biomatcher_fileupload.errors %}
+															<span style="color: red">{{ upload_form.biomatcher_fileupload.errors }}</span>
+														{% endif %}
 													</td>
 												</tr>
 											</table>
@@ -87,8 +93,8 @@
 			</div>
 		</div>
 
-
-		<form>
+		<form action="/biomatcher/run/" method="post" id="run-biomatcher">
+		{% csrf_token %}
 		<div class="row">
 			<div class="col-xs-12">
 				<div class="panel panel-default">

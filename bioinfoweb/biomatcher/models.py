@@ -1,4 +1,5 @@
 from django.db import models
+from .validators import validate_file_extension
 
 class BiomatcherFileUpload(models.Model):
 
@@ -8,7 +9,8 @@ class BiomatcherFileUpload(models.Model):
 	)
 
 	biomatcher_fileupload = models.FileField(
-		upload_to='biomatcher/database'
+		upload_to='biomatcher/database',
+		validators=[validate_file_extension]
 	)
 
 	def __unicode__(self):
