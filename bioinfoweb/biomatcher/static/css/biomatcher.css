@@ -145,7 +145,8 @@ body {
 	width: 450px;
 }
 
-#new-database-content {
+#new-database-content,
+#match-settings {
 	text-align: left;
 }
 
@@ -155,4 +156,22 @@ body {
 
 #id_biomatcher_fileupload {
 	padding: 10px 0px 0px 0px;
+}
+
+#id_max_mismatches_allowed, 
+#id_minimum_total_hits,
+#id_maximum_total_hits {
+	width: 50px;
+}
+
+#match-settings-table td {
+	padding: 5px;
+}
+
+#match-settings-table span {
+	font-size: 14px;
+}
+
+#run-content button {
+	font-size: 20px;
 }

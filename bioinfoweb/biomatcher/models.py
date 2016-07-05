@@ -3,7 +3,7 @@ from django.db import models
 class BiomatcherFileUpload(models.Model):
 
 	biomatcher_filename = models.CharField(
-		max_length=1000,
+		max_length=100,
 		unique=True
 	)
 

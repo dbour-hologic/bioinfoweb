@@ -43,7 +43,8 @@
 								</div>
 								<div role="tabpanel" id="use-new-database" class="tab-pane">
 									<div id="new-database-content">
-										<form>
+										<form action="" method="post" id="upload-pattern-database" enctype="multipart/form-data">
+											{% csrf_token %}
 											<table>
 												<tr>
 													<td>
@@ -86,6 +87,8 @@
 			</div>
 		</div>
 
+
+		<form>
 		<div class="row">
 			<div class="col-xs-12">
 				<div class="panel panel-default">
@@ -117,6 +120,68 @@
 			</div>
 		</div>
 
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<h4 style="text-align: left">Settings</h3>
+						<hr>
+							<div id="match-settings">
+								<table id="match-settings-table">
+									<tr>
+										<td>
+										Number of Mismatches Allowed
+										</td>
+										<td>&emsp;</td>
+										<td>
+										{{ input_form.max_mismatches_allowed }}
+										</td>
+										<td>
+										<span>Minimum number mismatches allowed between subject and pattern.</span>
+										</td>
+									</tr>
+									<tr>
+										<td>
+										Min Number of Hits Allowed
+										</td>
+										<td>&emsp;</td>
+										<td>
+										{{ input_form.minimum_total_hits }}
+										</td>
+										<td>
+										<span>Minimum number of times a pattern must match to subject to be considered valid.</span>
+										</td>
+									</tr>
+									<tr>
+										<td>
+										Max Number of Hits Allowed
+										</td>
+										<td>&emsp;</td>
+										<td>
+										{{ input_form.maximum_total_hits }}
+										</td>
+										<td>
+										<span>Maximum number of times a pattern can match to subject to be considered valid.</span>
+										</td>
+									</tr>
+								</table>
+							</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-12" id="run-content">
+				<div class="panel panel-default">
+				<div class="panel-body">
+					<button class="btn btn-danger" type="submit"> <span class="glyphicon glyphicon-play"></span> RUN </button>
+					<hr>
+				</div>
+			</div>
+			</div>
+		</div>
+		</form>
 
 		<hr>
 
