@@ -2,9 +2,10 @@ from django import forms
 from .models import BiomatcherFileUpload
 
 class BiomatcherUploadForm(forms.ModelForm):
+	
 	class Meta:
 		model = BiomatcherFileUpload
-		fields = ['biomatcher_fileupload']
+		fields = ['biomatcher_fileupload', 'biomatcher_filename']
 
 class BiomatcherInputForm(forms.Form):
 
@@ -23,7 +24,7 @@ class BiomatcherInputForm(forms.Form):
 	maximum_total_hits = forms.IntegerField()
 
 	# Displays the uploaded files
-	file_upload_selection = forms.ModelChoiceField (
-		queryset = BiomatcherFileUpload.objects.all()
+	file_upload_selection = forms.ModelMultipleChoiceField (
+		queryset = BiomatcherFileUpload.objects.order_by('-id')
 	)
 

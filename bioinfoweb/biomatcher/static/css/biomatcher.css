@@ -133,3 +133,26 @@ body {
 	height: 300px;
 }
 /** ____________ **/
+
+/** Biomatcher Specific **/
+
+#id_file_upload_selection {
+	margin: 15px 0px 0px 0px;
+}
+
+#id_patterns {
+	resize: vertical;
+	width: 450px;
+}
+
+#new-database-content {
+	text-align: left;
+}
+
+#submit_upload {
+	margin: 15px 0px 0px 0px;
+}
+
+#id_biomatcher_fileupload {
+	padding: 10px 0px 0px 0px;
+}
