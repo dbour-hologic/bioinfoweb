@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from .forms import BiomatcherUploadForm, BiomatcherInputForm
+from .models import BiomatcherFileUpload
+from django.core.files.storage import default_storage
 
 def index(request):
 
@@ -20,10 +22,46 @@ def index(request):
 
 def matcher(request):
 
-	# Add implementation for matcher
-	# Make a hidden form to take value from dropdown select
-	# Use javascript to submit it all in one form
-	# Example: stackoverflow.com/questions/1759006/embed-an-html-form-within-a-larger-form
-	print request.POST
+	minimum_total_hits = request.POST.get('minimum_total_hits')
+	maximum_total_hits = request.POST.get('maximum_total_hits')
+	max_mismatches_allowed = request.POST.get('max_mismatches_allowed')
+	patterns = request.POST.get('patterns')
+	database_selection = request.POST.get('database-selection-hidden')
 
-	return render(request, 'biomatcher/biomatcher_run.html')
+	q = BiomatcherFileUpload.objects.get(id=database_selection)
+	path = q.biomatcher_fileupload
+	# Default Storage finds the file directory and can open it
+	db_file = default_storage.open(path)
+
+	data = convert_to_fasta(patterns, db_file, max_mismatches_allowed)
+	list_to_show = {}
+
+	for key, value in data.list_of_queries.iteritems():
+		attributes = []
+		for items in value:
+			
+
+	return render(request, 'biomatcher/biomatcher_run.html', {'data':data})
+
+def convert_to_fasta(patterns, database_selection, mismatch_score):
+
+	from matcher.pattern_analysis import PatternAnalysis
+	from Bio import SeqIO
+	from Bio.Seq import Seq
+	import tempfile
+
+	temp = tempfile.TemporaryFile()
+
+	lis = patterns.split("\n")
+	lis2 = [x +'\n' for x in lis]
+
+	with temp as tmp:
+		for lines in lis2:
+			tmp.write(lines)
+		tmp.seek(0)
+
+		pat = PatternAnalysis()
+		pat.run(tmp, database_selection, int(mismatch_score))
+		return pat
+	return None
+		
