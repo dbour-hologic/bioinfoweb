@@ -311,6 +311,7 @@ class PatternAnalysis(object):
 		field_builder["tolerance"] = run_id.mismatch_tolerance_set
 		field_builder["sub_sequences"] = run_id.get_partial_sequences()
 		field_builder["hit_coordinates"] = run_id.get_coordinates()
+		field_builder["total_hits"] = run_id.total_hits
 
 		dict_builder[run_id.pattern_id] = field_builder
 

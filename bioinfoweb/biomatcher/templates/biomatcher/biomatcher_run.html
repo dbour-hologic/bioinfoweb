@@ -1,5 +1,64 @@
-{{ data|length }}
+{% extends 'biomatcher/base.html' %}
+{% block content %}
+<table id="results-table">
+<tbody>
+<tr>
+<th>DATA</th>
+</tr>
+</tbody>
+</table>
 
-{% for key, value in data.items %}
-	{{ value }}
-{% endfor %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script>
+
+	var dataPoints = {{ data|safe }};
+
+	$("#results-table").click(function() {
+		alert(dataPoints)
+		$('#results-table tbody').append('<tr>Data2</tr>');
+	})
+
+	var content = ""
+
+	for (var i = 0; i < dataPoints.length; i++) {
+		for (var key in dataPoints[i]) {
+			if (dataPoints[i].hasOwnProperty(key)) {
+				// Get the subject
+				var val = dataPoints[i][key];
+				// content += "<tr>CONTENT</tr>"
+				// $('#results-table > tbody:last-child').append(content);
+				// Looping through all oligonucleotides belonging to subject
+				for (var x = 0; x < val.length; x++) {
+					for (var prop in val[x]) {
+						var itemOf = val[x][prop];
+						// Subject ID
+						console.log(key);
+						var subject_id = key
+						// Pattern Sequence
+						console.log(itemOf.pattern_sequence);
+						var pattern_seq = itemOf.pattern_sequence
+						// Sequence Matched
+						if (itemOf.total_hits != 0) {
+							var sub_seq = Object.keys(itemOf.sub_sequences)[0];
+							console.log(sub_seq);
+							var locationOf = itemOf.sub_sequences[Object.keys(itemOf.sub_sequences)[0]];
+							console.log(locationOf);
+							// All hit coordinates
+							var coordinateString = ""
+							for (var y = 0; y < itemOf.hit_coordinates.length; y++) {
+								coordinateString += itemOf.hit_coordinates[y] + "|"
+							}
+							console.log(coordinateString);
+						} else {
+							var sub_seq = "No hits";
+						}
+					}
+				}
+			}
+		}
+	}
+
+
+</script>
+{% endblock %}

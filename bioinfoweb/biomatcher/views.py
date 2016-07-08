@@ -1,7 +1,9 @@
 from django.shortcuts import render
+from django.http import HttpResponse
+from django.core.files.storage import default_storage
 from .forms import BiomatcherUploadForm, BiomatcherInputForm
 from .models import BiomatcherFileUpload
-from django.core.files.storage import default_storage
+
 
 def index(request):
 
@@ -34,14 +36,9 @@ def matcher(request):
 	db_file = default_storage.open(path)
 
 	data = convert_to_fasta(patterns, db_file, max_mismatches_allowed)
-	list_to_show = {}
+	json_data_returned = data.get_json_result()
 
-	for key, value in data.list_of_queries.iteritems():
-		attributes = []
-		for items in value:
-			
-
-	return render(request, 'biomatcher/biomatcher_run.html', {'data':data})
+	return render(request, 'biomatcher/biomatcher_run.html', {'data':json_data_returned})
 
 def convert_to_fasta(patterns, database_selection, mismatch_score):
 
