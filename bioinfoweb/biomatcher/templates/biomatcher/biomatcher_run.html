@@ -4,6 +4,7 @@
 <tbody>
 <tr>
 <th>DATA</th>
+{{ data }}
 </tr>
 </tbody>
 </table>
@@ -12,47 +13,35 @@
 
 <script>
 
-	var dataPoints = {{ data|safe }};
+	var dataPoints = {{ data|safe }}; // This is an array of JSON objects
 
 	$("#results-table").click(function() {
 		alert(dataPoints)
-		$('#results-table tbody').append('<tr>Data2</tr>');
+		$('#results-table tbody').append('<tr><td>Data2</td></tr>');
 	})
 
-	var content = ""
 
-	for (var i = 0; i < dataPoints.length; i++) {
-		for (var key in dataPoints[i]) {
-			if (dataPoints[i].hasOwnProperty(key)) {
-				// Get the subject
-				var val = dataPoints[i][key];
-				// content += "<tr>CONTENT</tr>"
-				// $('#results-table > tbody:last-child').append(content);
-				// Looping through all oligonucleotides belonging to subject
-				for (var x = 0; x < val.length; x++) {
-					for (var prop in val[x]) {
-						var itemOf = val[x][prop];
-						// Subject ID
-						console.log(key);
-						var subject_id = key
-						// Pattern Sequence
-						console.log(itemOf.pattern_sequence);
-						var pattern_seq = itemOf.pattern_sequence
-						// Sequence Matched
-						if (itemOf.total_hits != 0) {
-							var sub_seq = Object.keys(itemOf.sub_sequences)[0];
-							console.log(sub_seq);
-							var locationOf = itemOf.sub_sequences[Object.keys(itemOf.sub_sequences)[0]];
-							console.log(locationOf);
-							// All hit coordinates
-							var coordinateString = ""
-							for (var y = 0; y < itemOf.hit_coordinates.length; y++) {
-								coordinateString += itemOf.hit_coordinates[y] + "|"
-							}
-							console.log(coordinateString);
-						} else {
-							var sub_seq = "No hits";
-						}
+	// Iterate the length of the JSON objects (Strains) | INDEX
+	for (var strain_index = 0; strain_index < dataPoints.length; strain_index++) {
+		// Get the specific STRAIN NAME
+		var STRAIN_OBJ_NAME = dataPoints[strain_index]
+		// 'Loop' once to get the first & only key
+		for (var STRAIN_STRING_NAME in STRAIN_OBJ_NAME) {
+			// Get list of OLIGOS
+			var OLIGO_LIST = STRAIN_OBJ_NAME[STRAIN_STRING_NAME]
+			// Iterates the length of the LIST objects (OLIGO_LIST) | INDEX
+			for (var object_index = 0; object_index < OLIGO_LIST.length; object_index++) {
+				// Get the specific OLIGO NAME
+				var OLIGO_OBJ_NAME = OLIGO_LIST[object_index]
+				// Loop to get the OLIGO names (keys)
+				for (var OLIGO_NAME in OLIGO_OBJ_NAME) {
+					var PATTERN_SEQUENCE = OLIGO_OBJ_NAME[OLIGO_NAME].pattern_sequence
+					var SUBJECT_SEQUENCE = OLIGO_OBJ_NAME[OLIGO_NAME].subj_sequence
+					var TOLERANCE = OLIGO_OBJ_NAME[OLIGO_NAME].tolerance
+					var SUBJECT_ID = OLIGO_OBJ_NAME[OLIGO_NAME].subject_id
+					if (OLIGO_OBJ_NAME[OLIGO_NAME].total_hits != 0) {
+						var SUBJECT_MATCHED_SEQUENCE = Object.keys(OLIGO_OBJ_NAME[OLIGO_NAME].sub_sequences[0])
+						
 					}
 				}
 			}
