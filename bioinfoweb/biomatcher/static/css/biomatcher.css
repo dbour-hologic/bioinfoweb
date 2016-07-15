@@ -175,3 +175,12 @@ body {
 #run-content button {
 	font-size: 20px;
 }
+
+#biomatcher-data-table {
+	border-spacing: 10px;
+	border-collapse: separate;
+}
+
+#biomatcher-data-table > tbody > tr > td {
+	text-align: center;
+}

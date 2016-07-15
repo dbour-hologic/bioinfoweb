@@ -177,7 +177,7 @@ class PatternAnalysis(object):
 
 			for pattern in self.loaded_patterns:
 				# The pattern ID
-				pattern_id = pattern.id
+				pattern_id = pattern.description
 				# The pattern sequence
 				pattern_seq = str(pattern.seq).rstrip()
 				# Core matching algorithm

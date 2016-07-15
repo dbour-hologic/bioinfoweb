@@ -148,6 +148,11 @@
 										</td>
 									</tr>
 									<tr>
+										<td><!-- Features currently unavailable -->
+											<h5 style="color: red"><i>Options below currently unavailable</i></h5>
+										</td>
+									</tr>
+									<tr>
 										<td>
 										Min Number of Hits Allowed
 										</td>
@@ -184,14 +189,19 @@
 				<div class="panel-body">
 					<input type="hidden" name="database-selection-hidden" id="hidden-database-selection">
 					<button class="btn btn-danger" id='submit-form' type="submit"> <span class="glyphicon glyphicon-play"></span> RUN </button>
-					<hr>
 				</div>
 			</div>
 			</div>
 		</div>
 		</form>
 
-		<hr>
+		<div class="row" id="results-table">
+			<div class="col-xs-12">
+				<h4><u>Results</u></h4>
+				<table id="biomatcher-data-table">						
+				</table>
+			</div>
+		</div>
 
 	</div>
 
