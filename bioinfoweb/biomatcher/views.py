@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import default_storage
 from .forms import BiomatcherUploadForm, BiomatcherInputForm
 from .models import BiomatcherFileUpload
+import json
 
 
 def index(request):
@@ -22,24 +24,30 @@ def index(request):
 
 	return render(request, 'biomatcher/biomatcher.html', {"input_form":input_form, "upload_form":upload_form})
 
+@csrf_exempt
 def matcher(request):
 
-	minimum_total_hits = request.POST.get('minimum_total_hits')
-	maximum_total_hits = request.POST.get('maximum_total_hits')
-	max_mismatches_allowed = request.POST.get('max_mismatches_allowed')
-	patterns = request.POST.get('patterns')
-	database_selection = request.POST.get('database-selection-hidden')
+	""" Matcher 
+		Serves to process the ajax data
+	"""
 
-	q = BiomatcherFileUpload.objects.get(id=database_selection)
-	path = q.biomatcher_fileupload
-	# Default Storage finds the file directory and can open it
-	db_file = default_storage.open(path)
+	if request.is_ajax():
+		bio_data = json.loads(request.body)
+		minimum_total_hits = bio_data['minimum_total_hits']
+		maximum_total_hits = bio_data['maximum_total_hits']
+		max_mismatches_allowed = bio_data['max_mismatches_allowed']
+		patterns = bio_data['patterns']
+		database_selection = bio_data['database_selection_hidden']
 
-	data = convert_to_fasta(patterns, db_file, max_mismatches_allowed)
-	json_data_returned = data.get_json_result()
+		q = BiomatcherFileUpload.objects.get(id=database_selection)
+		path = q.biomatcher_fileupload
+		# Default Storage finds the file directory and can open it
+		db_file = default_storage.open(path)
+		data = convert_to_fasta(patterns, db_file, max_mismatches_allowed)
+		json_data_returned = data.get_json_result()
 
-	return render(request, 'biomatcher/biomatcher_run.html', {'data':json_data_returned})
-
+	return HttpResponse(json_data_returned, content_type='application/json')
+	
 def convert_to_fasta(patterns, database_selection, mismatch_score):
 
 	from matcher.pattern_analysis import PatternAnalysis

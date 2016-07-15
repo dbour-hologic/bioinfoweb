@@ -93,7 +93,7 @@
 			</div>
 		</div>
 
-		<form action="/biomatcher/run/" method="post" id="run-biomatcher">
+		<form action="" method="post" id="run-biomatcher">
 		{% csrf_token %}
 		
 		<div class="row">
@@ -183,7 +183,7 @@
 				<div class="panel panel-default">
 				<div class="panel-body">
 					<input type="hidden" name="database-selection-hidden" id="hidden-database-selection">
-					<button class="btn btn-danger" type="submit"> <span class="glyphicon glyphicon-play"></span> RUN </button>
+					<button class="btn btn-danger" id='submit-form' type="submit"> <span class="glyphicon glyphicon-play"></span> RUN </button>
 					<hr>
 				</div>
 			</div>

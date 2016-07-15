@@ -4,7 +4,6 @@
 <tbody>
 <tr>
 <th>DATA</th>
-{{ data }}
 </tr>
 </tbody>
 </table>
@@ -16,8 +15,7 @@
 	var dataPoints = {{ data|safe }}; // This is an array of JSON objects
 
 	$("#results-table").click(function() {
-		alert(dataPoints)
-		$('#results-table tbody').append('<tr><td>Data2</td></tr>');
+		$('#results-table tbody').append('<tr><td>Data2</td><td>Data3</td><td>Data4</td></tr>');
 	})
 
 
@@ -33,6 +31,7 @@
 			for (var object_index = 0; object_index < OLIGO_LIST.length; object_index++) {
 				// Get the specific OLIGO NAME
 				var OLIGO_OBJ_NAME = OLIGO_LIST[object_index]
+
 				// Loop to get the OLIGO names (keys)
 				for (var OLIGO_NAME in OLIGO_OBJ_NAME) {
 					var PATTERN_SEQUENCE = OLIGO_OBJ_NAME[OLIGO_NAME].pattern_sequence
@@ -40,8 +39,15 @@
 					var TOLERANCE = OLIGO_OBJ_NAME[OLIGO_NAME].tolerance
 					var SUBJECT_ID = OLIGO_OBJ_NAME[OLIGO_NAME].subject_id
 					if (OLIGO_OBJ_NAME[OLIGO_NAME].total_hits != 0) {
-						var SUBJECT_MATCHED_SEQUENCE = Object.keys(OLIGO_OBJ_NAME[OLIGO_NAME].sub_sequences[0])
-						
+						var SUBJECT_MATCHED_SEQUENCE = Object.keys(OLIGO_OBJ_NAME[OLIGO_NAME].sub_sequences)[0]
+
+						console.log("OLIGO NAME", OLIGO_NAME)
+						console.log("PATTERN", PATTERN_SEQUENCE)
+						console.log("SUBJECT FULL SEQ", SUBJECT_SEQUENCE)
+						console.log("TOLERANCE", TOLERANCE)
+						console.log("SUBJECT ID", SUBJECT_ID)
+						console.log("SEQ MATCHED", SUBJECT_MATCHED_SEQUENCE)
+						console.log(OLIGO_OBJ_NAME[OLIGO_NAME].hit_coordinates.join([separator='|']))
 					}
 				}
 			}
