@@ -77,7 +77,7 @@ class RunIdentifier(object):
 			if partial_sequences.get(sub_seq) == None:
 				partial_sequences[sub_seq] = [coords]
 			else:
-				print partial_sequences[sub_seq].append([coords])
+				partial_sequences[sub_seq].append([coords])
 		return partial_sequences
 
 
