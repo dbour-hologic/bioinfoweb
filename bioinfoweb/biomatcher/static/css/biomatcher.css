@@ -103,8 +103,13 @@ body {
 
 .styleGuide {
 	display: inline-block;
-	width: 8px;
+	width: 14px;
 	text-align: center;
+}
+
+.blockYellow {
+	color: yellow;
+	background: yellow;
 }
 
 .inputErrors {
@@ -177,7 +182,7 @@ body {
 }
 
 #biomatcher-data-table {
-	border-spacing: 10px;
+	border-spacing: 13px;
 	border-collapse: separate;
 }
 

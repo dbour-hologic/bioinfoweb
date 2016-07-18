@@ -7,6 +7,8 @@ $(document).ready(function() {
 
 	$('#run-biomatcher').submit(function(event) {
 
+		$('#submit-form').attr('disabled', true);
+
 		var biomatcher_data = {
 				minimum_total_hits: $('#id_minimum_total_hits').val(),
 				maximum_total_hits: $('#id_maximum_total_hits').val(),
@@ -17,10 +19,14 @@ $(document).ready(function() {
 		}
 
 		$.ajax({
+
 			url: "/biomatcher/run/",
 			type: "POST",
 			dataType: "json",
 			data: JSON.stringify(biomatcher_data),
+			complete: function() {
+				$('#submit-form').removeAttr('disabled');
+			},
 			success: function (response) {
 				refreshTables();
 				biomatcherRun(response);
@@ -39,7 +45,7 @@ $(document).ready(function() {
 	*/
 	function refreshTables() {
 
-		$("#biomatcher-data-table").html("<table id='biomatcher-data-table'><tr><th>Subject ID</th><th>Oligo Name</th><th>Mismatch Tolerance</th><th>Hit Coordinates</th></tr></table>");
+		$("#biomatcher-data-table").html("<table id='biomatcher-data-table' class='table table-striped'><tr><th>Subject ID</th><th>Oligo Name</th><th>Oligo Seq</th><th>Mismatch Tolerance</th><th>Hit Coordinates</th></tr></table>");
 	}
 
 	function biomatcherRun(big_data) {
@@ -63,18 +69,10 @@ $(document).ready(function() {
 						var TOLERANCE = OLIGO_OBJ_NAME[OLIGO_NAME].tolerance
 						var SUBJECT_ID = OLIGO_OBJ_NAME[OLIGO_NAME].subject_id
 						if (OLIGO_OBJ_NAME[OLIGO_NAME].total_hits != 0) {
-							var SUBJECT_MATCHED_SEQUENCE = Object.keys(OLIGO_OBJ_NAME[OLIGO_NAME].sub_sequences)[0]
-							console.log("ALL",Object.keys(OLIGO_OBJ_NAME[OLIGO_NAME].sub_sequences));
-							console.log("OLIGO NAME", OLIGO_NAME)
-							console.log("PATTERN", PATTERN_SEQUENCE)
-							console.log("SUBJECT FULL SEQ", SUBJECT_SEQUENCE)
-							console.log("TOLERANCE", TOLERANCE)
-							console.log("SUBJECT ID", SUBJECT_ID)
-							console.log("SEQ MATCHED", SUBJECT_MATCHED_SEQUENCE)
-							console.log(OLIGO_OBJ_NAME[OLIGO_NAME].hit_coordinates.join([separator='|']))
+							var SUBJECT_MATCHED_SEQUENCE = OLIGO_OBJ_NAME[OLIGO_NAME].sub_sequences;
 							var hitCoords = OLIGO_OBJ_NAME[OLIGO_NAME].hit_coordinates.join([separator='|'])
 
-							addingDataToTable(SUBJECT_ID, OLIGO_NAME, TOLERANCE, hitCoords, PATTERN_SEQUENCE, SUBJECT_MATCHED_SEQUENCE, strain_index)
+							addingDataToTable(SUBJECT_ID, OLIGO_NAME, TOLERANCE, hitCoords, PATTERN_SEQUENCE, SUBJECT_MATCHED_SEQUENCE, strain_index, SUBJECT_SEQUENCE)
 						}
 					}
 				}
@@ -95,34 +93,63 @@ $(document).ready(function() {
 
 	*/
 
-	function addingDataToTable(subjectID, oligoName, mismatchTolerance, hitCoords, patternSeq, subjectSeq, iteration) {
+	function addingDataToTable(subjectID, oligoName, mismatchTolerance, hitCoords, patternSeq, subjectSeq, iteration, fullSeq) {
 		var assign_subjectID = subjectID;
 		var assign_oligoName = oligoName;
 		var assign_mismatch = mismatchTolerance;
 		var assign_hitCoords = hitCoords;
 		var assign_patternSeq = patternSeq;
 		var assign_subjectSeq = subjectSeq;
+		var assign_fullSubSeq = fullSeq;
 
-		var topSeq = "seq-top" + iteration;
-		var midSeq = "seq-mid" + iteration;
-		var botSeq = "seq-bot" + iteration;
-
-		var topSeqDiv = "<div id=" + "'" + topSeq + "'></div>";
-		var midSeqDiv = "<div id=" + "'" + midSeq + "'></div>";
-		var botSeqDiv = "<div id=" + "'" + botSeq + "'></div>";
-		var assign_allSeq = topSeqDiv + midSeqDiv + botSeqDiv;
+		var subseq_table_id = subjectID + "-" + oligoName + "-" + iteration;
+		var subseq_table_html = "<div id='" + subseq_table_id + "'></div>"
 
 		$("#biomatcher-data-table").append('<tr><td>' + assign_subjectID + '</td>' +
-																			     '<td>' + assign_oligoName + '</td>' +
-																			     '<td>' + assign_mismatch  + '</td>' +
-																			     '<td>' + assign_hitCoords + '</td>' +
-																			     '<td>' + assign_allSeq		 + '</td>'
+											   '<td>' + assign_oligoName + '</td>' +
+											   '<td>' + assign_patternSeq + '</td>' +
+										       '<td>' + assign_mismatch  + '</td>' +
+										       '<td>' + assign_hitCoords + '</td>' +
+										       '<tr><td>' + subseq_table_html + '</td></tr>'
 		)
 
-		// NOTE: 7/15/2016 - Feature temporarily disabled as need to figure out
-		// how to deal with the case of multiple sub sequences matching and displaying this.
-		// seqAligner(assign_patternSeq, assign_subjectSeq, topSeq, midSeq, botSeq);
+		// Appends all patterns to subseq_table_html using subseq_table_id
+		generateSubPatterns(subjectSeq, subseq_table_id, patternSeq);
 
+	}
+
+	/* generateSubPatterns
+
+	Serves to parse out all the patterns that hit per subject and create 
+	a visual display of the matches.
+	
+	Args:
+		arrayOfSubSequences - the hash of all sub sequence match (key) and the hit coordinates (values)
+		oligoIdIteration - the ID of the subject table that corresponds to each oligo set
+		seqPattern - pattern/oligonucleotide sequence 
+
+	*/
+	function generateSubPatterns(arrayOfSubSequences, oligoIdIteration, seqPattern) {
+		
+		var count = 0;
+
+		for (key in arrayOfSubSequences) {
+
+			var topSeq = "seq-top" + count + "-" + oligoIdIteration;
+			var midSeq = "seq-mid" + count + "-" + oligoIdIteration;
+			var botSeq = "seq-bot" + count + "-" + oligoIdIteration;
+
+			var topSeqDiv = "<div id=" + "'" + topSeq + "'></div>";
+			var midSeqDiv = "<div id=" + "'" + midSeq + "'></div>";
+			var botSeqDiv = "<div id=" + "'" + botSeq + "'></div>";
+			var hitCounts = "<div>" + "Match (Start, Stop): " + arrayOfSubSequences[key].join([separator=' | ']) + "</div>";
+
+			var assign_allSeq = topSeqDiv + midSeqDiv + botSeqDiv + hitCounts + "<hr>";
+			var createID = "#" + oligoIdIteration;
+			$(createID).append(assign_allSeq);
+			seqAligner(seqPattern, key, topSeq, midSeq, botSeq);
+			count = count + 1;
+		}
 	}
 
 
@@ -143,6 +170,7 @@ $(document).ready(function() {
 	function seqAligner(pattern_seq, subject_seq, topID, midID, botID) {
 		var patternArray = pattern_seq.split('');
 		var subjectArray = subject_seq.split('');
+
 		for (var index = 0; index < patternArray.length; index++) {
 			var patternCode = "<span class='styleGuide'>" + patternArray[index] + "</span>";
 			var subjectCode = "<span class='styleGuide'>" + subjectArray[index] + "</span>";

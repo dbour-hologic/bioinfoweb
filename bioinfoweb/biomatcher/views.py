@@ -42,7 +42,10 @@ def matcher(request):
 		q = BiomatcherFileUpload.objects.get(id=database_selection)
 		path = q.biomatcher_fileupload
 		# Default Storage finds the file directory and can open it
-		db_file = default_storage.open(path)
+		try:
+			db_file = default_storage.open(path)
+		except IOError:
+			print "No database file found at {0}".format(path)
 		data = convert_to_fasta(patterns, db_file, max_mismatches_allowed)
 		json_data_returned = data.get_json_result()
 
