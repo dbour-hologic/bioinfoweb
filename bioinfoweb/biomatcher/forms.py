@@ -15,13 +15,19 @@ class BiomatcherInputForm(forms.Form):
 	)
 
 	# Number of mismatches set for the search
-	max_mismatches_allowed = forms.IntegerField()
+	max_mismatches_allowed = forms.IntegerField(
+		initial = 0
+	)
 
 	# A cutoff for the amount of times a pattern matches with a single subject
-	minimum_total_hits = forms.IntegerField()
+	minimum_total_hits = forms.IntegerField(
+		initial = 0
+	)
 
 	# A cutoff for the amount of times a pattern matches with a single subject
-	maximum_total_hits = forms.IntegerField()
+	maximum_total_hits = forms.IntegerField(
+		initial = 0
+	)
 
 	# Displays the uploaded files
 	file_upload_selection = forms.ModelMultipleChoiceField (

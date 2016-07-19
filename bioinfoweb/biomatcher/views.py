@@ -59,6 +59,8 @@ def convert_to_fasta(patterns, database_selection, mismatch_score):
 	from Bio.Seq import Seq
 	import tempfile
 
+	patterns = patterns.upper()
+
 	temp = tempfile.TemporaryFile()
 
 	lis = patterns.split("\n")
