@@ -11,8 +11,6 @@ def index(request):
 
 	if request.method == "POST":
 
-		print(request.POST)
-
 		upload_form = BiomatcherUploadForm(request.POST, request.FILES)
 		input_form = BiomatcherInputForm(request.POST)
 		if upload_form.is_valid():

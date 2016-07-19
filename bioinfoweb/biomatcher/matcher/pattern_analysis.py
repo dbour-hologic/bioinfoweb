@@ -167,8 +167,9 @@ class PatternAnalysis(object):
 		self._load_patterns(pattern_file)
 		self._load_subjects(subject_file)
 
+
 		# Run each subject against a set of oligonucleotide patterns
-		for subject in self.loaded_subjects:
+		for num, subject in enumerate(self.loaded_subjects):
 
 			# The sequence ID
 			run_id = subject.id
@@ -221,7 +222,6 @@ class PatternAnalysis(object):
 		for subject, run_id in self.list_of_queries.iteritems():
 
 			for run in run_id[:]:
-				print run.total_hits
 				if run.total_hits < minCut:
 					run_id.remove(run)
 				if run.total_hits > maxCut:

@@ -77,7 +77,7 @@ def meltingExec(command):
 	
 	#Capture the error message
 	stdout, stderr = p.communicate()
-
+	
 	# Gets the result log in a dictionary form for parsing
 	resultLog = getData(stdout)
 

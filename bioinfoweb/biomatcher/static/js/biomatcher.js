@@ -71,7 +71,7 @@ $(document).ready(function() {
 						var SUBJECT_ID = OLIGO_OBJ_NAME[OLIGO_NAME].subject_id;
 						if (OLIGO_OBJ_NAME[OLIGO_NAME].total_hits != 0) {
 							var SUBJECT_MATCHED_SEQUENCE = OLIGO_OBJ_NAME[OLIGO_NAME].sub_sequences;
-							var hitCoords = OLIGO_OBJ_NAME[OLIGO_NAME].hit_coordinates.join([separator='|']);
+							var hitCoords = OLIGO_OBJ_NAME[OLIGO_NAME].hit_coordinates.join([separator='<br>']);
 
 							addingDataToTable(SUBJECT_ID, OLIGO_NAME, TOLERANCE, hitCoords, PATTERN_SEQUENCE, SUBJECT_MATCHED_SEQUENCE, strain_index, SUBJECT_SEQUENCE);
 						}
@@ -103,15 +103,20 @@ $(document).ready(function() {
 		var assign_subjectSeq = subjectSeq;
 		var assign_fullSubSeq = fullSeq;
 
-		var subseq_table_id = subjectID + "-" + oligoName + "-" + iteration;
-		var subseq_table_html = "<div id='" + subseq_table_id + "'></div>"
+		// Remove invalid characters in html ID creation
+		var reg_remove_special = /[\.()\s+\+]/g;
+		var new_subject_id = subjectID.replace(reg_remove_special,"");
+		var new_oligo_id = oligoName.replace(reg_remove_special,"");
+
+		var subseq_table_id = new_subject_id + "-" + new_oligo_id + "-" + iteration;
+		var subseq_table_html = "<div id='" + subseq_table_id + "'></div>";
 
 		$("#biomatcher-data-table").append('<tr><td>' + assign_subjectID + '</td>' +
 											   '<td>' + assign_oligoName + '</td>' +
 											   '<td>' + assign_patternSeq + '</td>' +
 										       '<td>' + assign_mismatch  + '</td>' +
 										       '<td>' + assign_hitCoords + '</td>' +
-										       '<tr><td>' + subseq_table_html + '</td></tr>'
+										       '<tr><td colspan="5">' + subseq_table_html + '</td></tr>'
 		)
 
 		// Appends all patterns to subseq_table_html using subseq_table_id
