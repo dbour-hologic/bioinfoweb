@@ -47,6 +47,7 @@ def matcher(request):
 		except IOError:
 			print "No database file found at {0}".format(path)
 		data = convert_to_fasta(patterns, db_file, max_mismatches_allowed)
+		data.filter_by_frequency(int(minimum_total_hits), int(maximum_total_hits))
 		json_data_returned = data.get_json_result()
 
 	return HttpResponse(json_data_returned, content_type='application/json')

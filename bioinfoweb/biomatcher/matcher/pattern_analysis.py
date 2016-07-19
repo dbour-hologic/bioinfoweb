@@ -201,6 +201,33 @@ class PatternAnalysis(object):
 	def size(self):
 		return len(self.list_of_queries)
 
+	def filter_by_frequency(self, minCut=0, maxCut=0):
+
+		"""
+		Filters the list of results by the chosen number of total
+		matches a pattern has made to a specific subject. 
+
+		Example: If pattern ATCG matched two times to a single subject,
+		and the max number of hits allowed is 1, the pattern will be 
+		completely dropped from the hit results. If it was set to a minimum
+		of two matches, it will pass.
+
+		Args:
+			minCut - the minimum number of times a pattern has to match a single subject
+			maxCut - the maximum number of times a pattern can match to a single subject
+
+		"""
+
+		for subject, run_id in self.list_of_queries.iteritems():
+
+			for run in run_id[:]:
+				print run.total_hits
+				if run.total_hits < minCut:
+					run_id.remove(run)
+				if run.total_hits > maxCut:
+					run_id.remove(run)
+
+
 	def print_features(self):
 
 		""" Prints results to terminal """
@@ -298,6 +325,7 @@ class PatternAnalysis(object):
 							"tolerance" : mismatch tolerance used <int>,
 							"sub_seq" : sub-sequences obtained from hit list as well as their coords <dict>,
 							"hit_coordinates" : a list of start to end coordinates of each hit <list>
+							"total_hits" : total amount of times a pattern hit a sequence
 						  }
 		}
 
