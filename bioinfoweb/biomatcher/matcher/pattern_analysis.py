@@ -42,7 +42,9 @@ class RunIdentifier(object):
 	def get_coordinates(self):
 		"""
 		Generates a list with coordinates for the start position
-		and end position of each pattern match.
+		and end position of each pattern match. This is the actual
+		positions relative to the subject, not the python indexes
+		used for slicing.
 
 		Returns:
 			list of coordinate tuples (<start>:<end>)
@@ -50,8 +52,11 @@ class RunIdentifier(object):
 
 		locations = []
 		for location in self.hit_locations:
-			start_location = location
-			end_location = location + len(self.pattern)-1
+			# Actual Start (Not Python Slice Indexing)
+			start_location = location + 1 
+			# Actual End (Not Python Slice Indexing)
+			end_location = location + len(self.pattern)
+
 			locations.append((start_location, end_location))
 
 		return locations
@@ -69,11 +74,13 @@ class RunIdentifier(object):
 		partial_sequences = {}
 
 		for coords in self.get_coordinates():
-			start_position = coords[0]
-			# Note, the end position had +1 added since slice ranges at not inclusive.
-			end_position = coords[1] + 1
+			# Note, start position had -1 since python indexing starts at 0
+			start_position = coords[0] - 1
+			end_position = coords[1]
 			sub_seq = self.subject[start_position:end_position]
-			
+
+			# Python indexing starts at 0, but we want to display actual for results.
+
 			if partial_sequences.get(sub_seq) == None:
 				partial_sequences[sub_seq] = [coords]
 			else:
