@@ -68,17 +68,11 @@
 													<td>
 														Name the database:
 														{{ upload_form.biomatcher_filename }}
-														{% if upload_form.biomatcher_filename.errors %}
-															<span style="color: red">{{ upload_form.biomatcher_filename.errors }}</span>
-														{% endif %}
 													</td>
 												</tr>												
 												<tr>
 													<td>
 														{{ upload_form.biomatcher_fileupload }}
-														{% if upload_form.biomatcher_fileupload.errors %}
-															<span style="color: red">{{ upload_form.biomatcher_fileupload.errors }}</span>
-														{% endif %}
 													</td>
 												</tr>
 											</table>
@@ -104,13 +98,14 @@
 							<div class="col-xs-6">
 							<p style="text-align:left">Enter oligonucleotide sequence(s):</p>
 							{{ input_form.patterns }}
+							<p style="text-align: left"><i>The program accepts IUPAC degenerate bases.</i></p>
 							</div>
 							<div class="col-xs-6">
 							<h3>Instructions</h3>
 							<p style="text-align:left">Please enter your oligonucleotide sequences in the same
 							orientation as the reference database sequences (i.e. if the reference database is 5'-3',
-							the oligonucleotide sequences also have to be 5'-3'.</p>
-							<p style="text-align: left">Sequences must be entered in FASTA format as such:
+							the oligonucleotide sequences also have to be 5'-3'. No duplicate oligonucleotide names are allowed.</p>
+							<p style="text-align: left">Sequences <b>must</b> be entered in FASTA format as such:
 								<br>
 								>OligonucleotideName
 								<br>
@@ -119,6 +114,9 @@
 								>OligonucleotideName2
 								<br>
 								TTAACCACAGGG
+							</p>
+							<hr>
+							<p style="text-align:left">Note: The program does not perform well on full genomes and is only limited to pattern matching against a database of genes such as a database of 16S rRNA. 
 							</p>
 							</div>
 						</div>
@@ -137,7 +135,7 @@
 								<table id="match-settings-table">
 									<tr>
 										<td>
-										Number of Mismatches Allowed
+										<font class='match-setting-labels'>Number of Mismatches Allowed</font>
 										</td>
 										<td>&emsp;</td>
 										<td>
@@ -149,26 +147,26 @@
 									</tr>
 									<tr>
 										<td>
-										Min Number of Hits Allowed
+										<font class='match-setting-labels'>Min Number of Hits Allowed</font>
 										</td>
 										<td>&emsp;</td>
 										<td>
 										{{ input_form.minimum_total_hits }}
 										</td>
 										<td>
-										<span>Minimum number of times a pattern must match to subject to be considered valid.</span>
+										<span>Minimum number of times a pattern must match to subject to be considered valid. Only numbers greater than or equal to 1 are valid.</span>
 										</td>
 									</tr>
 									<tr>
 										<td>
-										Max Number of Hits Allowed
+										<font class='match-setting-labels'>Max Number of Hits Allowed</font>
 										</td>
 										<td>&emsp;</td>
 										<td>
 										{{ input_form.maximum_total_hits }}
 										</td>
 										<td>
-										<span>Maximum number of times a pattern can match to subject to be considered valid.</span>
+										<span>Maximum number of times a pattern can match to subject to be considered valid. Only numbers greater than or equal to 1 are valid.</span>
 										</td>
 									</tr>
 								</table>

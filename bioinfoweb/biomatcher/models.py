@@ -10,7 +10,7 @@ class BiomatcherFileUpload(models.Model):
 
 	biomatcher_fileupload = models.FileField(
 		upload_to='biomatcher/database',
-		validators=[validate_file_extension]
+		validators=[validate_file_extension],
 	)
 
 	def __unicode__(self):

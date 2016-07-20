@@ -5,38 +5,68 @@ $(document).ready(function() {
 		$('#hidden-database-selection').val(item);
 	});
 
-	$('#run-biomatcher').submit(function(event) {
 
-		$('#submit-form').attr('disabled', true);
 
-		var biomatcher_data = {
-				minimum_total_hits: $('#id_minimum_total_hits').val(),
-				maximum_total_hits: $('#id_maximum_total_hits').val(),
-				max_mismatches_allowed: $('#id_max_mismatches_allowed').val(),
-				patterns: $('#id_patterns').val(),
-				database_selection_hidden: $('#hidden-database-selection').val(),
-				csrfmiddlewaretoken: '{{ csrf_token }}'
-		};
+		$('#run-biomatcher').validate({
 
-		$.ajax({
+			errorClass: "jquery-error",
 
-			url: "/biomatcher/run/",
-			type: "POST",
-			cache: false,
-			dataType: "json",
-			data: JSON.stringify(biomatcher_data),
-			complete: function() {
-				$('#submit-form').removeAttr('disabled');
+			rules: {
+				patterns:{
+					required: true
+				},
+				max_mismatches_allowed: {
+					required: true,
+					min: 0,
+					number: true
+				},
+				minimum_total_hits: {
+					required: true,
+					min: 1,
+					number: true
+				},
+				maximum_total_hits: {
+					required: true,
+					min: 1,
+					number: true
+				},
 			},
-			success: function (response) {
-				refreshTables();
-				biomatcherRun(response);
+
+			messages: {
+				patterns: "Please enter oligonucleotide data.",
+				max_mismatches_allowed: "A value equal to or greater than 0 required.",
+				minimum_total_hits: "A value equal to or greater than 1 required.",
+				maximum_total_hits: "A value equal to or greater than 1 required.",
+				file_upload_selection: "Please select a database."
+			},
+
+			submitHandler: function() {
+
+				var biomatcher_data = {
+						minimum_total_hits: $('#id_minimum_total_hits').val(),
+						maximum_total_hits: $('#id_maximum_total_hits').val(),
+						max_mismatches_allowed: $('#id_max_mismatches_allowed').val(),
+						patterns: $('#id_patterns').val(),
+						database_selection_hidden: $('#hidden-database-selection').val(),
+						csrfmiddlewaretoken: '{{ csrf_token }}'
+				};
+
+				$.ajax({
+					url: "/biomatcher/run/",
+					type: "POST",
+					cache: false,
+					dataType: "json",
+					data: JSON.stringify(biomatcher_data),
+					complete: function() {
+						$('#submit-form').removeAttr('disabled');
+					},
+					success: function (response) {
+						refreshTables();
+						biomatcherRun(response);
+					}
+				});
 			}
 		});
-
-		event.preventDefault();
-	});
-
 
 	/* Refresh Tables
 	
@@ -242,6 +272,23 @@ $(document).ready(function() {
 		}
 		return false;
 	}
+
+
+	// jQuery Validators
+	$("#upload-pattern-database").validate({
+
+		errorClass: "jquery-error",
+		errorPlacement: function(label, element) {
+			label.insertAfter(element);
+			$("<br>").insertBefore(label);
+		}
+
+	});
+
+	$("#run-biomatcher").validate({
+
+	});
+	
 
 })
 
