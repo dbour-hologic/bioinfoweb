@@ -136,13 +136,18 @@ class PatternAnalysis(object):
 
 		Args:
 			pattern_file - directory path to pattern file (str)
+		Returns:
+			true if there were any patterns available, false if not (bool)
 
 		"""
+
 		try:
 			for pat_records in SeqIO.parse(pattern_file, "fasta"):
 				self.loaded_patterns.append(pat_records)
 		except IOError:
 			print "Failed to find pattern file at '{0}'".format(pattern_file)
+
+		return len(self.loaded_patterns) != 0
 
 	def _load_subjects(self, subject_file):
 		"""
@@ -168,12 +173,18 @@ class PatternAnalysis(object):
 			pattern_file - file path of the pattern file in FASTA <*.fasta> format (str)
 			subject_file - file path of the subject file in FASTA <*.fasta> format (str)
 			mismatch_tolerance - the amount of mismatches to tolerate (int)
+		Returns
+			true/false - if the run was successful (bool)
 		"""
 
 		# Load up the data from the files
-		self._load_patterns(pattern_file)
-		self._load_subjects(subject_file)
+		pattern_available = self._load_patterns(pattern_file)
 
+		# End execution prematurely if there's no patterns
+		if not pattern_available:
+			return False
+
+		self._load_subjects(subject_file)
 
 		# Run each subject against a set of oligonucleotide patterns
 		for num, subject in enumerate(self.loaded_subjects):
@@ -205,6 +216,7 @@ class PatternAnalysis(object):
 										  )
 										
 				self.list_of_queries[run_id].append(run_create)
+		return True
 
 	def size(self):
 		return len(self.list_of_queries)

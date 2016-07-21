@@ -7,66 +7,72 @@ $(document).ready(function() {
 
 
 
-		$('#run-biomatcher').validate({
+	$('#run-biomatcher').validate({
 
-			errorClass: "jquery-error",
+		errorClass: "jquery-error",
 
-			rules: {
-				patterns:{
-					required: true
-				},
-				max_mismatches_allowed: {
-					required: true,
-					min: 0,
-					number: true
-				},
-				minimum_total_hits: {
-					required: true,
-					min: 1,
-					number: true
-				},
-				maximum_total_hits: {
-					required: true,
-					min: 1,
-					number: true
-				},
+		rules: {
+			patterns:{
+				required: true
 			},
-
-			messages: {
-				patterns: "Please enter oligonucleotide data.",
-				max_mismatches_allowed: "A value equal to or greater than 0 required.",
-				minimum_total_hits: "A value equal to or greater than 1 required.",
-				maximum_total_hits: "A value equal to or greater than 1 required.",
-				file_upload_selection: "Please select a database."
+			max_mismatches_allowed: {
+				required: true,
+				min: 0,
+				number: true
 			},
+			minimum_total_hits: {
+				required: true,
+				min: 1,
+				number: true
+			},
+			maximum_total_hits: {
+				required: true,
+				min: 1,
+				number: true
+			},
+		},
 
-			submitHandler: function() {
+		messages: {
+			patterns: "Please enter oligonucleotide data.",
+			max_mismatches_allowed: "A value equal to or greater than 0 required.",
+			minimum_total_hits: "A value equal to or greater than 1 required.",
+			maximum_total_hits: "A value equal to or greater than 1 required.",
+			file_upload_selection: "Please select a database."
+		},
 
-				var biomatcher_data = {
-						minimum_total_hits: $('#id_minimum_total_hits').val(),
-						maximum_total_hits: $('#id_maximum_total_hits').val(),
-						max_mismatches_allowed: $('#id_max_mismatches_allowed').val(),
-						patterns: $('#id_patterns').val(),
-						database_selection_hidden: $('#hidden-database-selection').val(),
-						csrfmiddlewaretoken: '{{ csrf_token }}'
-				};
+		submitHandler: function() {
 
-				$.ajax({
-					url: "/biomatcher/run/",
-					type: "POST",
-					cache: false,
-					dataType: "json",
-					data: JSON.stringify(biomatcher_data),
-					complete: function() {
-						$('#submit-form').removeAttr('disabled');
-					},
-					success: function (response) {
-						refreshTables();
-						biomatcherRun(response);
-					}
-				});
-			}
-		});
+			var biomatcher_data = {
+					minimum_total_hits: $('#id_minimum_total_hits').val(),
+					maximum_total_hits: $('#id_maximum_total_hits').val(),
+					max_mismatches_allowed: $('#id_max_mismatches_allowed').val(),
+					patterns: $('#id_patterns').val(),
+					database_selection_hidden: $('#hidden-database-selection').val(),
+					csrfmiddlewaretoken: '{{ csrf_token }}'
+			};
+
+			$.ajax({
+				url: "/biomatcher/run/",
+				type: "POST",
+				cache: false,
+				dataType: "json",
+				data: JSON.stringify(biomatcher_data),
+				complete: function() {
+					$('#submit-form').removeAttr('disabled');
+				},
+				success: function (response) {
+					refreshTables();
+					biomatcherRun(response);
+				},
+				error: function() {
+					alert("Execution failed. Possible reasons - (1) Oligonucleotide pattern was \
+						   not in the correct format. (2) Olignucleotide pattern had an unacceptable character. \
+						   (3) No database has been selected.");
+						
+				}
+			});
+		}
+	});
 
 	/* Refresh Tables
 	
@@ -80,16 +86,22 @@ $(document).ready(function() {
 	}
 
 	function biomatcherRun(big_data) {
+
 		var dataPoints = big_data;
+
 		for (strain_index = 0; strain_index < dataPoints.length; strain_index++) {
 			// Get the specific STRAIN NAME
+
 			var STRAIN_OBJ_NAME = dataPoints[strain_index];
 			// 'Loop' once to get the first & only key
 			for (STRAIN_STRING_NAME in STRAIN_OBJ_NAME) {
 				// Get list of OLIGOS
+
 				var OLIGO_LIST = STRAIN_OBJ_NAME[STRAIN_STRING_NAME];
+
 				// Iterates the length of the LIST objects (OLIGO_LIST) | INDEX
 				for (object_index = 0; object_index < OLIGO_LIST.length; object_index++) {
+
 					// Get the specific OLIGO NAME
 					var OLIGO_OBJ_NAME = OLIGO_LIST[object_index];
 
@@ -104,7 +116,8 @@ $(document).ready(function() {
 							var hitCoords = OLIGO_OBJ_NAME[OLIGO_NAME].hit_coordinates.join([separator='<br>']);
 
 							addingDataToTable(SUBJECT_ID, OLIGO_NAME, TOLERANCE, hitCoords, PATTERN_SEQUENCE, SUBJECT_MATCHED_SEQUENCE, strain_index, SUBJECT_SEQUENCE);
-						}
+
+						} 
 					}
 				}
 			}

@@ -70,7 +70,8 @@ def convert_to_fasta(patterns, database_selection, mismatch_score):
 		tmp.seek(0)
 
 		pat = PatternAnalysis()
-		pat.run(tmp, database_selection, int(mismatch_score))
-		return pat
+		run_successful = pat.run(tmp, database_selection, int(mismatch_score))
+		if run_successful:
+			return pat
 	return None
 		
