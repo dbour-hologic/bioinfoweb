@@ -58,6 +58,7 @@ INSTALLED_APPS = (
     'reportbug',
     'feasibility',
     'biomatcher',
+    'pqanalysis'
 )
 
 # Third Party Apps & Dependicies

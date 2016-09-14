@@ -1,0 +1,599 @@
+---
+title: "`r params$analysis.id`"
+author: "`r params$name`"
+date: "`r Sys.Date()`"
+version: "v1.5.0"
+output: 
+     html_document:
+          toc: true
+params:
+     name: "Kyle"
+     directory: "C:/Users/ks0316/Documents/PQReportCompiler"
+     stats.filter: "none" #"LIS/Failed" #LIS #Failed
+     assay: "Paraflu"#"AdV/hMPV/RV" #"Flu A/B/RSV"
+     worklist.id: "C:/Users/ks0316/Documents/PQReportCompiler/worklist.id.csv"
+     limits: "C:/Users/ks0316/Documents/PQReportCompiler/assay.limits.csv"
+     lof: "nonspecified"
+     analysis.id: "Generic Analysis ID"
+     graphing: "instrument"
+---
+<style>
+body {
+    position: absolute;
+    left: 10px;}
+table {
+    text-align: left;
+    border-collapse: collapse;
+    width: 100%;
+}
+th, td {
+    text-align: left;
+    padding: 8px;
+}
+tr:nth-child(even){background-color: #f2f2f2}
+th {
+    text-align: left;
+    background-color: #00008B;
+    color: white;
+}
+</style>
+
+<!-- #Parameters Entered -->
+<!-- ```{r set-options, echo=FALSE, cache=FALSE} -->
+
+<!-- ### At home testing -->
+<!-- # params = list( -->
+<!-- #                name="Kyle", -->
+<!-- #                directory="C:/Users/ks0316/Documents/PQReportCompiler", -->
+<!-- #                stats.filter= "none",#"LIS/Failed", #LIS #Failed #LIS/Failed, -->
+<!-- #                assay = "Paraflu",#"AdV/hMPV/RV", "Paraflu", -->
+<!-- #                worklist.id="C:/Users/ks0316/Documents/PQReportCompiler/worklist.id.csv", -->
+<!-- #                limits="C:/Users/ks0316/Documents/PQReportCompiler/assay.limits.csv", -->
+<!-- #                lof="nonspecified", -->
+<!-- #                analysis.id="generic title.html", -->
+<!-- #                graphing="instrument") -->
+
+<!-- print(params) -->
+<!-- ``` -->
+
+#Loading in the data
+```{r, result='asis', warning=FALSE, message=FALSE, echo=FALSE, include=TRUE, cache=FALSE}
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(lubridate)
+library(stringr)
+library(formattable)
+library(DT)
+library(htmltools)
+library(knitr)
+# setwd("T:/CoreTeams/Radium/Assay Development_Orig/Kyle S/PQ Data")
+# setwd("C:/Users/ks0316/Documents/PQReportCompiler")
+source(file="./allFunctions2.R")
+wlid <- read.csv(params$worklist.id, stringsAsFactors = FALSE)
+print("Loaded Worklist ID.")
+
+if(params$limits != "nonspecified"){
+     print("Loading assay.limits file...")
+     assay.limits <- read.csv(params$limits, stringsAsFactors = FALSE)
+     print("Complete.")
+}
+
+if(params$lof == "nonspecified"){
+     setwd(params$directory)
+     lof <- list.files(pattern="@DI", path=params$directory, full.names = T)
+
+     a <- basename(lof)
+     b<-strsplit(a, split="_")
+     c<-lapply(b, `[[`, 1)
+     d <- unlist(c)
+     filt.v <- !grepl(pattern="@DI", d)
+     lof <- lof[filt.v] #filtered list of files
+     rm(a, b, c, d, filt.v)
+} else{
+     lof <- params$lof
+}
+
+pq0 <- appender(lof, grabber)
+if(all(pq0$list.output$loaded == "LOADED")){
+     cat("All PCRExport files have been loaded.")
+     pq0 <- pq0$pq.data
+} else{
+     cat("Some PCRExport files had issues being loaded, see output.")
+     pq0 <- pq0$pq.data
+     print(pq0$list.output$files[pq0$list.output$loaded != "LOADED"])
+}
+
+### Filter all-non related assays
+pq0 <- pq0 %>% filter(FusionAssayName == params$assay)
+
+### Clean up and prevent categorization issues
+#Round down RFU Range
+pq0$RFU.Range <- floor(pq0$RFU.Range)
+pq0$ct <- signif(pq0$ct, digits=4)
+
+### Special Escape characters
+pq0$Sample.Name <- gsub("`", "battick", pq0$Sample.Name)
+pq0$Sample.Name <- gsub("\\\\", "double-slash", pq0$Sample.Name)
+
+######################################################## LIS Component
+# parameters
+#stats.filter: "none" #LIS #Failed #LIS/Failed
+
+if(params$stats.filter == "LIS" | params$stats.filter == "LIS/Failed"){
+     lis <- lis.grabber()
+     lis.f <- lis %>% filter(Assay.Name == "Paraflu" & Run.ID == "000330-20160819-04")
+     lis.pcr.join = left_join(pq0, lis.f, by=c("Run.ID", "test.order"="Test.order.."))
+     # print("LIS imported and results are filtered!")
+     pq0 <- lis.pcr.join %>%
+          filter(!(Interpretation.6 %in% c("Invalid", "Error"))) %>%
+          filter(!(Interpretation.7 %in% c("Invalid", "Error"))) %>%
+          filter(!(Interpretation.8 %in% c("Invalid", "Error"))) %>%
+          filter(!(Interpretation.9 %in% c("Invalid", "Error"))) %>%
+          filter(!(Interpretation.10 %in% c("Invalid", "Error"))) %>%
+          select(-c(Assay.Name, Interpretation.6:Interpretation.10))
+     
+     filtered.samples.1 <- lis.pcr.join %>%
+          filter(Interpretation.6 %in% c("Invalid", "Error") | Interpretation.7 %in% c("Invalid", "Error") |
+                      Interpretation.8 %in% c("Invalid", "Error") |Interpretation.9 %in% c("Invalid", "Error") |
+                      Interpretation.10 %in% c("Invalid", "Error")) %>%
+          select(-c(Assay.Name, Interpretation.6:Interpretation.10))
+
+     if((dim(lis.pcr.join)[1] != dim(pq0)[1]) == FALSE){
+          print("Warning: Dimensions of LIS and PCRExport do not match.")
+     }
+}
+
+#########################################################################
+pq0 <- categorizer(pq0, inputfile = wlid)
+uncat <- pq0 %>%
+     group_by(filename) %>%
+     summarise(Uncategorized = sum(is.na(sample.type)))
+
+### Filtering logical vectors
+pslv <- c("Panel C - High", "Panel C - Low", "Positive Control", "Panel C")
+nslv <- c("Panel A", "Negative Control")
+
+## Data type manipulation
+# pq0$sample.type = as.factor(sort(as.character(pq0$sample.type)))
+# pq0$Channel = as.factor(sort(as.character(pq0$Channel)))
+# assay.limits$sample.type = as.factor(sort(as.character(assay.limits$sample.type)))
+# assay.limits$Channel = as.factor(sort(as.character(assay.limits$Channel)))
+
+pq0[,c("sample.type", "Channel")] <- lapply(pq0[,c("sample.type", "Channel")], as.character)
+assay.limits[,c("sample.type", "Channel")] <- lapply(assay.limits[,c("sample.type", "Channel")], as.character)
+
+### PQ ZERO ENDS HERE
+pq  <-  left_join(pq0, assay.limits, by=c("sample.type", "Channel"))
+
+pq <- pq %>%
+     mutate(pass = ifelse((direction=="min" & RFU.Range > threshold) | (direction=="max" & RFU.Range < threshold), "PASS", "FAIL")) %>%
+     mutate(hits=ifelse(pass == "PASS", 1, 0))
+
+### Filtering site #2
+#stats.filter: "none" #LIS #Failed #LIS/Failed
+if(params$stats.filter == "Failed" | params$stats.filter == "LIS/Failed"){
+     any.hits <- any(pq$hits == 0)
+     if(any.hits == TRUE){
+          filtered.samples.2 <- pq %>% filter(hits == 0)
+          pq <- pq %>% filter(hits == 1)
+          print("LIS and Failed samples have been filtered")
+     } else{
+          print("No failed samples.")
+     }
+}
+```
+
+# PQ Result
+``` {R, result='asis', echo=FALSE, cache=FALSE, warning=FALSE, message=FALSE}
+summary.pq  <- pq %>%
+     group_by(filename, FusionAssayName, FusionAssayVersion, pantherSN, Channel, sample.type) %>%
+     summarise(Mean.RFU.Range = mean(RFU.Range, na.rm=T), Sd.RFU.Range = sd(RFU.Range, na.rm=T),
+               Max.RFU.Range = max(RFU.Range, na.rm=T), Min.RFU.Range=min(RFU.Range, na.rm=T),
+               N = n(), Positive = sum(hits),
+               Mean.Ct = mean(ct, na.rm=T), Sd.Ct = sd(ct, na.rm=T),
+               Max.Ct = max(ct, na.rm=T), Min.Ct = min(ct, na.rm=T)) %>%
+     mutate(CV = Sd.Ct/Mean.Ct*100, Pass.Fail = ifelse(N == Positive, 1, ifelse(Channel == "RED647" & N-Positive <= 2, 1, 0)))
+
+summary1.pq <- pq %>%
+     group_by(Software.Revision, Channel, sample.type) %>%
+     summarise(Mean.RFU.Range = mean(RFU.Range, na.rm=T), Sd.RFU.Range = sd(RFU.Range, na.rm=T),
+               Max.RFU.Range = max(RFU.Range, na.rm=T), Min.RFU.Range=min(RFU.Range, na.rm=T),
+               N = n(), Positive = sum(hits),
+               Mean.Ct = mean(ct, na.rm=T), Sd.Ct = sd(ct, na.rm=T),
+               Max.Ct = max(ct, na.rm=T), Min.Ct = min(ct, na.rm=T)) %>%
+     mutate(CV = Sd.Ct/Mean.Ct*100,
+            Pass.Fail = ifelse(N == Positive, "PASS",
+                               ifelse(Channel == "RED647" & N-Positive <= 2, "PASS", "FAIL")),
+            Hits = paste(Positive, N, sep="/")) %>%
+     ungroup() %>%
+     select(Channel, sample.type, Mean.RFU.Range, Sd.RFU.Range, Max.RFU.Range, Min.RFU.Range,
+            Mean.Ct, Sd.Ct, Max.Ct, Min.Ct, CV, Hits) %>%
+     arrange(sample.type)
+
+summary1.pq$CV  <- percent(summary1.pq$CV)/100
+summary1.pq$Mean.RFU.Range <- floor(summary1.pq$Mean.RFU.Range)
+summary1.pq$Sd.RFU.Range <- floor(summary1.pq$Sd.RFU.Range)
+summary1.pq[,c("Mean.Ct", "Sd.Ct")] <- lapply(summary1.pq[,c("Mean.Ct", "Sd.Ct")], signif, digits=4)
+
+condensed.summary <-
+     summary.pq %>%
+     ungroup() %>%
+     group_by(filename, FusionAssayName, FusionAssayVersion, pantherSN) %>%
+     summarise(PQ.PF=sum(Pass.Fail), count = n()) %>%
+     mutate(Chemistry.Pass =ifelse(PQ.PF == count, 1, 0))
+
+########################## Bold attempt at error handling... something is going down in flaggregator.
+# flaggregator(df = pq, assay=params$assay) %>% utils::View()
+
+attempt <- try(flaggregator(df = pq, assay=params$assay))
+
+if(any(class(attempt) == "try-error") == FALSE){
+     c.summary2 <- left_join(condensed.summary, flaggregator(df = pq, assay=params$assay), by="filename")
+     c.summary2 <- other_flags(c.summary2)
+     
+     if(params$assay=="Paraflu"){
+          c.summary3 <- c.summary2 %>%
+               group_by(filename, FusionAssayName, FusionAssayVersion, pantherSN, Flags) %>%
+               summarise(Result = ifelse(Chemistry.Pass == 1 & VVFS <= 6 & other.flags == TRUE, "PASS",
+                                         ifelse(other.flags == FALSE, "PENDING", "FAIL")))
+     } else{
+          c.summary3 <- c.summary2 %>%
+               group_by(filename, FusionAssayName, FusionAssayVersion, pantherSN, Flags) %>%
+               summarise(Result = "PENDING")
+     }
+     
+     c.summary3$Uncategorized.Samples <- uncat$Uncategorized
+     
+     datatable(c.summary3, list(Result = formatter("span",
+     style = x ~ ifelse(x == "PASS", style(color="green"),
+     ifelse(x =="PENDING", style(color="orange"), style(color="red"))))))
+} else{
+     print("Issue with flaggregator.")
+}
+
+```
+
+# Summary statistics of PQ
+``` {R, result='asis', echo=FALSE, cache=FALSE}
+panel.rows <- summary1.pq %>% filter(grepl("Panel", sample.type)) %>% nrow
+
+s1.pq.t <- summary1.pq %>%
+     filter(grepl("Panel", sample.type)) %>%
+     select(sample.type, Channel, everything()) %>%
+     rename(Sample.Type=sample.type) %>%
+     t()
+s1.pq.t[is.na(s1.pq.t)] = "-"
+formattable(as.data.frame(s1.pq.t))
+# summary1.pq$filename = as.factor(summary1.pq$filename)
+
+control.rows <- summary1.pq %>% filter(grepl("Control", sample.type)) %>% nrow
+
+if(control.rows > 0){
+     s2.pq.t <- summary1.pq %>%
+          filter(grepl("Control", sample.type)) %>%
+          select(sample.type, Channel, everything()) %>%
+          rename(Sample.Type=sample.type) %>%
+          t()
+     s2.pq.t[is.na(s2.pq.t)] = "-"
+     formattable(as.data.frame(s2.pq.t))
+} else{
+     print("No rows in Controls.")
+}
+# summary1.pq$filename = as.factor(summary1.pq$filename)
+# temp = split(summary1.pq, summary1.pq$filename, drop=TRUE)
+# 
+# show_plot <- function(plot_object){
+#   div(style="margin:auto;text-align:center", plot_object)
+# }
+```
+
+# Pass / Fail Criteria
+##Assay Defined Thresholds
+``` {R, result='asis', echo=FALSE}
+assay.limits.t <- assay.limits %>%
+     filter(grepl("Panel", sample.type)) %>%
+     mutate(Threshold=ifelse(direction=="min", paste0(">", threshold), paste0("<", threshold))) %>%
+     rename(Sample.Type=sample.type) %>%
+     select(Sample.Type, Channel, Threshold) %>%
+     t()
+     
+formattable(as.data.frame(assay.limits.t))
+```
+
+# Positive Samples
+Raw RFU.Range data of Panel C and Positive Control (if present):
+``` {R, result='asis', echo=FALSE, cache=FALSE, warning=FALSE, message=FALSE}
+pq.s <- pq %>% select(-pass, -threshold, -direction) %>% new_spreader()
+
+if(params$assay=="Paraflu"){
+     temp.table <-
+          pq.s %>% ungroup() %>%
+          filter(sample.type %in% pslv) %>%
+          mutate(FAM.Result = ifelse(FAM.result == 1, "POS", "NEG"),
+                 HEX.Result = ifelse(HEX.result == 1, "POS", "NEG"),
+                 IC.Result = ifelse(IC.result == 1, "POS", "NEG"),
+                 RED647.Result = ifelse(RED647.result == 1, "POS", "NEG"),
+                 ROX.Result = ifelse(ROX.result == 1, "POS", "NEG")) %>%
+          select(Sample.Name, Flag, FusionTestOrder, test.order, WellID, replicate,
+                 FAM.ct:FAM.eb, FAM.Result, HEX.ct:HEX.eb, HEX.Result,
+                 IC.ct:IC.eb, IC.Result, RED647.ct:RED647.eb, RED647.Result,
+                 ROX.ct:ROX.eb, ROX.Result, filename, ud.filename)
+
+     hiding.vect <- which(colnames(temp.table) %in% c("FAM.ct", "FAM.tslope", "FAM.eb",
+                                       "HEX.ct", "HEX.tslope", "HEX.eb",
+                                       "IC.ct", "IC.tslope", "IC.eb",
+                                       "RED647.ct", "RED647.tslope", "RED647.eb",
+                                       "ROX.ct", "ROX.tslope", "ROX.eb",
+                                       "filename", "replicate", "ud.filename"))
+     datatable(
+       temp.table,
+       extensions = c('Buttons'),
+       options = list(dom = 'Bfrtip', buttons = c('copy', 'csv', I('colvis')), pageLength = 10,
+                      columnDefs = list(list(targets = hiding.vect,
+                                             visible = FALSE)))
+       )
+} else{
+     temp.table <-
+          pq.s %>% ungroup() %>%
+          filter(sample.type %in% pslv) %>%
+          mutate(FAM.Result = ifelse(FAM.result == 1, "POS", "NEG"),
+                 HEX.Result = ifelse(HEX.result == 1, "POS", "NEG"),
+                 IC.Result = ifelse(IC.result == 1, "POS", "NEG"),
+                 ROX.Result = ifelse(ROX.result == 1, "POS", "NEG")) %>%
+          select(Sample.Name, Flag, FusionTestOrder, test.order, WellID, replicate,
+                 FAM.ct:FAM.eb, FAM.Result, HEX.ct:HEX.eb, HEX.Result,
+                 IC.ct:IC.eb, IC.Result,
+                 ROX.ct:ROX.eb, ROX.Result, filename, ud.filename)
+
+     hiding.vect <- which(colnames(temp.table) %in% c("FAM.ct", "FAM.tslope", "FAM.eb",
+                                       "HEX.ct", "HEX.tslope", "HEX.eb",
+                                       "IC.ct", "IC.tslope", "IC.eb",
+                                       "ROX.ct", "ROX.tslope", "ROX.eb",
+                                       "filename", "replicate", "ud.filename"))
+     datatable(
+       temp.table,
+       extensions = c('Buttons'),
+       options = list(dom = 'Bfrtip', buttons = c('copy', 'csv', I('colvis')), pageLength = 10,
+                      columnDefs = list(list(targets = hiding.vect,
+                                             visible = FALSE)))
+     )
+}
+```
+
+# Negative Samples
+Raw RFU.Range data of Panel A and Negative Control (if present):
+``` {R, result='asis', echo=FALSE, cache=FALSE, warning=FALSE, message=FALSE}
+if(params$assay == "Paraflu"){
+     temp.table.2 <- pq.s %>% ungroup() %>%
+          filter(sample.type %in% nslv) %>%
+          mutate(FAM.Result = ifelse(FAM.result == 1, "NEG", "POS"),
+                 HEX.Result = ifelse(HEX.result == 1, "NEG", "POS"),
+                 IC.Result = ifelse(IC.result == 1, "POS", "NEG"),
+                 RED647.Result = ifelse(RED647.result == 1, "NEG", "POS"),
+                 ROX.Result = ifelse(ROX.result == 1, "NEG", "POS")) %>%
+          select(Sample.Name, Flag, FusionTestOrder, test.order, WellID, replicate,
+                 FAM.ct:FAM.eb, FAM.Result, HEX.ct:HEX.eb, HEX.Result,
+                 IC.ct:IC.eb, IC.Result, RED647.ct:RED647.eb, RED647.Result,
+                 ROX.ct:ROX.eb, ROX.Result, filename, ud.filename)
+
+     datatable(
+       temp.table.2, 
+       extensions = c('Buttons'),
+       options = list(dom = 'Bfrtip', buttons = c('copy', 'csv', I('colvis')), pageLength = 10,
+                      columnDefs = list(list(targets = hiding.vect,
+                                             visible = FALSE)))
+       )
+} else{
+     temp.table.2 <- pq.s %>% ungroup() %>%
+          filter(sample.type %in% nslv) %>%
+          mutate(FAM.Result = ifelse(FAM.result == 1, "NEG", "POS"),
+                 HEX.Result = ifelse(HEX.result == 1, "NEG", "POS"),
+                 IC.Result = ifelse(IC.result == 1, "POS", "NEG"),
+                 ROX.Result = ifelse(ROX.result == 1, "NEG", "POS")) %>%
+          select(Sample.Name, Flag, FusionTestOrder, test.order, WellID, replicate,
+                 FAM.ct:FAM.eb, FAM.Result, HEX.ct:HEX.eb, HEX.Result,
+                 IC.ct:IC.eb, IC.Result,
+                 ROX.ct:ROX.eb, ROX.Result, filename, ud.filename)
+
+     datatable(
+       temp.table.2, 
+       extensions = c('Buttons'),
+       options = list(dom = 'Bfrtip', buttons = c('copy', 'csv', I('colvis')), pageLength = 10,
+                      columnDefs = list(list(targets = hiding.vect,
+                                             visible = FALSE)))
+     )
+}
+```
+
+<!-- #Filtered Samples -->
+<!-- ``` {R, result='asis', echo=FALSE, cache=FALSE, warning=FALSE, message=FALSE} -->
+
+<!-- filtered.s.1 <- filtered.samples.1 %>% select(-pass, -threshold, -direction) %>% new_spreader() -->
+<!-- filtered.s.1 <- filtered.samples %>% select(-pass, -threshold, -direction) %>% new_spreader() -->
+<!-- filtered.s.2 <- filtered.samples.2 %>% select(-pass, -threshold, -direction) %>% new_spreader() -->
+
+
+<!-- if(params$assay == "Paraflu"){ -->
+<!--      temp.table.2 <- pq.s %>% ungroup() %>% -->
+<!--           filter(nslv) %>% -->
+<!--           mutate(FAM.Result = ifelse(FAM.result == 1, "NEG", "POS"), -->
+<!--                  HEX.Result = ifelse(HEX.result == 1, "NEG", "POS"), -->
+<!--                  IC.Result = ifelse(IC.result == 1, "POS", "NEG"), -->
+<!--                  RED647.Result = ifelse(RED647.result == 1, "NEG", "POS"), -->
+<!--                  ROX.Result = ifelse(ROX.result == 1, "NEG", "POS")) %>% -->
+<!--           select(Sample.Name, Flag, FusionTestOrder, test.order, WellID, replicate, -->
+<!--                  FAM.ct:FAM.eb, FAM.Result, HEX.ct:HEX.eb, HEX.Result, -->
+<!--                  IC.ct:IC.eb, IC.Result, RED647.ct:RED647.eb, RED647.Result, -->
+<!--                  ROX.ct:ROX.eb, ROX.Result, filename, ud.filename) -->
+
+<!--      datatable( -->
+<!--        temp.table.2,  -->
+<!--        extensions = c('Buttons'), -->
+<!--        options = list(dom = 'Bfrtip', buttons = c('copy', 'csv', I('colvis')), pageLength = 10, -->
+<!--                       columnDefs = list(list(targets = hiding.vect, -->
+<!--                                              visible = FALSE))) -->
+<!--        ) -->
+<!-- } else{ -->
+<!--      cat("Functionality not supported.") -->
+<!-- } -->
+
+<!-- ``` -->
+
+#Summary Plots
+```{R, result='asis', warning=FALSE, echo=FALSE, cache=FALSE}
+
+ct.limits <- pq %>%
+     group_by(Channel, sample.type) %>%
+     summarise(mCt=mean(ct, na.rm=TRUE), sdCt = sd(ct, na.rm=TRUE)) %>%
+     mutate(UCL = mCt + 3*sdCt, MUCL = mCt +2*sdCt, MLCL = mCt - 2*sdCt, LCL = mCt - 3*sdCt)
+eb.limits <- pq %>%
+     group_by(Channel, sample.type) %>%
+     summarise(mEB=mean(EstimatedBaseline, na.rm=TRUE), sdEB = sd(EstimatedBaseline, na.rm=TRUE)) %>%
+     mutate(UCL = mEB + 3*sdEB, MUCL = mEB +2*sdEB, MLCL = mEB - 2*sdEB, LCL = mEB - 3*sdEB)
+
+pq$Channel = factor(pq$Channel, levels=c("FAM", "HEX", "ROX", "RED647", "IC"))
+
+if(params$graphing == "FVF"){
+     
+     p1 <- pq %>%
+          # filter(sample.type %in% pslv) %>%
+          ggplot(aes(x=filename, y=RFU.Range)) + geom_boxplot(outlier.shape = NA, aes(color=filename)) + geom_jitter(width=0.25) + 
+          facet_grid(Channel~sample.type, scales = "free") +
+          geom_hline(data=assay.limits, aes(yintercept=threshold), color="red") +
+          # scale_x_discrete() +
+          theme(legend.position="top", legend.direction="vertical", axis.text.x=element_blank(), axis.title.x=element_blank()) +
+          ggtitle("RFU Ranges faceted by Channel and Sample Type across the File(s)")
+     
+     p2 <- pq %>%
+          # filter(sample.type %in% pslv) %>%
+          ggplot(aes(x=filename, y=ct)) + geom_boxplot(outlier.shape = NA, aes(color=filename)) + geom_jitter(width=0.25) +
+          facet_grid(Channel~sample.type, scales = "free") +
+          geom_hline(data=ct.limits, aes(yintercept=UCL), color="red") +
+          geom_hline(data=ct.limits, aes(yintercept=LCL), color="red") +
+          geom_hline(data=ct.limits, aes(yintercept=MUCL), color="orange", linetype="dashed") +
+          geom_hline(data=ct.limits, aes(yintercept=MLCL), color="orange", linetype="dashed") +
+          geom_hline(data=ct.limits, aes(yintercept=mCt), color="green", size = 1) +
+          theme(legend.position="top", legend.direction="vertical", axis.text.x=element_blank(), axis.title.x=element_blank()) +
+          ggtitle("Cts faceted by Channel and Sample Type across the File(s)")
+
+     p3 <- pq %>%
+          # filter(sample.type %in% pslv) %>%
+          ggplot(aes(x=filename, y=EstimatedBaseline)) +
+          geom_boxplot(outlier.shape = NA, aes(color=filename)) +
+          geom_jitter(width=0.25) +
+          facet_grid(Channel~sample.type, scales = "free") +
+          geom_hline(data=eb.limits, aes(yintercept=UCL), color="red") +
+          geom_hline(data=eb.limits, aes(yintercept=LCL), color="red") +
+          geom_hline(data=eb.limits, aes(yintercept=MUCL), color="orange", linetype="dashed") +
+          geom_hline(data=eb.limits, aes(yintercept=MLCL), color="orange", linetype="dashed") +
+          geom_hline(data=eb.limits, aes(yintercept=mEB), color="green", size = 1) +
+          theme(legend.position="top", legend.direction="vertical", axis.text.x=element_blank(), axis.title.x=element_blank()) +
+          ggtitle("Estimated Baselines faceted by Channel and Sample Type across the File(s)")
+     
+     render.graphics <- TRUE
+
+} else if(params$graphing == "time"){
+     pq$completion.date <- as.Date(pq$completion.date)
+     pq$completion.date <- as.factor(pq$completion.date)
+     
+     p1 <- pq %>%
+          # filter(sample.type %in% pslv) %>%
+          ggplot(aes(x=completion.date, y=RFU.Range)) +
+          geom_boxplot(outlier.shape = NA, aes(color=completion.date)) + geom_jitter(width=0.25) + 
+          facet_grid(Channel~sample.type, scales = "free") +
+          geom_hline(data=assay.limits, aes(yintercept=threshold), color="red") +
+          # scale_x_discrete() +
+          theme(legend.position="top", legend.direction="vertical", axis.text.x=element_blank(), axis.title.x=element_blank()) +
+          ggtitle("RFU Ranges faceted by Channel and Sample Type across Time")
+     
+     p2 <- pq %>%
+          # filter(sample.type %in% pslv) %>%
+          ggplot(aes(x=completion.date, y=ct)) +
+          geom_boxplot(outlier.shape = NA, aes(color=completion.date)) + geom_jitter(width=0.25) +
+          facet_grid(Channel~sample.type, scales = "free") +
+          geom_hline(data=ct.limits, aes(yintercept=UCL), color="red") +
+          geom_hline(data=ct.limits, aes(yintercept=LCL), color="red") +
+          geom_hline(data=ct.limits, aes(yintercept=MUCL), color="orange", linetype="dashed") +
+          geom_hline(data=ct.limits, aes(yintercept=MLCL), color="orange", linetype="dashed") +
+          geom_hline(data=ct.limits, aes(yintercept=mCt), color="green", size = 1) +
+          theme(legend.position="top", legend.direction="vertical", axis.text.x=element_blank(), axis.title.x=element_blank()) +
+          ggtitle("Cts faceted by Channel and Sample Type across Time")
+
+     p3 <- pq %>%
+          # filter(sample.type %in% pslv) %>%
+          ggplot(aes(x=completion.date, y=EstimatedBaseline)) +
+          geom_boxplot(outlier.shape = NA, aes(color=completion.date)) +
+          geom_jitter(width=0.25) +
+          facet_grid(Channel~sample.type, scales = "free") +
+          geom_hline(data=eb.limits, aes(yintercept=UCL), color="red") +
+          geom_hline(data=eb.limits, aes(yintercept=LCL), color="red") +
+          geom_hline(data=eb.limits, aes(yintercept=MUCL), color="orange", linetype="dashed") +
+          geom_hline(data=eb.limits, aes(yintercept=MLCL), color="orange", linetype="dashed") +
+          geom_hline(data=eb.limits, aes(yintercept=mEB), color="green", size = 1) +
+          theme(legend.position="top", legend.direction="vertical", axis.text.x=element_blank(), axis.title.x=element_blank()) +
+          ggtitle("Estimated Baselines faceted by Channel and Sample Type across Time")
+     
+     render.graphics <- TRUE
+} else if(params$graphing == "instrument"){
+     p1 <- pq %>%
+          ggplot(aes(x=pantherSN, y=RFU.Range)) + geom_boxplot(outlier.shape = NA, aes(color=pantherSN)) + geom_jitter(width=0.25) + 
+          facet_grid(Channel~sample.type, scales = "free") +
+          geom_hline(data=assay.limits, aes(yintercept=threshold), color="red") +
+          theme(legend.position="top", legend.direction="vertical", axis.text.x=element_blank(), axis.title.x=element_blank()) +
+          ggtitle("RFU Ranges faceted by Channel and Sample Type across different instruments")
+     
+     p2 <- pq %>%
+          # filter(sample.type %in% pslv) %>%
+          ggplot(aes(x=pantherSN, y=ct)) + geom_boxplot(outlier.shape = NA, aes(color=pantherSN)) + geom_jitter(width=0.25) +
+          facet_grid(Channel~sample.type, scales = "free") +
+          geom_hline(data=ct.limits, aes(yintercept=UCL), color="red") +
+          geom_hline(data=ct.limits, aes(yintercept=LCL), color="red") +
+          geom_hline(data=ct.limits, aes(yintercept=MUCL), color="orange", linetype="dashed") +
+          geom_hline(data=ct.limits, aes(yintercept=MLCL), color="orange", linetype="dashed") +
+          geom_hline(data=ct.limits, aes(yintercept=mCt), color="green", size = 1) +
+          theme(legend.position="top", legend.direction="vertical", axis.text.x=element_blank(), axis.title.x=element_blank()) +
+          ggtitle("Cts faceted by Channel and Sample Type across different instruments")
+
+     p3 <- pq %>%
+          # filter(sample.type %in% pslv) %>%
+          ggplot(aes(x=pantherSN, y=EstimatedBaseline)) +
+          geom_boxplot(outlier.shape = NA, aes(color=pantherSN)) +
+          geom_jitter(width=0.25) +
+          facet_grid(Channel~sample.type, scales = "free") +
+          geom_hline(data=eb.limits, aes(yintercept=UCL), color="red") +
+          geom_hline(data=eb.limits, aes(yintercept=LCL), color="red") +
+          geom_hline(data=eb.limits, aes(yintercept=MUCL), color="orange", linetype="dashed") +
+          geom_hline(data=eb.limits, aes(yintercept=MLCL), color="orange", linetype="dashed") +
+          geom_hline(data=eb.limits, aes(yintercept=mEB), color="green", size = 1) +
+          theme(legend.position="top", legend.direction="vertical", axis.text.x=element_blank(), axis.title.x=element_blank()) +
+          ggtitle("Estimated Baselines faceted by Channel and Sample Type across different instruments")
+     
+     render.graphics <- TRUE
+} else{
+     render.graphics <- FALSE
+     print("Graphics have been surpressed")
+     
+}
+```
+save.image()
+##RFU Range
+```{R, echo=FALSE, warning=FALSE, cache=FALSE, eval=render.graphics}
+if(render.graphics)
+     print(p1)
+```
+
+##Ct Non-Normalized
+```{R, echo=FALSE, warning=FALSE, cache=FALSE, eval=render.graphics}
+if(render.graphics)
+     print(p2)
+```
+
+##Estimated Baseline
+```{R, echo=FALSE, warning=FALSE, cache=FALSE, eval=render.graphics}
+if(render.graphics){
+     print(p3)
+}
+# save.image(file=paste0(Sys.time(), ".RData"))
+save.image()
+```

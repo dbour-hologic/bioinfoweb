@@ -40,7 +40,9 @@ urlpatterns = [
     url(r'^tools/', include(melting_urls)),
     url(r'^reportbug/', include(reportbug_urls)),
     url(r'^biomatcher/', include(biomatcher_urls)),
+    url(r'^pq/', include('pqanalysis.urls'))
 ]
+
 
 # Third party applications
 urlpatterns += [
