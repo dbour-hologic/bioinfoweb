@@ -22,8 +22,9 @@
 
 	<div class="collapse navbar-collapse">
 		<ul class="nav navbar-nav">
-			<li><a href="http://bioinfo-3:9800/pq"><span class="glyphicon glyphicon-home"></span>  PQ HOME</a></li>
-			<li><a href="http://bioinfo-3:9800/pq/results"><span class="glyphicon glyphicon-hdd"></span>  PQ Results</a></li>
+			<li><a href="{% url 'index' %}"><span class="glyphicon glyphicon-home"></span>  Bioinformatics Home</a></li>
+			<li><a href="{% url 'add_attachment' %}"><span class="glyphicon glyphicon-tasks"></span> PQ Home</a></li>
+			<li><a href="{% url 'view_results' %}"><span class="glyphicon glyphicon-hdd"></span> PQ Results</a></li>
 		</ul>
 	</div>
 </nav>

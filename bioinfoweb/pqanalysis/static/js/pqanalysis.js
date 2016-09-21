@@ -1,14 +1,15 @@
 // DataTable library for organization of results
 $(document).ready(function() {
+
+	$.validator.addMethod("alphaonly", function(value, element) {
+		return this.optional(element) || /^[a-z0-9]+$/i.test(value);
+	}),
+
 	$("#pqupload").validate({
 		rules: {
-			'file[]': {
-				required: true,
-				extension: 'csv|tsv|lis|LIS'
-			},
 			'analysis_id': {
 				required: true,
-				alphanumeric:true,
+				alphaonly:true,
 				rangelength:[1,99]
 			},
 			'submitter': {
@@ -17,10 +18,7 @@ $(document).ready(function() {
 			}
 		},
 		messages: {
-			'file[]': {
-				required: true,
-				extension: "Please upload valid file format."
-			}
+			'analysis_id': 'Only letters and numbers allowed.'
 		}
 	});
 });
