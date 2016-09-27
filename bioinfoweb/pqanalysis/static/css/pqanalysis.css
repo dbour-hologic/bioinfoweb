@@ -88,3 +88,6 @@ span.glyph-mod {
 	font-size: 1.2em;
 }
 
+.modal.modal-wide .modal-dialog {
+	width: 70%;
+}
