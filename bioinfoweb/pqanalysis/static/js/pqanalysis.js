@@ -114,7 +114,8 @@ $(document).ready(function() {
 				required: true
 			},
 			'worklist_name': {
-				required: true
+				required: true,
+				alphaOnly: true
 			}
 		},
 		messages: {
@@ -127,22 +128,27 @@ $(document).ready(function() {
 			'worklist[0].category': {
 				alphaOnly: "Only letters and numbers."
 			},
+			'worklist_name': {
+				alphaOnly: "Only letters and numbers."
+			}
 		},
 
 		submitHandler: function(form) {
 
 			var data_collection = data_collect();
 
+
 			$.ajax({
 				type: "POST",
-				url: "/echo/json/",
-				data: data_collection,
+				url: "worklist-upload/",
+				data: JSON.stringify(data_collection),
+				datatype: "application/json",
 				cache: false,
 				success: function(json_data) {
 					console.log(json_data);
 					clear_form($("#fusionForm"));
 					$("#success-upload").show();
-					return false;
+					return true;
 				},
 				error: function() {
 					alert("ERROR");
@@ -189,7 +195,7 @@ $(document).ready(function() {
 
 		// Create JSON RESPONSE OBJECT
 		var json_data = {
-			json: JSON.stringify(data_results)
+			json: data_results
 		};
 
 		return json_data
@@ -256,6 +262,94 @@ $(document).ready(function() {
 		var $row = $(this).parents(".form-group").remove();
 	});	
 
+	/**
+	* Validation method for dynamically generated
+	* workflow form.
+	*
+	**/
+	$("#fusionLimitsForm").validate({
+		// Initializing initial rules for static content - necessary before "adding" more rules
+		rules: {
+			'limitslist[0].name': {
+				required: true,
+				alphaOnly: true,
+			},
+			'limitslist[0].threshold': {
+				required: true,
+				alphaOnly: true
+			},
+			'submitter_name_limits': {
+				required: true
+			},
+			'limits_name': {
+				required: true
+			}
+		},
+		messages: {
+			'limitslist[0].name': {
+				alphaOnly: "Only letters and numbers."
+			},
+			'limitslist[0].threshold': {
+				alphaOnly: "Only letters and numbers."
+			}
+		},
+
+		submitHandler: function(form) {
+
+			var data_collection = data_collect();
+
+			$.ajax({
+				type: "POST",
+				url: "/echo/json/",
+				data: data_collection,
+				cache: false,
+				success: function(json_data) {
+					console.log(json_data);
+					clear_form($("#fusionForm"));
+					$("#success-upload").show();
+					return false;
+				},
+				error: function() {
+					alert("ERROR");
+				}
+			});
+		}		
+	})
+
+	/**
+	* limits_data_collect() is a function that is used for collecting
+	* data from a dynamically generated form that creates rows
+	* and returns this data as a JSON object.
+	*
+	**/
+	function limits_data_collect() {
+		// Holds the group of data per row
+		data_results = {};
+
+		$("#fusionForm > div").each(function(index, element) {
+			if ($(this).attr("data-limitslist-index") != null) {
+				data_results[index] = {};
+				$(this).children().find("[name]").each(function() {
+					var propertyName = $(this).attr("name");
+					var propertyValue = $(this).val();
+					data_results[index][propertyName] = propertyValue
+				});
+			}
+		});
+
+		var submitter_name = $("#limitsList-submitter").val();
+		var limitslist_name = $("#limits-name-input").val();
+
+		data_results["submitter_name"] = submitter_name;
+		data_results["limitslist_name"] = worklist_name;
+
+		// Create JSON RESPONSE OBJECT
+		var json_data = {
+			json: JSON.stringify(data_results)
+		};
+
+		return json_data
+	};
 
 
 // <--- Document on load --->

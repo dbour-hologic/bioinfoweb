@@ -45,9 +45,9 @@ class CombineResults(models.Model):
 
 class Worklist(models.Model):
 	""" Storing user worklist """
-	filename = models.CharField(max_length=100)
+	filename = models.CharField(max_length=1000)
 	file = models.FileField(upload_to="worklist")
-	slug = models.SlugField(max_length=50, blank=True)
+	slug = models.SlugField(max_length=1000, blank=True)
 	upload_date = models.DateField(auto_now_add=True)
 
 	def __str__(self):

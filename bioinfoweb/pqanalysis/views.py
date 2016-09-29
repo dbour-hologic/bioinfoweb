@@ -285,3 +285,49 @@ def worklist_delete(request, pk):
 		return HttpResponse(str(pk))
 	else:
 		return HttpResponseBadRequest("Only POST Accepted")
+
+@csrf_exempt
+def ajax_uploaded_worklist(request):
+
+	import csv
+
+	if request.is_ajax():
+
+		worklist_response_data = json.loads(request.body)
+
+		media_path = os.path.join(settings.MEDIA_ROOT, "worklist")
+		worklist_name = worklist_response_data['json']['worklist_name']
+		submission_name = worklist_response_data['json']['submitter_name']
+
+		file_name_generator = worklist_name + create_timestamp() + ".csv"
+		file_save_path = os.path.join(media_path, file_name_generator)
+
+		with open(file_save_path, "wb") as worklist_file:
+			csv_writer = csv.writer(worklist_file, delimiter=",")
+
+			for key, value in worklist_response_data['json'].iteritems():
+				if key == "worklist_name" or key == "submitter_name":
+					continue
+				else:
+
+					# Temporary storage to parse the JSON data into a predictable format
+					temp_data_storage = {
+						"name":"",
+						"type":"",
+						"category":"",
+					}
+
+					for category, data_value in value.iteritems():
+						parse_value = category.split(".")[1]
+						temp_data_storage[parse_value] = data_value
+
+					line_to_write = [temp_data_storage["name"], temp_data_storage["type"], temp_data_storage["category"]]
+					csv_writer.writerow(line_to_write)
+
+			worklist_save_file = Worklist()
+			worklist_save_file.filename = str(worklist_name)
+			worklist_save_file.file = file_save_path
+			worklist_save_file.save()
+
+
+	return HttpResponse("success")
