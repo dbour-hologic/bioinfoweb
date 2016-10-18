@@ -68,13 +68,21 @@ $(document).ready(function() {
 			.find('[name="worklist.type"]').attr('name', 'worklist[' + worklistIndex + '].type').end()
 
 			$('.worklist-input').each(function() {
-				$(this).rules("add", {
-					required: true,
-					alphaOnly: true,
-					messages: {
-						alphaOnly: "Only letters and numbers."
-					}
-				});
+
+				// Add a different rule to the name field which allows other characters
+				if (this.name.indexOf("name") == -1) {
+					$(this).rules("add", {
+						required: true,
+						alphaOnly: true,
+						messages: {
+							alphaOnly: "Only letters and numbers."
+						}
+					});
+				} else {
+					$(this).rules("add", {
+						required: true,
+					});
+				}
 			});
 		};
 	})()).on("click", ".removeButton", function() {
@@ -100,7 +108,7 @@ $(document).ready(function() {
 		rules: {
 			'worklist[0].name': {
 				required: true,
-				alphaOnly: true,
+				alphaOnly: false,
 			},
 			'worklist[0].type': {
 				required: true,
@@ -114,7 +122,7 @@ $(document).ready(function() {
 				required: true
 			},
 			'worklist_name': {
-				required: true,
+				required: false,
 				alphaOnly: true
 			}
 		},
@@ -276,7 +284,7 @@ $(document).ready(function() {
 			},
 			'limitslist[0].threshold': {
 				required: true,
-				alphaOnly: true
+				number: true
 			},
 			'submitter_name_limits': {
 				required: true
@@ -290,7 +298,7 @@ $(document).ready(function() {
 				alphaOnly: "Only letters and numbers."
 			},
 			'limitslist[0].threshold': {
-				alphaOnly: "Only letters and numbers."
+				number: "Only numbers."
 			}
 		},
 

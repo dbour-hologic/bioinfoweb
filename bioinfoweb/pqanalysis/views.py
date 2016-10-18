@@ -27,7 +27,7 @@ def add_attachment(request):
 		analysis_id = request.POST['analysis_id']
 		worklist_options = request.POST.get('file_upload_selection', False)
 		stats_options = request.POST.get('stats-option', "None")
-		limit_options = request.POST.getlist('limit-options')[0]
+		limit_options = request.POST.get('file_limits_upload_selection', False)
 		assay_options = request.POST.getlist('assay-analysis')[0]
 		graph_options = request.POST.getlist('graph-options')[0]
 		combine_options = request.POST.get('combine-file')
@@ -133,11 +133,13 @@ def add_attachment_done(request, user_name, stats_options, assay, format_analysi
 		worklist_filename = str(worklist_query.filename)
 		worklist_path = os.path.join(settings.MEDIA_ROOT, str(worklist_query.file))
 
-		DEFAULT_LIMIT_OPTION = os.path.join(settings.MEDIA_ROOT, "limits/assay.limits.csv")
+		limitslist_query = Limits.objects.get(id=limit_options)
+		limitslist_filename = str(limitslist_query.filename)
+		limitslist_path = os.path.join(settings.MEDIA_ROOT, str(limitslist_query.file))
 
 		# Arg 'limit_options' is not used for now, but DEFAULT will be used.
 		logs = r.execute(default=False, user_name=user_name, data_dir=files_dir, stats_option=stats_options, assay_type='Paraflu', 
-						 analysis_id=format_analysis_id, wrk_list=worklist_path, limits_list=DEFAULT_LIMIT_OPTION, graphing_type=graph_options)
+						 analysis_id=format_analysis_id, wrk_list=worklist_path, limits_list=limitslist_path, graphing_type=graph_options)
 
 	log_str = ""
 
@@ -325,7 +327,12 @@ def ajax_uploaded_limits(request):
 		file_save_path = os.path.join(media_path, file_name_generator)
 
 		with open(file_save_path, "wb") as limitslist_file:
+
+			limits_headers = ["sample.type", "Channel", "threshold", "direction"]
+
 			csv_writer = csv.writer(limitslist_file, delimiter=",")
+
+			csv_writer.writerow(limits_headers)
 
 			for key, value in limits_response_data['json'].iteritems():
 				if key == "limitslist_name" or key == "submitter_name":
@@ -375,7 +382,12 @@ def ajax_uploaded_worklist(request):
 		file_save_path = os.path.join(media_path, file_name_generator)
 
 		with open(file_save_path, "wb") as worklist_file:
+
+			worklist_headers = ["term", "type", "logical vector"]
+
 			csv_writer = csv.writer(worklist_file, delimiter=",")
+
+			csv_writer.writerow(worklist_headers)
 
 			for key, value in worklist_response_data['json'].iteritems():
 				if key == "worklist_name" or key == "submitter_name":
