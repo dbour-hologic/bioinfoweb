@@ -11,8 +11,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
 
-from .models import PqAttachment, PqResults, Worklist, CombineResults
-from .forms import WorklistInputForm
+from .models import PqAttachment, PqResults, Worklist, CombineResults, Limits
+from .forms import WorklistInputForm, LimitsInputForm
 
 from rcall.rcaller import R_Caller
 
@@ -22,6 +22,7 @@ def create_timestamp():
 	return ('{:%Y%m%d-%H-%M-%S}'.format(datetime.datetime.now()))
 
 def add_attachment(request):
+
 	if request.method == "POST":
 		analysis_id = request.POST['analysis_id']
 		worklist_options = request.POST.get('file_upload_selection', False)
@@ -50,8 +51,6 @@ def add_attachment(request):
 
 			return create_and_serve_combined_file(request, format_analysis_id)
 
-
-
 		return add_attachment_done(request, submitter, stats_options, assay_options, format_analysis_id, worklist_options, limit_options, graph_options)
 	
 	# Have to find a better methd for this one later
@@ -61,10 +60,11 @@ def add_attachment(request):
 		worklist_template = None
 
 	worklist_form = WorklistInputForm();
+	limits_form = LimitsInputForm();
 
-	return render(request, "pqanalysis/pqanalysis.html", {"worklist_form":worklist_form, "worklist_template":worklist_template})
-
-
+	return render(request, "pqanalysis/pqanalysis.html", {"worklist_form":worklist_form, 
+														  "worklist_template":worklist_template,
+														  "limits_form":limits_form})
 
 def create_and_serve_combined_file(request, format_analysis_id):
 
@@ -82,15 +82,22 @@ def create_and_serve_combined_file(request, format_analysis_id):
 	f = FusionCombiner(list_of_files, "P 1/2/3/4")
 
 	if not isinstance(f.mega_combination, pandas.core.frame.DataFrame):
+
 		error_msg = "The files provided could not be combined. Please check if they are from the same run. If you believe this message is not correct, please consult one of the contacts."
-		worklist_form = WorklistInputForm();
+
 		# Have to find a better methd for this one later
 		try:
 			worklist_template = Worklist.objects.get(filename="paraflu-default-worklist.csv")
 		except ObjectDoesNotExist:
 			worklist_template = None
+
 		worklist_form = WorklistInputForm();
-		return render(request, "pqanalysis/pqanalysis.html", {"error_msg":error_msg, "worklist_form":worklist_form, "worklist_template":worklist_template})
+		limits_form = LimitsInputForm()
+
+		return render(request, "pqanalysis/pqanalysis.html", {"error_msg":error_msg, 
+															  "worklist_form":worklist_form, 
+															  "worklist_template":worklist_template,
+															  "limits_form":limits_form})
 
 	data_save = os.path.join(SAVE_DATA_DIR, format_analysis_id + "_combined.xlsx")
 	f.write_combined_multiple(data_save)
@@ -236,6 +243,20 @@ def get_worklist_update(request):
 		return HttpResponse(json.dumps(work_list_all), content_type='application/json')
 
 @csrf_exempt
+def get_limitslist_update(request):
+
+	if request.method == 'GET':
+		limits_list = Limits.objects.all()
+		limits_list_all = []
+		for element in limits_list.values():
+			limits_list_all.append(
+						{ 'id':element['id'],
+						  'filename':element['filename']}
+				)
+
+	return HttpResponse(json.dumps(limits_list_all), content_type='application/json')
+
+@csrf_exempt
 def worklist_upload(request):
 	""" Worklist uploader - using ajax to allow
 	users to custom upload their database
@@ -287,6 +308,57 @@ def worklist_delete(request, pk):
 		return HttpResponseBadRequest("Only POST Accepted")
 
 @csrf_exempt
+def ajax_uploaded_limits(request):
+
+	import csv
+
+	if request.is_ajax():
+
+		limits_response_data = json.loads(request.body)
+		print limits_response_data
+
+		media_path = os.path.join(settings.MEDIA_ROOT, "limits")
+		limitslist_name = limits_response_data['json']['limitslist_name']
+		submission_name = limits_response_data['json']['submitter_name']
+
+		file_name_generator = limitslist_name + create_timestamp() + ".csv"
+		file_save_path = os.path.join(media_path, file_name_generator)
+
+		with open(file_save_path, "wb") as limitslist_file:
+			csv_writer = csv.writer(limitslist_file, delimiter=",")
+
+			for key, value in limits_response_data['json'].iteritems():
+				if key == "limitslist_name" or key == "submitter_name":
+					continue
+				else:
+
+					# Temporary storage to parse the JSON data into a predictable format
+					temp_data_storage = {
+						"name":"",
+						"channel":"",
+						"threshold":"",
+						"logic":""
+					}
+
+					for category, data_value in value.iteritems():
+						parse_value = category.split(".")[1]
+						temp_data_storage[parse_value] = data_value
+
+					line_to_write = [temp_data_storage["name"], 
+									 temp_data_storage["channel"], 
+									 temp_data_storage["threshold"], 
+									 temp_data_storage["logic"]]
+
+					csv_writer.writerow(line_to_write)
+
+			limits_save_file = Limits()
+			limits_save_file.filename = limitslist_name
+			limits_save_file.file = os.path.join("limits", file_name_generator)
+			limits_save_file.save()
+
+	return HttpResponse("success")
+
+@csrf_exempt
 def ajax_uploaded_worklist(request):
 
 	import csv
@@ -325,9 +397,9 @@ def ajax_uploaded_worklist(request):
 					csv_writer.writerow(line_to_write)
 
 			worklist_save_file = Worklist()
-			worklist_save_file.filename = str(worklist_name)
-			worklist_save_file.file = file_save_path
+			worklist_save_file.filename = worklist_name
+			worklist_save_file.file = os.path.join("worklist", file_name_generator)
 			worklist_save_file.save()
 
-
 	return HttpResponse("success")
+

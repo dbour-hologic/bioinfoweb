@@ -124,9 +124,7 @@
 								<b>Limits</b>
 								<p class="help-block">The limits list is a value cutoff file specifing the threshold ranges.</p>
 
-								<select class="form-control" name='limit-options'>
-									<option value="paraflu-default-limit">Paraflu Default</option>
-								</select>
+								{{ limits_form.file_limits_upload_selection }}
 
 								<br>
 
@@ -165,7 +163,7 @@
 					</div>
 				</div>
 				<button class="btn btn-primary" type="Submit">SUBMIT</button>
-			</form>
+		</form>
 		</div>
 		<div class="col-xs-4">
 			<div class="row">
@@ -344,7 +342,6 @@
 										<button name="clickClear" id="clickClear" type="button" class="btn btn-danger">Clear</button>
 									</div>
 								</div>
-
 							</form>
 
 
@@ -368,6 +365,8 @@
 							</div>
 
 							<form id="fusionLimitsForm" method="post" class="form-horizontal">
+
+								{% csrf_token %}
 
 								<div>
 									<label for="submitterName-limits">Submitter Name:</label>
@@ -393,8 +392,8 @@
 									</div>
 									<div class="col-xs-2">
 										<select name="limitslist[0].logic" class="form-control">
-											<option value="min"> < </option>
-											<option value="max"> > </option>
+											<option value="min"> &#x2265; </option>
+											<option value="max"> &#8804; </option>
 										</select>
 									</div>
 									<div class="col-xs-2">
@@ -423,8 +422,8 @@
 									</div>
 									<div class="col-xs-2">
 										<select name="limitslist.logic" class="form-control">
-											<option value="min"> < </option>
-											<option value="max"> > </option>
+											<option value="min"> &#62; </option>
+											<option value="max"> &#60; </option>
 										</select>
 									</div>
 									<div class="col-xs-2">
@@ -442,7 +441,6 @@
 										<button name="clickClear" id="clickClearLimits" type="button" class="btn btn-danger">Clear</button>
 									</div>
 								</div>
-
 							</form>
 
 
@@ -496,6 +494,17 @@ document.getElementById('file[]').addEventListener('change', handleFileSelect, f
 			$("#id_file_upload_selection").empty();
 			$.each(data, function() {
 				$("#id_file_upload_selection").append(
+					$("<option></option>").text(this.filename).val(this.id)
+					);
+			});
+		});
+	}
+
+	var update_limits_list = function() {
+		$.getJSON("{% url 'update-limitslist' %}", function(data) {
+			$("#id_file_limits_upload_selection").empty();
+			$.each(data, function() {
+				$("#id_file_limits_upload_selection").append(
 					$("<option></option>").text(this.filename).val(this.id)
 					);
 			});

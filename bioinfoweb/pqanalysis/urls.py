@@ -7,5 +7,7 @@ urlpatterns = [
 	url(r'^upload/$', views.worklist_upload, name='upload-new'),
 	url(r'^delete-worklist/(?P<pk>\d+)$', views.worklist_delete, name='upload-delete'),
 	url(r'^worklist/$', views.get_worklist_update, name='update-worklist'),
-	url(r'^worklist-upload/$', views.ajax_uploaded_worklist, name='ajax-upload-worklist')
+	url(r'^worklist-upload/$', views.ajax_uploaded_worklist, name='ajax-upload-worklist'),
+	url(r'^limits-upload/$', views.ajax_uploaded_limits, name='ajax-upload-limits'),
+	url(r'^limitslist/$', views.get_limitslist_update, name='update-limitslist')
 ]

@@ -137,7 +137,6 @@ $(document).ready(function() {
 
 			var data_collection = data_collect();
 
-
 			$.ajax({
 				type: "POST",
 				url: "worklist-upload/",
@@ -145,9 +144,10 @@ $(document).ready(function() {
 				datatype: "application/json",
 				cache: false,
 				success: function(json_data) {
-					console.log(json_data);
 					clear_form($("#fusionForm"));
 					$("#success-upload").show();
+					// Calls a django view to get the updated list
+					update_list();
 					return true;
 				},
 				error: function() {
@@ -294,27 +294,32 @@ $(document).ready(function() {
 			}
 		},
 
-		submitHandler: function(form) {
+		submitHandler: function(form, event) {
 
-			var data_collection = data_collect();
+			// Needed to prevent default action
+			event.preventDefault();
+
+			var data_collection = limits_data_collect();
 
 			$.ajax({
 				type: "POST",
-				url: "/echo/json/",
-				data: data_collection,
+				url: "limits-upload/",
+				data: JSON.stringify(data_collection),
+				datatype: "application/json",
 				cache: false,
 				success: function(json_data) {
-					console.log(json_data);
-					clear_form($("#fusionForm"));
-					$("#success-upload").show();
-					return false;
+					clear_form($("#fusionLimitsForm"));
+					$("#limits-success-upload").show();
+					update_limits_list();
+					return true;
 				},
 				error: function() {
 					alert("ERROR");
 				}
 			});
-		}		
-	})
+			return false;
+		}	
+	});
 
 	/**
 	* limits_data_collect() is a function that is used for collecting
@@ -326,7 +331,7 @@ $(document).ready(function() {
 		// Holds the group of data per row
 		data_results = {};
 
-		$("#fusionForm > div").each(function(index, element) {
+		$("#fusionLimitsForm > div").each(function(index, element) {
 			if ($(this).attr("data-limitslist-index") != null) {
 				data_results[index] = {};
 				$(this).children().find("[name]").each(function() {
@@ -341,11 +346,11 @@ $(document).ready(function() {
 		var limitslist_name = $("#limits-name-input").val();
 
 		data_results["submitter_name"] = submitter_name;
-		data_results["limitslist_name"] = worklist_name;
+		data_results["limitslist_name"] = limitslist_name;
 
 		// Create JSON RESPONSE OBJECT
 		var json_data = {
-			json: JSON.stringify(data_results)
+			json: data_results
 		};
 
 		return json_data
