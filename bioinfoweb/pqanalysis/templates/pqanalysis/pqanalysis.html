@@ -60,12 +60,12 @@
 					Paraflu
 				</label>
 				<label>
-					<input type="radio" name="assay-analysis" id="flu" value="flu" disabled/>
-					Flu (coming soon)
+					<input type="radio" name="assay-analysis" id="flu" value="Flu A/B/RSV"/>
+					Flu
 				</label>
 				<label>
-					<input type="radio" name="assay-analysis" id="amr" value="amr" disabled/>
-					AMR (coming soon)
+					<input type="radio" name="assay-analysis" id="amr" value="AdV/hMPV/RV"/>
+					AMR
 				</label>
 			</div>
 			<br>
@@ -139,6 +139,17 @@
 									</div>
 								</div>
 								<br>
+
+								<b>Flag Options</b>
+								<p class="help-block">Ignore flags called by Panther in analysis; will not take flags into account.</p>
+									<div class="checkbox">
+										<label for="ignoreflags">
+											<input type="checkbox" name="ignoreflags" id="ignoreflags" value="ignoreflags"/>
+											Ignore flags
+										</label>
+									</div>								
+								<br>
+
 								<b>Stats Filter</b>
 								<p class="help-block">Stats filter allows selection of specific data views.</p>
 								<select class="form-control" name="stats-option">

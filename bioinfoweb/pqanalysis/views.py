@@ -30,6 +30,7 @@ def add_attachment(request):
 		limit_options = request.POST.get('file_limits_upload_selection', False)
 		assay_options = request.POST.getlist('assay-analysis')[0]
 		graph_options = request.POST.getlist('graph-options')[0]
+		ignoreflag_options = request.POST.getlist('ignoreflags')
 		combine_options = request.POST.get('combine-file')
 		submitter = request.POST['submitter']
 		files = request.FILES.getlist('file[]')
@@ -51,7 +52,21 @@ def add_attachment(request):
 
 			return create_and_serve_combined_file(request, format_analysis_id)
 
-		return add_attachment_done(request, submitter, stats_options, assay_options, format_analysis_id, worklist_options, limit_options, graph_options)
+
+		if ignoreflag_options:
+			ignoreflag_options = "TRUE"
+		else:
+			ignoreflag_options = "FALSE"
+
+		return add_attachment_done(request, 
+								   submitter, 
+								   stats_options, 
+								   assay_options, 
+								   format_analysis_id, 
+								   worklist_options, 
+								   limit_options, 
+								   graph_options, 
+								   ignoreflag_options)
 	
 	# Have to find a better methd for this one later
 	try:
@@ -68,7 +83,10 @@ def add_attachment(request):
 
 def create_and_serve_combined_file(request, format_analysis_id):
 
-	""" Gets combined file data and serves """
+	""" Gets combined file data and serves 
+	Function is currently not compatible with
+	AMR/FLU.
+	"""
 
 	from .fcombiner import FusionCombiner
 	import shutil
@@ -83,7 +101,10 @@ def create_and_serve_combined_file(request, format_analysis_id):
 
 	if not isinstance(f.mega_combination, pandas.core.frame.DataFrame):
 
-		error_msg = "The files provided could not be combined. Please check if they are from the same run. If you believe this message is not correct, please consult one of the contacts."
+		error_msg = "The files provided could not be combined.   \
+					Please check if they are from the same run.  \
+					If you believe this message is not correct,  \
+					please consult one of the contacts."
 
 		# Have to find a better methd for this one later
 		try:
@@ -113,7 +134,15 @@ def create_and_serve_combined_file(request, format_analysis_id):
 
 	return response
 
-def add_attachment_done(request, user_name, stats_options, assay, format_analysis_id, worklist_options, limit_options, graph_options):
+def add_attachment_done(request, 
+						user_name, 
+						stats_options, 
+						assay, 
+						format_analysis_id, 
+						worklist_options, 
+						limit_options, 
+						graph_options,
+						ignoreflag_options):
 	""" 
 		(1) Append analysis_id to R markdown output.
 		(2) Execute necessary programs
@@ -125,21 +154,26 @@ def add_attachment_done(request, user_name, stats_options, assay, format_analysi
 	query_db = PqAttachment.objects.filter(analysis_id__exact = format_analysis_id)
 	files_dir = os.path.join(settings.MEDIA_ROOT, "/".join(query_db.values()[0]['attachment'].split("/")[:-1]))
 
-	if assay == 'Paraflu':
+	r = R_Caller(user_name, stats_options, assay, files_dir, format_analysis_id, graph_options)
 
-		r = R_Caller(user_name, stats_options, 'Paraflu', files_dir, format_analysis_id, graph_options)
+	worklist_query = Worklist.objects.get(id=worklist_options)
+	worklist_filename = str(worklist_query.filename)
+	worklist_path = os.path.join(settings.MEDIA_ROOT, str(worklist_query.file))
 
-		worklist_query = Worklist.objects.get(id=worklist_options)
-		worklist_filename = str(worklist_query.filename)
-		worklist_path = os.path.join(settings.MEDIA_ROOT, str(worklist_query.file))
+	limitslist_query = Limits.objects.get(id=limit_options)
+	limitslist_filename = str(limitslist_query.filename)
+	limitslist_path = os.path.join(settings.MEDIA_ROOT, str(limitslist_query.file))
 
-		limitslist_query = Limits.objects.get(id=limit_options)
-		limitslist_filename = str(limitslist_query.filename)
-		limitslist_path = os.path.join(settings.MEDIA_ROOT, str(limitslist_query.file))
-
-		# Arg 'limit_options' is not used for now, but DEFAULT will be used.
-		logs = r.execute(default=False, user_name=user_name, data_dir=files_dir, stats_option=stats_options, assay_type='Paraflu', 
-						 analysis_id=format_analysis_id, wrk_list=worklist_path, limits_list=limitslist_path, graphing_type=graph_options)
+	logs = r.execute(default=False, 
+					 user_name=user_name, 
+					 data_dir=files_dir, 
+					 stats_option=stats_options, 
+					 assay_type=assay, 
+					 analysis_id=format_analysis_id, 
+					 wrk_list=worklist_path, 
+					 limits_list=limitslist_path, 
+					 graphing_type=graph_options,
+					 ignoreflags_options=ignoreflag_options)
 
 	log_str = ""
 
@@ -161,7 +195,7 @@ def add_attachment_done(request, user_name, stats_options, assay, format_analysi
 	if not run_completed:
 		return render(request, "pqanalysis/pqerror.html", {"error_out":log_str})
 
-	program_timed_out = shuttle_dir('paraflu')
+	program_timed_out = shuttle_dir('rscripts')
 
 	return view_results(request)
 
