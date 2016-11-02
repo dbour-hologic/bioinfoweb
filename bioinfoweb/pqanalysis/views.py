@@ -333,6 +333,46 @@ def worklist_upload(request):
 	else:
 		return HttpResponse('Only POST Accepted')
 
+def worklist_get(request, pk):
+
+	import csv
+
+	# Returns a representation of the file
+	json_return = {"header":[], "rows":[]}
+
+	if request.method == 'GET':
+
+		file = get_object_or_404(Worklist, pk=pk)
+
+		media_path = os.path.join(settings.MEDIA_ROOT, file.file.name)
+		with open(media_path) as f:
+			csv_reader = csv.reader(f, delimiter=",")
+			for num, lines in enumerate(csv_reader):
+				if num == 0:
+					json_return["header"].append({
+						"term":"term",
+						"type":"type",
+						"logvector":"logvector"
+					})
+				else:
+					json_return["rows"].append({
+						"term":lines[0],
+						"type":lines[1],
+						"logvector":lines[2],
+					})
+
+		to_json = json.dumps(json_return)
+
+		mimetype = "text/plain"
+
+		if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:
+			mimetype = "application/json"
+
+		return HttpResponse(to_json, content_type=mimetype)
+	else:
+		return HttpResponse("Only GET Requests Allowed.")
+
+
 @csrf_exempt
 def worklist_delete(request, pk):
 	""" View for deleting via AJAX """

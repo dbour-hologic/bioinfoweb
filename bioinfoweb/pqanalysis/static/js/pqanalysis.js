@@ -36,11 +36,101 @@ $(document).ready(function() {
 	});
 
 	/**
+	* Retrieves the selected worklist from dropdown and returns
+	* the file contents to the dynamic upload box
+	**/
+	$("#id_file_upload_selection").change(function() {
+		getValue = $("#id_file_upload_selection option:selected").val();
+		
+		$.ajax({
+			type:"GET",
+			url: "prepopulate-worklist/" + getValue,
+			success: function(fileData)
+			{
+				parsed_JSON = JSON.parse(fileData);
+				addWorklistRows(parsed_JSON.rows)
+			}
+		})
+	});
+
+	/**
 	* Clears the form with 'Clear' button
 	**/
 	$("#clickClear").click(function() {
 		clear_form($("#fusionForm"))
 	});
+
+
+	/**
+	 * Helper function to dynamically populate the worklist form with 
+	 * previously uploaded worklist. The way it performs addition of 
+	 * rows is the same as the manual 'add rows' button.
+	 **/
+	function addWorklistRows(getData) {
+
+		// 'Refreshes'/removes the old rows of data
+		$("#fusionForm > div").each(function(index, element) {
+			if ($(this).attr("data-worklist-index") != null) {
+				$(this).remove();	
+			}
+		});		
+
+		var worklistIndex = 0;
+
+		$.each(getData, function(index, value) {
+
+
+			var term = value.term;
+			var type = value.type;
+			var logvector = value.logvector;
+
+			var $template = $("#datagroup-template"),
+			$clone = $template
+			.clone()
+			.removeClass("hide")
+			.removeAttr("id")
+			.attr("data-worklist-index", worklistIndex)
+			.insertBefore($template);
+
+			$clone
+			.find('[name="worklist.name"]').attr('name', 'worklist[' + worklistIndex + '].name').end()
+			.find('[name="worklist.category"]').attr('name', 'worklist[' + worklistIndex + '].category').end()
+			.find('[name="worklist.type"]').attr('name', 'worklist[' + worklistIndex + '].type').end();
+
+
+			$("input[name='worklist["+worklistIndex+"].name']").val(value.term);
+			$("input[name='worklist["+worklistIndex+"].type']").val(value.type);
+			$("input[name='worklist["+worklistIndex+"].category']").val(value.logvector);
+
+			// Resets the first icon to a plus since template creates removal buttons
+			if (worklistIndex == 0) {
+	
+				$("#fusionForm > [data-worklist-index=0] > div > button").attr('class', 'btn btn-default addButton');
+				$("#fusionForm > [data-worklist-index=0] > div > button > span").attr('class', 'glyphicon glyphicon-plus');
+			}
+
+			worklistIndex++;
+
+			$('.worklist-input').each(function() {
+
+				// Add a different rule to the name field which allows other characters
+				if (this.name.indexOf("name") == -1) {
+					$(this).rules("add", {
+						required: true,
+						alphaOnly: true,
+						messages: {
+							alphaOnly: "Only letters and numbers."
+						}
+					});
+				} else {
+					$(this).rules("add", {
+						required: true,
+					});
+				}
+			});
+
+		});
+	};
 
 	/**
 	* Feature to add/remove rows of data for workflow.
@@ -85,6 +175,7 @@ $(document).ready(function() {
 				}
 			});
 		};
+
 	})()).on("click", ".removeButton", function() {
 		var $row = $(this).parents(".form-group").remove();
 	});
