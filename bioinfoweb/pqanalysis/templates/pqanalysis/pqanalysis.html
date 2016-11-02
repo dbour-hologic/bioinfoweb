@@ -103,7 +103,10 @@
 								<hr>
 
 								<b>Worklist</b>
-								<p class="help-block">The worklist is a label file specifing the negative and postive samples.</p>
+								<p class="help-block">The worklist is a label file specifing the negative and postive samples. 
+								<br>
+								<b>Tip:</b> 
+								Selecting any of the previously uploaded worklists will load its content into the worklist upload dialog.</p>
 
 								{{ worklist_form.file_upload_selection }}
 
@@ -111,7 +114,7 @@
 
 								<div class="row">
 									<div class="col-xs-12">
-										<span class="btn btn-primary" data-target="#worklist-upload" data-toggle="modal">
+										<span id="worklist-modal-button" class="btn btn-primary" data-target="#worklist-upload" data-toggle="modal">
 											Worklist Upload
 										</span>
 										<span class="btn btn-danger" data-target="#worklist-help" data-toggle="modal">
@@ -122,8 +125,10 @@
 								</div>
 								<br>
 								<b>Limits</b>
-								<p class="help-block">The limits list is a value cutoff file specifing the threshold ranges.</p>
-
+								<p class="help-block">The limits list is a value cutoff file specifing the threshold ranges.
+								<br>
+								<b>Tip:</b> 
+								Selecting any of the previously uploaded limits will load its content into the limits list upload dialog.</p>
 								{{ limits_form.file_limits_upload_selection }}
 
 								<br>
