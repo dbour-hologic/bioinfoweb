@@ -37,10 +37,18 @@ $(document).ready(function() {
 
 	/**
 	* Retrieves the selected worklist from dropdown and returns
-	* the file contents to the dynamic upload box
+	* the file contents to the dynamic upload box. The optional
+	* primaryKey argument allows us to manually select which
+	* key to select.
 	**/
-	$("#id_file_upload_selection").change(function() {
-		getValue = $("#id_file_upload_selection option:selected").val();
+	function dynamicWorklistRetrieve(primaryKey) {
+
+		if (typeof primaryKey === 'undefined') {
+			getValue = $("#id_file_upload_selection option:selected").val();
+		} else {
+			getValue = primaryKey;
+		}
+		
 		
 		$.ajax({
 			type:"GET",
@@ -50,8 +58,24 @@ $(document).ready(function() {
 				parsed_JSON = JSON.parse(fileData);
 				addWorklistRows(parsed_JSON.rows)
 			}
-		})
+		});
+	}
+
+	/**
+	* Populates the worklist through worklist selection.
+	*/
+	$("#id_file_upload_selection").change(function() {
+		dynamicWorklistRetrieve();
 	});
+
+	/**
+	* Populates the default worklist through clicking. The
+	* default value can change depending on how its
+	* represented in the database.
+	*/
+	$("#load-worklist-default").click(function() {
+		dynamicWorklistRetrieve(11);
+	});	
 
 	/**
 	* Clears the form with 'Clear' button
@@ -308,11 +332,18 @@ $(document).ready(function() {
 	**************************************************************/
 
 	/**
-	* Retrieves the selected worklist from dropdown and returns
-	* the file contents to the dynamic upload box
+	* Retrieves the selected limitslist from dropdown and returns
+	* the file contents to the dynamic upload box. The optional
+	* primaryKey argument allows us to manually select which
+	* key to select.
 	**/
-	$("#id_file_limits_upload_selection").change(function() {
-		getValue = $("#id_file_limits_upload_selection option:selected").val();
+	function dynamicLimitsListRetrieve(primaryKey)
+	{
+		if (typeof primaryKey === 'undefined') {
+			getValue = $("#id_file_limits_upload_selection option:selected").val();
+		} else {
+			getValue = primaryKey;
+		}
 		
 		$.ajax({
 			type:"GET",
@@ -323,8 +354,24 @@ $(document).ready(function() {
 				parsed_JSON = JSON.parse(fileData);
 				addLimitslistRows(parsed_JSON.rows)
 			}
-		})
+		});
+	}
+
+	/**
+	* Populates the limitslist through worklist selection.
+	*/
+	$("#id_file_limits_upload_selection").change(function() {
+		dynamicLimitsListRetrieve();
 	});
+
+	/**
+	* Populates the default limitslist through clicking. The
+	* default value can change depending on how its
+	* represented in the database.
+	*/
+	$("#load-limitslist-default").click(function() {
+		dynamicLimitsListRetrieve(6);
+	});		
 
 	/**
 	* Hides the success banner when clicked anywhere.
@@ -341,7 +388,7 @@ $(document).ready(function() {
 	});
 
 
-/**
+	/**
 	 * Helper function to dynamically populate the limits list form with 
 	 * previously uploaded limits list. The way it performs addition of 
 	 * rows is the same as the manual 'add rows' button.
@@ -388,8 +435,8 @@ $(document).ready(function() {
 			// Resets the first icon to a plus since template creates removal buttons
 			if (limitsListIndex == 0) {
 	
-				$("#fusionForm > [data-limitslist-index=0] > div > button").attr('class', 'btn btn-default addButton');
-				$("#fusionForm > [data-limitslist-index=0] > div > button > span").attr('class', 'glyphicon glyphicon-plus');
+				$("#fusionLimitsForm > [data-limitslist-index=0] > div > button").attr('class', 'btn btn-default addLimitsButton');
+				$("#fusionLimitsForm > [data-limitslist-index=0] > div > button > span").attr('class', 'glyphicon glyphicon-plus');
 			}
 
 			limitsListIndex++;

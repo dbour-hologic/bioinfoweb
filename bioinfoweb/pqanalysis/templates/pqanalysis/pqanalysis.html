@@ -133,7 +133,7 @@
 										<span class="btn btn-primary" data-target="#limits-upload" data-toggle="modal">
 											Limits Upload
 										</span>
-										<span class="btn btn-danger" data-target="#worklist-help" data-toggle="modal">
+										<span class="btn btn-danger" data-target="#limitslist-help" data-toggle="modal">
 											Help
 										</span>										
 									</div>
@@ -235,26 +235,22 @@
 							</div>
 							<div class="modal-body">
 								<p>
-									<b>Description:</b> The worklist is a comma separated file (".csv") that acts
+									<b>Description:</b> The worklist acts
 									as a label file for the program to distinguish between positive samples, negative
 									samples, positive controls, negative controls. 
 									<br>
 									<br>
-									<b>Instructions:</b> You may use any text editor to create the file as long as 
-									it has a comma in between the labels; between the 'term' and 'type' as shown below. Excel is recommended for editing. Be sure to save as
-									comma separated file. If not using Excel, please save as .csv or .txt.
-									<br>
-									<br>
-									Example: 
+									<b>Instructions:</b> There are three dialog boxes per row that you must fill out
+									completely. The content within in box is case sensitive. The row contents are as follows
 									<br>
 									<br>
 									<table>
 										<tr>
-											<th> term </th>
+											<th> Sample Name </th>
 											<th>&nbsp;&nbsp;</th>
-											<th> type </th>
+											<th> Sample Type </th>
 											<th>&nbsp;&nbsp;</td></th>
-											<th> logical vector </th>
+											<th> Logical Vector </th>
 										</tr>
 										<tr>
 											<td>FSPANELA</td>
@@ -277,8 +273,8 @@
 									used to describe what type of samples they are categorized as; valid type labels are 
 									Panel A, Positive Control, Negative Control, Panel C. <b>Logical vector</b> categorizes
 									the entire row as a positive sample type (ps) or negative sample type (ns). For a detailed example, 
-									please download the template and modify as needed. The template contains all currently known
-									labels.
+									please click on <u>"Load Example"</u> under the <u>Worklist Upload</u> tab. The template contains all currently known
+									labels for the Paraflu assay.
 
 								</p>
 							</div>
@@ -311,7 +307,14 @@
 									<input id="worklist-name-input" class="form-control" type="text" name="worklist_name" placeholder="Worklist Name" />
 								</div>
 
-								<hr>
+								<br>
+
+								<div>
+									<button type="button" id="load-worklist-default">Load Example</button> Loads an example worklist used for Paraflu. 
+								</div>
+
+								<br>
+
 								<div class="form-group" id="datagroup" data-worklist-index="0">
 									<label class="col-xs-1 control-label">Sample</label>
 									<div class="col-xs-3">
@@ -364,6 +367,74 @@
 				</div>
 			</div>
 
+
+			<div class="modal fade" id="limitslist-help" tabindex="-1" role="dialog">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span></button>
+								<h4 class="modal-title">Limits List Help</h4>
+							</div>
+							<div class="modal-body">
+								<p>
+									<b>Description:</b> The limits list is used to determine the cutoff values for
+									specific channels when the program runs the analysis. Samples that do not meet the 
+									specified cutoff value will be flagged as passing or not passing the criteria set. 
+									<br>
+									<br>
+									<b>Instructions:</b> Fill out the dialog boxes for the sample name and threshold. The
+									sample names are case sensitive, so please fill them out the same exact way that was 
+									used for the Panther output. The row contents are as follows.
+									<br>
+									<br>
+									<table>
+										<tr>
+											<th> Sample Name </th>
+											<th>&nbsp;&nbsp;</th>
+											<th> Channel </th>
+											<th>&nbsp;&nbsp;</td></th>
+											<th> Logic </th>
+											<th>&nbsp;&nbsp;</td></th>
+											<th> Threshold </th>
+										</tr>
+										<tr>
+											<td>Negative Control</td>
+											<td><b>,</b>&nbsp;&nbsp;</td>
+											<td>ROX</td>
+											<td><b>,</b>&nbsp;&nbsp;</td>
+											<td>&#8804;</td>
+											<td><b>,</b>&nbsp;&nbsp;</td>
+											<td>500</td>
+										</tr>
+										<tr>
+											<td>Positive Control</td>
+											<td><b>,</b>&nbsp;&nbsp;</td>
+											<td>FAM</td>
+											<td><b>,</b>&nbsp;&nbsp;</td>
+											<td>&#x2265;</td>
+											<td><b>,</b>&nbsp;&nbsp;</td>
+											<td>1200</td>
+										</tr>
+									</table>
+
+									<br>
+									The <b>sample name</b> is used to describe what the samples are labelled as. <b>Channel</b> is 
+									the Panther channel being analyzed such as FAM, HEX, ROX.. etc. <b>Logic</b> describes the minimum
+									and maximum values for each sample. For a detailed example, 
+									please click on <u>"Load Example"</u> under the <u>Limits Upload</u> tab. The default limits is 
+									for Paraflu assay only!
+
+								</p>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<div class="modal modal-wide fade" id="limits-upload" tabindex="-1" role="dialog">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
@@ -387,7 +458,14 @@
 									<input id="limits-name-input" class="form-control" type="text" name="limits_name" placeholder="Limits Name" />
 								</div>
 
-								<hr>
+								<br>
+
+								<div>
+									<button type="button" id="load-limitslist-default">Load Example</button> Loads an example limits list used for Paraflu. 
+								</div>
+
+								<br>
+
 								<div class="form-group" id="datagroup-limits" data-limitslist-index="0">
 									<label class="col-xs-1 control-label">Sample</label>
 									<div class="col-xs-3">
