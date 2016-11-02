@@ -372,7 +372,6 @@ def worklist_get(request, pk):
 	else:
 		return HttpResponse("Only GET Requests Allowed.")
 
-
 @csrf_exempt
 def worklist_delete(request, pk):
 	""" View for deleting via AJAX """
@@ -382,6 +381,48 @@ def worklist_delete(request, pk):
 		return HttpResponse(str(pk))
 	else:
 		return HttpResponseBadRequest("Only POST Accepted")
+
+
+def limitslist_get(request, pk):
+
+	import csv
+
+	json_return = {"header":[], "rows":[]}
+
+	if request.method == 'GET':
+
+		file = get_object_or_404(Limits, pk=pk)
+
+		media_path = os.path.join(settings.MEDIA_ROOT, file.file.name)
+		with open(media_path) as f:
+			csv_reader = csv.reader(f, delimiter=",")
+			for num, lines in enumerate(csv_reader):
+
+				if num == 0:
+					json_return["header"].append({
+						"sampletype":"sampletype",
+						"channel":"channel",
+						"threshold":"threshold",
+						"direction":"direction",
+					})
+				else:
+					print(lines)
+					json_return["rows"].append({
+						"sampletype":lines[0],
+						"channel":lines[1],
+						"threshold":lines[2],
+						"direction":lines[3]
+					})
+
+		to_json = json.dumps(json_return)
+		mimetype = "text/plain"
+
+		if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:
+			mimetype = "application/json"
+
+		return HttpResponse(to_json, content_type=mimetype)
+	else:
+		return HttpResponse("Only GET Requests Allowed")
 
 @csrf_exempt
 def ajax_uploaded_limits(request):

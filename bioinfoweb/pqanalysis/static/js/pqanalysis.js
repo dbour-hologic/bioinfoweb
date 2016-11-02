@@ -308,6 +308,25 @@ $(document).ready(function() {
 	**************************************************************/
 
 	/**
+	* Retrieves the selected worklist from dropdown and returns
+	* the file contents to the dynamic upload box
+	**/
+	$("#id_file_limits_upload_selection").change(function() {
+		getValue = $("#id_file_limits_upload_selection option:selected").val();
+		
+		$.ajax({
+			type:"GET",
+			url: "prepopulate-limitslist/" + getValue,
+			success: function(fileData)
+			{
+				console.log(fileData);
+				parsed_JSON = JSON.parse(fileData);
+				addLimitslistRows(parsed_JSON.rows)
+			}
+		})
+	});
+
+	/**
 	* Hides the success banner when clicked anywhere.
 	**/
 	$(document).click(function() {
@@ -320,6 +339,74 @@ $(document).ready(function() {
 	$("#clickClearLimits").click(function() {
 		clear_form($("#fusionLimitsForm"))
 	});
+
+
+/**
+	 * Helper function to dynamically populate the limits list form with 
+	 * previously uploaded limits list. The way it performs addition of 
+	 * rows is the same as the manual 'add rows' button.
+	 **/
+	function addLimitslistRows(getData) {
+
+		// 'Refreshes'/removes the old rows of data
+		$("#fusionLimitsForm > div").each(function(index, element) {
+			if ($(this).attr("data-limitslist-index") != null) {
+				$(this).remove();	
+			}
+		});		
+
+		var limitsListIndex = 0;;
+
+		$.each(getData, function(index, value) {
+
+
+			var sampletype = value.sampletype;
+			var channel = value.channel;
+			var sampthreshold = value.threshold; 
+			var directionlogic = value.direction;
+
+			var $template = $("#datagroup-template-limits"),
+			$clone = $template
+			.clone()
+			.removeClass("hide")
+			.removeAttr("id")
+			.attr("data-limitslist-index", limitsListIndex)
+			.insertBefore($template);
+
+			$clone
+			.find('[name="limitslist.name"]').attr('name', 'limitslist[' + limitsListIndex + '].name').end()
+			.find('[name="limitslist.channel"]').attr('name', 'limitslist[' + limitsListIndex + '].channel').end()
+			.find('[name="limitslist.logic"]').attr('name', 'limitslist[' + limitsListIndex + '].logic').end()
+			.find('[name="limitslist.threshold"]').attr('name', 'limitslist[' + limitsListIndex + '].threshold').end()
+
+
+			$("input[name='limitslist["+limitsListIndex+"].name']").val(value.sampletype);
+			$("select[name='limitslist["+limitsListIndex+"].channel']").val(value.channel);
+			$("select[name='limitslist["+limitsListIndex+"].logic']").val(value.direction);
+			$("input[name='limitslist["+limitsListIndex+"].threshold']").val(value.threshold);
+
+			// Resets the first icon to a plus since template creates removal buttons
+			if (limitsListIndex == 0) {
+	
+				$("#fusionForm > [data-limitslist-index=0] > div > button").attr('class', 'btn btn-default addButton');
+				$("#fusionForm > [data-limitslist-index=0] > div > button > span").attr('class', 'glyphicon glyphicon-plus');
+			}
+
+			limitsListIndex++;
+
+			$('.limitslist-input').each(function() {
+				$(this).rules("add", {
+					required: true,
+					alphaOnly: true,
+					messages: {
+						alphaOnly: "Only letters and numbers."
+					}
+				});
+			});
+
+		});
+	};
+
 
 	/**
 	* Feature to add/remove rows of data for workflow.
