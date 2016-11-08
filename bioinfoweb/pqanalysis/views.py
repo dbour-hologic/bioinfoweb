@@ -406,7 +406,7 @@ def limitslist_get(request, pk):
 						"direction":"direction",
 					})
 				else:
-					print(lines)
+
 					json_return["rows"].append({
 						"sampletype":lines[0],
 						"channel":lines[1],
@@ -432,7 +432,6 @@ def ajax_uploaded_limits(request):
 	if request.is_ajax():
 
 		limits_response_data = json.loads(request.body)
-		print limits_response_data
 
 		media_path = os.path.join(settings.MEDIA_ROOT, "limits")
 		limitslist_name = limits_response_data['json']['limitslist_name']
