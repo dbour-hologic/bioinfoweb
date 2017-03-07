@@ -1,7 +1,7 @@
 # Melting program to send raw bash commands
 import os
 import subprocess
-from bioinfow import settings
+from config import settings
 
 # From DJANGO
 # ----> DJANGO will convert the JSON to string
