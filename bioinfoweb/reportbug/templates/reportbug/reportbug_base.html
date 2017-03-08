@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/bug.css' %}">
+{% endblock %}
+{% block content %}
+{% endblock %}
+{% block js %}
+<!-- Placed at the end of the document for faster load times -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="http://cdn.jsdelivr.net/jquery.validation/1.14.0/additional-methods.js"></script>
+<script type="text/javascript" src="{% static 'js/bug.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/pqanalysis.css' %}">
+<link rel="stylesheet" href="{% static 'css/jquery.fileupload-ui.css' %}">
+{% endblock %}
+{% block content %}
+{% endblock %}
+{% block js %}
+<!-- Placed at the end of the document for faster load times -->
+<script>
+// Checks if the browser is comptabile with HTML5 File API
+if (window.File && window.FileReader && window.FileList && window.Blob) {
+	// Browser has the FileReader API
+} else {
+	alert("The FILE APIs may not be fully supported in this browser.")
+}
+
+function handleFileSelect(evt) {
+	var files = evt.target.files;
+	var output = [];
+	for (var i = 0, f; f = files[i]; i++) {
+		output.push('<li><strong>', escape(f.name), '</strong></li>');
+	}
+	document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+}
+
+document.getElementById('file[]').addEventListener('change', handleFileSelect, false);
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="http://cdn.jsdelivr.net/jquery.validation/1.14.0/additional-methods.js"></script>
+
+<script type="text/javascript" src="{% static 'js/vendor/jquery.ui.widget.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery.iframe-transport.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery.fileupload.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery.fileupload-process.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery.fileupload-validate.js' %}"></script>
+
+<script>
+
+	{% if error_msg %}
+	alert("{{ error_msg }}");
+	{% endif %}
+
+	var update_list = function() {
+		$.getJSON("{% url 'update-worklist' %}", function(data) {
+			$("#id_file_upload_selection").empty();
+			$.each(data, function() {
+				$("#id_file_upload_selection").append(
+					$("<option></option>").text(this.filename).val(this.id)
+					);
+			});
+		});
+	}
+
+	var update_limits_list = function() {
+		$.getJSON("{% url 'update-limitslist' %}", function(data) {
+			$("#id_file_limits_upload_selection").empty();
+			$.each(data, function() {
+				$("#id_file_limits_upload_selection").append(
+					$("<option></option>").text(this.filename).val(this.id)
+					);
+			});
+		});
+	}
+
+</script>
+
+<script>
+
+	function csrfSafeMethod(method) {
+	// These HTTP methods do not require CSRF protection
+	return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+
+$(function () {
+	'use strict';
+	// Change this to the location of server-side upload handler;
+	var url = 'upload/';
+	var csrftoken = $.cookie('csrftoken');
+	$('#fileupload').fileupload({
+		url: url,
+		crossDomain: false,
+		beforeSend: function(xhr, settings) {
+			if (!csrfSafeMethod(settings.type)) {
+				xhr.setRequestHeader("X-CSRFToken", csrftoken);
+			}
+		},
+		dataType: 'json',
+		processQueue: [
+		{
+			action: 'validate',
+			always: true,
+			acceptFileTypes: /(\.|\/)(txt|csv)$/i
+		}
+		],
+		processfail: function(e, data) {
+			$('#files').empty();
+			$('<p/>').text("File extension invalid, please upload a .csv file").appendTo('#files');
+		},
+		done: function(e, data) {
+			$.each(data.files, function(index, file) {
+				$('#files').empty();
+				$('<p/>').text("File upload complete.").appendTo('#files');
+				update_list();
+			});
+		},
+		progressall: function(e, data) {
+			var progress = parseInt(data.loaded / data.total * 100, 10);
+			$('#progress .progress-bar').css(
+				'width',
+				progress + '%'
+				);
+		},
+	}).prop('disabled', !$.support.fileInput)
+	.parent().addClass($.support.fileInput ? undefined : 'disabled');
+})
+</script>
+
+<script type="text/javascript" src="{% static 'js/jquery.cookie.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/pqanalysis.js' %}"></script>
+
+
+<script src="//static.getclicky.com/js" type="text/javascript"></script>
+<script type="text/javascript">try{ clicky.init(100988674); }catch(e){}</script>
+<noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/100988674ns.gif" /></p></noscript>
+{% endblock %}

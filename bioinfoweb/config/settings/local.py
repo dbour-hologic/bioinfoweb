@@ -9,7 +9,7 @@ import json
 DEBUG = True
 
 # JSON-based secret module
-with open("secrets.json") as f:
+with open(join(PROJECT_ROOT, "secrets.json")) as f:
 	secrets = json.loads(f.read())
 
 def get_secret(setting, secrets=secrets):

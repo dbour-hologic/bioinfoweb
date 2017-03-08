@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/feasibility.css' %}">
+{% endblock %}
+{% block content %}
+{% endblock %}
+{% block js %}
+<!-- Placed at the end of the document for faster load times -->
+<script type="text/javascript" src="{% static 'js/feasibility.js' %}"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+{% endblock %}

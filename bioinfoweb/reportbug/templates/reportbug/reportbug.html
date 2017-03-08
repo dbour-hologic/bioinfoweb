@@ -1,6 +1,5 @@
-{% extends 'reportbug/base.html' %}
+{% extends 'reportbug/reportbug_base.html' %}
 {% block content %}
-
 <div class="bugreport_main">
 	<form action="" method="post" id="bugreport_id">
 			{% for field in reportBug %}
@@ -18,6 +17,4 @@
 			<button type="Submit" class="btn btn-primary">Submit</button>
 	</form>
 </div>
-
-
 {% endblock %}

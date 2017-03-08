@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/gparchives.css' %}">
+<link href='https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css' rel='stylesheet' type='text/css'>
+{% endblock %}
+{% block content %}
+{% endblock %}
+{% block js %}
+<!-- Placed at the end of the document for faster load times -->
+<script type="text/javascript" src="{% static 'js/gparchives.js' %}"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+{% endblock %}

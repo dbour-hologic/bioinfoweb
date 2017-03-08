@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/melt.css' %}">
+{% endblock %}
+{% block content %}
+{% endblock %}
+{% block js %}
+<!-- Placed at the end of the document for faster load times -->
+<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.1.0.js"></script>
+<script type="text/javascript" src="{% static 'js/kocustom.js' %}"></script>
+{% endblock %}
