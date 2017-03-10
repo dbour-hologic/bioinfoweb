@@ -2,7 +2,130 @@
 {% load staticfiles %}
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/portal.css' %}">
+<link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
 {% endblock %}
+{% block extranav %}
+<div class="full">
+  <div class="crazy">
+    Bioinformatics
+    <img src="http://www.hologic.com/sites/default/files/logo-hologic_0.png"/> 
+    <div class="scrolldownicon">
+      <a id="gotointro" href="#title_page"><span class="glyphicon glyphicon-chevron-down"></span></a>
+    </div>
+  </div>
+</div>	
+{% endblock %}
+{% block customnav %}
+<div id="nav">
+	<nav class="navbar navbar-default navbar-static">
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#">
+					<img style="max-width: 120px; margin-top: -7px;" alt="Bioinformatics" src="{% static 'img/hologic_logo_top.png' %}"/>
+				</a>
+			</div>
+
+			<div id="navbar">
+				<ul class="nav navbar-nav">
+					<li class="active"><a href="{% url 'index' %}">Home</a></li>
+					<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+					Services
+					<span class="caret"></span>
+					</a>
+						<ul class="dropdown-menu">
+							<li><a href="/helpdesk">
+							<span class="glyphicon glyphicon-cog"> | </span>
+							Bioinformatics Service Request
+							</a>
+							</li>
+							<li><a href="{% url 'clone_services' %}">
+							<span class="glyphicon glyphicon-repeat"> | </span>
+							Clone(IVT) Request
+							</a></li>
+							<li><a href="{% url 'msae_access' %}">
+							<span class="glyphicon glyphicon-align-left"> | </span>
+							MSAE Access Request
+							</a>
+							</li>
+						</ul>
+					</li>
+					<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+					Technologies
+					<span class="caret"></span>
+						<ul class="dropdown-menu">
+							<li><a href="{% url 'tech_tma' %}">
+							<span class="glyphicon glyphicon-tasks"> | </span>
+							Transcription-Mediated Amplification
+							</a>
+							</li>
+							<li><a href="{% url 'tech_invader' %}">
+							<span class="glyphicon glyphicon-transfer"> | </span>
+							Invader Technologies
+							</a>
+							</li>							
+							<li><a href="{% url 'tech_archives' %}">
+							<span class="glyphicon glyphicon-text-color"> | </span>
+							Gen-Probe Scientific Articles Archive
+							</a>
+							</li>
+							<li><a href="{% url 'feasibility_archives' %}">
+							<span class="glyphicon glyphicon-floppy-disk"> | </span>
+							Gen-Probe Scientific Feasibility Archives
+							</a>
+							</li>
+						</ul>
+					</a>
+					</li>
+					<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+					Tools
+					<span class="caret"></span>
+						<ul class="dropdown-menu">
+							<li><a href="{% url 'tools_seqconversion' %}">
+							<span class="glyphicon glyphicon-random"> | </span>
+							Sequence Conversion
+							</a>
+							</li>
+							<li><a href="http://yoho:28080/utils/bioinfo?action=MolWeight">
+							<span class="glyphicon glyphicon-calendar"> | </span>
+							Molecular Weight Calculator
+							</a>
+							</li>
+							<li><a href="{% url 'tools_melting' %}">
+							<span class="glyphicon glyphicon-fire"> | </span>
+							TM Melting Calculator
+							</a>
+							</li>
+							<li><a href="{% url 'add_attachment' %}">
+							<span class="glyphicon glyphicon-barcode"> | </span>
+							PQ Analysis
+							</a>
+							</li>
+							<li><a href="http://jasper:3838/rdtools/probit_analysis/">
+							<span class="glyphicon glyphicon-qrcode"> | </span>
+							Probit Analysis
+							</a>
+							</li>							
+							<li class="dropdown-header">Third Party</li>
+							<li><a href="#">
+							<span class="glyphicon glyphicon-erase"> | </span>
+							Bioinformatics Tools
+							| <span class='page_status_off'>Offline</span>
+							</a>
+							</li>
+						</ul>
+					</a>
+					</li>
+					<li><a href="mailto:david.bour@hologic.com">Contact</a></li>
+					<li><a href="{% url 'bug' %}" style="color: red"><i>Report Bug</i> </a></li>
+				</ul>
+			</div>
+	</nav>
+</div>
+{% endblock %}
+
 {% block content %}
 {% endblock %}
 {% block js %}

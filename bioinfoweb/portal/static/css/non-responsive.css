@@ -72,17 +72,18 @@ body {
 .navbar {
 	background: #333;
 	border: none;
+	border: 1px solid;
 }
 
 .navbar-default .navbar-nav > li > a {
-	font-size: 16px;
+	font-size: 14px;
 	font-weight: bold;
 }
 
 
 .navbar-default .navbar-nav > li > a:hover,
 .navbar-default .navbar-nav > li > a:focus{
-	color: white;
+	color: black;
 }
 
 
@@ -90,6 +91,6 @@ body {
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,
 .navbar-default .navbar-nav > .active > a:focus{
-	color: white;
-	background: #333;
+	color: black;
+	background: #FFFFFF;
 }

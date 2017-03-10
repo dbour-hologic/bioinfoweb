@@ -1,131 +1,123 @@
 {% extends 'portal/base_portal.html' %}
 {% block content %}
 	<div class="main_page">
-
-
-		<div class="row">
-			<div class="col-xs-9">
-				<div class="row equal">
-					<div class="col-xs-3">
-						<div class="panel panel-default">
-						<div class="panel-heading panel-mod">
-							<span class="glyphicon glyphicon-calendar glyph-mod"></span>
-						</div>
-							<div class="panel-body">
-							Molecular Weight Calculator
-							<hr>
-							<a class="btn btn-danger" href="http://yoho:28080/utils/bioinfo?action=MolWeight" role="button">> Run</a>		
-						</div>
-						</div>
-					</div>
-					<div class="col-xs-3">
-						<div class="panel panel-default">
-							<div class="panel-heading panel-mod">
-								<span class="glyphicon glyphicon-fire glyph-mod"/>
+	<div class="row">
+		<div class="col-xs-12">
+			<h3>Assay Development Tools</h3>
+			<hr class="categorydivider">
+			<div class="row">
+				<div class="col-xs-4">
+					<a href="/pq" class="panel-links">
+						<div class="panel panel-default app-panel">
+							<div class="panel-heading app-panel-header text-center navglyphs">
+								<span class="glyphicon glyphicon-signal"></span>
 							</div>
-							<div class="panel-body">
-							TM Melting Calculator
-							<br>
-							<br>
-							<hr>
-							<a class="btn btn-danger" href="/tools/melting" role="button">> Run</a>						
-							</div>
-						</div>
-					</div>
-					<div class="col-xs-3">
-						<div class="panel panel-default">
-						<div class="panel-heading panel-mod">
-							<span class="glyphicon glyphicon-cog glyph-mod"></span>
-						</div>
-							<div class="panel-body">
-							Bioinformatics Service Request
-							<br>
-							<hr>
-							<a class="btn btn-danger" href="/helpdesk" role="button">
-							Request
-							</a>
-							</div>
-						</div>
-					</div>
-					<div class="col-xs-3">
-						<div class="panel panel-default">
-						<div class="panel-heading panel-mod">
-							<span class="glyphicon glyphicon-repeat glyph-mod" ></span>
-						</div>
-							<div class="panel-body">Clone(IVT) Service Request
-							<br>
-							<hr>
-							<a class="btn btn-danger" href="/services/clone" role="button">Request</a>					
-							</div>
-						</div>			
-					</div>			
-				</div>
-				<div class="row equal">
-					<div class="col-xs-3">
-						<div class="panel panel-default">
-							<div class="panel-heading panel-mod">
-								<span class="glyphicon glyphicon-flag glyph-mod"/>
-							</div>
-							<div class="panel-body">
-							Training Service Requests
-							<br>
-							<hr>
-							<a class="btn btn-danger" href="/helpdesk" role="button">Request</a>
-							</div>
-						</div>
-					</div>
-					<div class="col-xs-3">
-						<div class="panel panel-default">
-						<div class="panel-heading panel-mod">
-							<span class="glyphicon glyphicon-align-left glyph-mod"></span>
-						</div>
-							<div class="panel-body">
-								MSAE Service Access Request
-								<br>
-								<hr>
-								<a class="btn btn-danger" href="/services/msaeaccess" role="button">Request</a>							
-							</div>
-						</div>			
-					</div>
-					<!-- Future Menu Options -->			
-					<div class="col-xs-3">
-						<div class="panel panel-default">
-						<div class="panel-heading panel-mod">
-							<span class="glyphicon glyphicon-barcode glyph-mod"></span>
-						</div>
-							<div class="panel-body">
+							<div class="panel-body text-center">
 								Performance Quality Analyzer
-								<br>
-								<hr>
-								<a class="btn btn-danger" href="/pq" role="button"> > Run</a>
 							</div>
 						</div>
-					</div>
-					<div class="col-xs-3">
-						<div class="panel panel-default">
-						<div class="panel-heading panel-mod">
-							<span class="glyphicon glyphicon-qrcode glyph-mod"></span>
-						</div>
-							<div class="panel-body">
-								<br>
-								Probit Analysis 
-								<br>
-								<br>
-								<hr>
-								<a class="btn btn-danger" href="http://jasper:3838/rdtools/probit_analysis/" role="button"> > Run</a>
+					</a>
+				</div>
+				<div class="col-xs-4">
+					<a href="http://jasper:3838/rdtools/probit_analysis/" class="panel-links">
+						<div class="panel panel-default app-panel">
+							<div class="panel-heading app-panel-header text-center navglyphs">
+								<span class="glyphicon glyphicon-ruble"></span>
 							</div>
-						</div>						
-					</div>								
+							<div class="panel-body text-center">
+								Probit Analysis
+							</div>
+						</div>
+					</a>
+				</div>
+				<div class="col-xs-4">
+					<!-- Future Tools -->
 				</div>
 			</div>
-			<div class="col-xs-3">
-				<h3>Bioinformatics Feed</h3>
-				Keep up with the latest news!
-	            <a class="twitter-timeline"  href="https://twitter.com/bioinfo_hologic/lists/bioinformatics" data-widget-id="735963767188508672">Tweets from https://twitter.com/bioinfo_hologic/lists/bioinformatics</a>
-	            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
-	            </script>
+
+			<h3>Sequence Analysis Tools</h3>
+			<hr class="categorydivider">
+			<div class="row">
+                <div class="col-xs-4">
+                	<a href="http://bioinfo-3:8181/molWt" class="panel-links">
+	                  <div class="panel panel-default app-panel">
+	                    <div class="panel-heading app-panel-header text-center navglyphs">
+	                      <span class="glyphicon glyphicon-calendar"></span>
+	                    </div>
+	                    <div class="panel-body text-center">
+	                      Molecular Weight Calculator
+	                  
+	                    </div>
+	                  </div>
+	                 </a>
+                </div>
+                <div class="col-xs-4">
+                	<a href="/tools/melting" class="panel-links">
+	                  <div class="panel panel-default app-panel">
+	                    <div class="panel-heading app-panel-header text-center navglyphs">
+	                      <span class="glyphicon glyphicon-fire"></span>
+	                    </div>
+	                    <div class="panel-body text-center">
+	                      TM Melting Calculator	
+	                    </div>
+	                  </div>
+	                 </a>
+                </div>
+                <div class="col-xs-4">
+	                <a href="/tools/seqconversion/" class="panel-links">
+	                  <div class="panel panel-default app-panel">
+	                    <div class="panel-heading app-panel-header text-center navglyphs" id="orbg">
+	                      <span class="glyphicon glyphicon-random"></span>
+	                    </div>
+	                    <div class="panel-body text-center">
+	                      Sequence Conversion Tool
+	                    </div>
+	                  </div>
+	                 </a>
+                </div>
 			</div>
+
+			<h3>Service Requests</h3>
+			<hr class="categorydivider">
+			<div class="row">
+                <div class="col-xs-4">
+                	<a href="https://hologic.sharepoint.com/divisions/diag/rd/bioinformatics/Pages/Gen-Probe-Multiple-Sequence-Alignment-Editor.aspx" class="panel-links">
+	                  <div class="panel panel-default app-panel">
+	                    <div class="panel-heading app-panel-header text-center navglyphs">
+	                      <span class="glyphicon glyphicon-align-left"></span>
+	                    </div>
+	                    <div class="panel-body text-center">
+	                      MSAE Access Request
+	                    </div>
+	                  </div>
+	                 </a>
+                </div>
+                <div class="col-xs-4">
+                	<a href="/services/clone" class="panel-links">
+	                  <div class="panel panel-default app-panel">
+	                    <div class="panel-heading app-panel-header text-center navglyphs" id="gbg">
+	                      <span class="glyphicon glyphicon-repeat"></span>
+	                    </div>
+	                    <div class="panel-body text-center">
+	                      Clone(IVT) Service Request	
+	                    </div>
+	                  </div>
+	                 </a>
+                </div>
+                <div class="col-xs-4">
+                  <!-- Future Requests -->
+                </div>
+			</div>
+
 		</div>
+	</div>
+
+
+
+
+
+
+
 	</div>
 {% endblock %}
 
