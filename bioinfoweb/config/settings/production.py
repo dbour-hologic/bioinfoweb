@@ -27,7 +27,7 @@ SECRET_KEY = get_secret("SECRET_KEY")
 DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.postgresql_psycopg2',
-		'NAME':'testlaunch',
+		'NAME':'bioinfow',
 		'USER':'davidb',
 		'PASSWORD':'',
 		'HOST':'10.200.254.3',
