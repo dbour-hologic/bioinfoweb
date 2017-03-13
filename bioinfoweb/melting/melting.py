@@ -1,7 +1,7 @@
 # Melting program to send raw bash commands
 import os
 import subprocess
-from config import settings
+from config.settings import common
 
 # From DJANGO
 # ----> DJANGO will convert the JSON to string
@@ -53,7 +53,7 @@ def queryBuilder(queryObject):
 def meltingExec(command):
 
 	# Sets up the environmental variable to execute MELTING 5
-	base_path = settings.BASE_DIR
+	base_path = common.PROJECT_ROOT
 	melt_path = os.path.join(base_path, "melting5", "MELTING5.1.1", "executable")
 	add_path = os.environ['PATH'] + ":" + melt_path
 
