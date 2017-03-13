@@ -50,7 +50,7 @@ urlpatterns += [
     url(r'^helpdesk/', include(helpdesk_urls)),
 ]
 
-# Flatpages
+# A capture all url pattern for FlatPages
 urlpatterns += [
     url(r'^(?P<url>.*/)$', views.flatpage, name='flatpage')
 ]

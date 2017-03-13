@@ -141,4 +141,16 @@ STATICFILES_FINDERS_IGNORE = [
 	'*uncompressed*',
 ]
 
+# The SITE_ID Attribute is used to assign the flat pages
+# a main website to attach itself to; you can attach
+# multiple websites to a single page ID: i.e.
+#
+# SITE_ID = 1 - www.site1.com/contact.html
+# SITE_ID = 2 - www.site2.com/contact.html
+# SITE_ID = 3 - www.site3.com/contact.html
+# All use the same /contact.html, but the site ID
+# is unique to only ONE of the websites.
+# 
+# https://docs.djangoproject.com/en/dev/ref/contrib/flatpages/
+
 SITE_ID = 3
