@@ -55,8 +55,8 @@ span.glyph-mod {
 	background-repeat: no-repeat;
 	background-size: 100%;
 	background-position: center;
-	padding-bottom: 300px;
-	background: #517396;
+	padding-bottom: 120px;
+	background: #111C61;
 }
 
 #bioinfo_header {
@@ -68,6 +68,7 @@ span.glyph-mod {
 	left: 10px;
 }
 
+
 #footer_main {
 	background: white;
 	padding: 100px;
@@ -75,7 +76,7 @@ span.glyph-mod {
 
 .jumbotron {
 	margin-top: 0px;
-	background: #517396;
+	background: #111C61;
 	position: relative;
 }
 

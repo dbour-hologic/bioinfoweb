@@ -37,6 +37,8 @@ DJANGO_APPS = [
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
 	'django.contrib.humanize',
+	'django.contrib.sites',
+	'django.contrib.flatpages',
 ]
 
 LOCAL_APPS = [
@@ -138,3 +140,5 @@ STATICFILES_FINDERS_IGNORE = [
 	'*tests*',
 	'*uncompressed*',
 ]
+
+SITE_ID = 3

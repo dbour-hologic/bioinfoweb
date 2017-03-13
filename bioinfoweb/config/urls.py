@@ -17,6 +17,7 @@ from django.conf.urls import include, url, patterns
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.flatpages import views
 from portal import urls as portal_urls
 from services import urls as services_urls
 from helpdesk import urls as helpdesk_urls
@@ -40,13 +41,18 @@ urlpatterns = [
     url(r'^tools/', include(melting_urls)),
     url(r'^reportbug/', include(reportbug_urls)),
     url(r'^biomatcher/', include(biomatcher_urls)),
-    url(r'^pq/', include('pqanalysis.urls'))
+    url(r'^pq/', include('pqanalysis.urls')),
 ]
 
 
 # Third party applications
 urlpatterns += [
     url(r'^helpdesk/', include(helpdesk_urls)),
+]
+
+# Flatpages
+urlpatterns += [
+    url(r'^(?P<url>.*/)$', views.flatpage, name='flatpage')
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

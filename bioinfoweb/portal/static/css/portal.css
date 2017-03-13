@@ -10,34 +10,20 @@
 	color: red;
 }
 
-
-#title_page {
-  background-repeat: no-repeat;
-  background-size: 100px;
-  background-position: center;
-  padding-bottom: 130px;
-  background: #FFFFFF;
+#logo
+{
+  padding-top: 10px;
+  font-size: 100px;
+  font-family: 'Raleway', sans-serif;
 }
 
-#bioinfo_header
-{
-  font-weight: bold;
-  color: black;
-  font-size: 100px;
-  bottom: 40px;
-  left: 350px;
-  position: absolute;
+#title_page {
+  padding-top: 100px;
 }
 
 #footer_main {
 	background: white;
 	padding: 100px;
-}
-
-.jumbotron {
-	margin-top: 180px;
-	background: #FFFFFF;
-	position: relative;
 }
 
 .panel-mod {
@@ -46,12 +32,12 @@
 
 .panel-body {
 	font-family: 'Noto Sans', sans-serif;
-	font-size: 1.2em;
+	font-size: 1em;
 }
 
 .navglyphs
 {
-  font-size: 100px;
+  font-size: 30px;
 }
 
 a.panel-links:link,
@@ -94,7 +80,7 @@ a.panel-links:hover > .app-panel
   font-family: 'Raleway', sans-serif;
 }
 
-.crazy {
+.splash {
   color: white;
   font-size: 80px;
   text-align: center;
@@ -124,4 +110,14 @@ a.panel-links:hover > .app-panel
   top: 0;
   width: 100%;
   z-index: 10;
+}
+
+.fullstretch {
+  position: relative;
+  background: white;
+  color: black;
+  width: 100%;
+  height: 100%;
+  display: table;
+  text-align: center;
 }

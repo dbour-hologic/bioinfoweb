@@ -21,10 +21,11 @@
 {% block extranav %}
 {% endblock %}
 
-<!-- Customized Navbar -->
-{% block customnav %}
+<!-- Fixed vs Static Navigation Bar -->
 <div id="nav">
+{% block customnav %}
 	<nav class="navbar navbar-default navbar-fixed-top">
+{% endblock %}	
 		<div class="container">
 			<div class="navbar-header">
 				<a class="navbar-brand" href="#">
@@ -41,16 +42,11 @@
 					<span class="caret"></span>
 					</a>
 						<ul class="dropdown-menu">
-							<li><a href="/helpdesk">
-							<span class="glyphicon glyphicon-cog"> | </span>
-							Bioinformatics Service Request
-							</a>
-							</li>
 							<li><a href="{% url 'clone_services' %}">
 							<span class="glyphicon glyphicon-repeat"> | </span>
 							Clone(IVT) Request
 							</a></li>
-							<li><a href="{% url 'msae_access' %}">
+							<li><a href="https://hologic.sharepoint.com/divisions/diag/rd/bioinformatics/Pages/Gen-Probe-Multiple-Sequence-Alignment-Editor.aspx">
 							<span class="glyphicon glyphicon-align-left"> | </span>
 							MSAE Access Request
 							</a>
@@ -95,7 +91,7 @@
 							Sequence Conversion
 							</a>
 							</li>
-							<li><a href="http://yoho:28080/utils/bioinfo?action=MolWeight">
+							<li><a href="http://bioinfo-3:8181/molWt">
 							<span class="glyphicon glyphicon-calendar"> | </span>
 							Molecular Weight Calculator
 							</a>
@@ -106,12 +102,12 @@
 							</a>
 							</li>
 							<li><a href="{% url 'add_attachment' %}">
-							<span class="glyphicon glyphicon-barcode"> | </span>
+							<span class="glyphicon glyphicon-signal"> | </span>
 							PQ Analysis
 							</a>
 							</li>
 							<li><a href="http://jasper:3838/rdtools/probit_analysis/">
-							<span class="glyphicon glyphicon-qrcode"> | </span>
+							<span class="glyphicon glyphicon-ruble"> | </span>
 							Probit Analysis
 							</a>
 							</li>							
@@ -125,13 +121,13 @@
 						</ul>
 					</a>
 					</li>
-					<li><a href="mailto:david.bour@hologic.com">Contact</a></li>
-					<li><a href="{% url 'bug' %}" style="color: red"><i>Report Bug</i> </a></li>
+					<li><a href="{% url 'flatpage' url='contacts/' %}">Contact</a></li>
+					<!-- <li><a href="{% url 'bug' %}" style="color: red"><i>Report Bug</i> </a></li> -->
 				</ul>
 			</div>
 	</nav>
 </div>
-{% endblock %}
+
 
 <body>
 
@@ -143,7 +139,11 @@
 	</div>
 	{% endblock %}
 
+	<!-- Make all child content align to middle -->
+	{% block fullcontent %}
 	<div class="fullstretch">
+	{% endblock %}
+
 		<div class="container">
 				{% block content %}
 				{% endblock %}

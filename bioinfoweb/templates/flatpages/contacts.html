@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/contacts.css' %}">
+{% endblock %}
+{% block fullcontent %}
+{% endblock %}
+{% block banner %}
+	<div class="fullstretch">
+		<div id="title_page">
+		</div>
+
+		<div class="jumbotron">
+			<div id="bioinfo_header">
+				Contacts
+			</div>
+		</div>
+	</div>
+{% endblock %}
+{% block content %}
+<div class="fullstretch">
+	<div class="row">
+		<div class="col-xs-4">
+		<b>David Bour</b>
+		<br><i>Web Administrator</i>
+		<br>email: david.bour@hologic.com
+
+		</div>
+		<div class="col-xs-4">
+		<b>Derek Leung</b>
+		<br>email: Derek.Leung@hologic.com
+
+		</div>
+		<div class="col-xs-4">
+		<b>Tongjia Yin</b>
+		<br>email: Tongjia.Yin@hologic.com
+
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-2"></div>
+		<div class="col-xs-4">
+		<b>Jennifer Bungo</b>
+		<br>email: Jennifer.Bungo@hologic.com
+
+		</div>
+		<div class="col-xs-4">
+		<b>Wilson Wang</b>
+		<br>email: Wilson.Wang@hologic.com
+		
+		</div>
+		<div class="col-xs-2"></div>
+	</div>
+</div>
+{% endblock %}
