@@ -112,11 +112,11 @@ TEMPLATES = [
 
 # WSGI CONFIGURATION
 # ---------------------------------------------------
-WSGI_APPLICATION = 'config.wsgi.application'
+WSGI_APPLICATION = 'bioinfow.wsgi.application'
 
 # URL CONFIGURATION
 # ---------------------------------------------------
-ROOT_URLCONF = 'config.urls'
+ROOT_URLCONF = 'bioinfow.urls'
 
 # MEDIA CONFIGURATION
 # ---------------------------------------------------
