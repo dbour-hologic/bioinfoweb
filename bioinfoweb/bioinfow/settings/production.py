@@ -3,12 +3,13 @@
 
 from .common import *
 from django.core.exceptions import ImproperlyConfigured
+import json
 
-# DEBUG Messages OFF
-DEBUG = False
+# DEBUG Messages OFF | Will Keep True Until Media Served Properly
+DEBUG = True
 
 # ALLOWED_HOSTS
-ALLOWED_HOSTS = ["bioinfo-3","bioinfo-3:81"]
+ALLOWED_HOSTS = ["bioinfo-3","bioinfo-3:81","10.200.254.3"]
 
 # JSON-BASED Secret Module
 with open(join(PROJECT_ROOT, "secrets.json")) as f:
