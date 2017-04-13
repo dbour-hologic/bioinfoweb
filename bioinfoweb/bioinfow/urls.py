@@ -50,9 +50,10 @@ urlpatterns += [
     url(r'^helpdesk/', include(helpdesk_urls)),
 ]
 
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 # A capture all url pattern for FlatPages
 urlpatterns += [
     url(r'^(?P<url>.*/)$', views.flatpage, name='flatpage')
 ]
 
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

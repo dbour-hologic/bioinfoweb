@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/msae.css' %}">
+{% endblock %}
+{% block fullcontent %}
+{% endblock %}
+{% block banner %}
+    <div class="fullstretch">
+		<div id="title_page">
+		</div>
+
+		<div class="jumbotron">
+			<div id="bioinfo_header">
+				MSAE
+			</div>
+		</div>
+	</div>
+{% endblock %}
+{% block content %}
+<div class="fullstretch">
+    <div class="row">
+        <div class="col-xs-12" id="aboutDescription">
+            <h1>MSAE Version 6.1.4</h1>
+            <p> The Gen-Probe Multiple Sequence Alignment Editor was designed to provide a secure place to design,
+                store and share sequence information. It offers basic alignment tools, search tools,
+                a Gen-Probe specific oligo design interface and the Gen-Probe Oligo Database.
+            </p>
+            <a href="http://bioinfo/editor/">User Guide</a>
+            <br>
+            A comprehensive overview of the multiple sequence alignment editor.
+            <br>
+            <br>
+            <a href="/media/msae/condensedguide.doc">Condensed Guide</a>
+            <br>
+            Brief guide on the multiple sequence alignment editor.
+            <br>
+            <br>
+            <a href="/media/msae/request.doc">Multiple Sequence Alignment Editor - Account Service Request Form</a>
+            <p> (All users must have departmental approval before using the Editor.
+                Major changes to existing accounts must also be approved.
+                Please fill out and print the request form, obtain required signatures,
+                and remit to the Bioinformatics group.)
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
