@@ -153,4 +153,5 @@ STATICFILES_FINDERS_IGNORE = [
 # 
 # https://docs.djangoproject.com/en/dev/ref/contrib/flatpages/
 
+# Change this to SITE_ID = 1 on the production server
 SITE_ID = 3
