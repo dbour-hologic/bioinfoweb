@@ -371,7 +371,7 @@ $(document).ready(function() {
 	* represented in the database.
 	*/
 	$("#load-limitslist-default").click(function() {
-		dynamicLimitsListRetrieve(6);
+		dynamicLimitsListRetrieve(1);
 	});		
 
 	/**
