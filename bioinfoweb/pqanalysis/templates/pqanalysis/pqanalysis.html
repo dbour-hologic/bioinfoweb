@@ -1,6 +1,5 @@
-<!DOCTYPE html">
+<!DOCTYPE html>
 {% load staticfiles %}
-
 
 <html>
 <head>
@@ -55,18 +54,32 @@
 
 			<div class="checkbox">
 				<legend>Choose assay type:</legend>
-				<label for="paraflu">
-					<input type="radio" name="assay-analysis" id="paraflu" value="Paraflu" checked="checked"/>
-					Paraflu
-				</label>
-				<label>
-					<input type="radio" name="assay-analysis" id="flu" value="Flu A/B/RSV"/>
-					Flu
-				</label>
-				<label>
-					<input type="radio" name="assay-analysis" id="amr" value="AdV/hMPV/RV"/>
-					AMR
-				</label>
+				<select class="form-control" id="assay_option_selection">
+					<option value="fusion">Fusion</option>
+					<option value="tma">TMA</option>
+				</select>
+				<div id="fusion_checkbox_options">
+					<h4>Fusion</h4>
+					<label>
+						<input type="radio" name="assay-analysis" id="paraflu" value="Paraflu"/>
+						Paraflu
+					</label>
+					<label>
+						<input type="radio" name="assay-analysis" id="flu" value="Flu A/B/RSV"/>
+						Flu
+					</label>
+					<label>
+						<input type="radio" name="assay-analysis" id="amr" value="AdV/hMPV/RV"/>
+						AMR
+					</label>
+				</div>
+				<div id="tma_checkbox_options">
+					<h4>TMA</h4>
+					<label>
+						<input type="radio" name="assay-analysis" id="qHIV" value="qHIV"/>
+						qHIV
+					</label>
+				</div>
 			</div>
 			<br>
 
@@ -187,7 +200,7 @@
 					<h3>Description</h3>
 					<p>PQ Analysis program is designed for internal research use only.
 						The PQ Analysis program serves to generate a report on Panther data.
-						Currently, the program only supports paraflu.</p>
+					</p>
 					</div>
 					<div class="col-xs-12">
 						<h3>Instructions</h3>
