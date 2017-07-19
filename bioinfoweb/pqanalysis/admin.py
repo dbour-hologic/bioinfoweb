@@ -1,3 +1,14 @@
 from django.contrib import admin
+from .models import Worklist, Limits
 
-# Register your models here.
+
+class WorklistAdmin(admin.ModelAdmin):
+    pass
+
+
+class LimitsAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(Worklist, WorklistAdmin)
+admin.site.register(Limits, LimitsAdmin)
+
