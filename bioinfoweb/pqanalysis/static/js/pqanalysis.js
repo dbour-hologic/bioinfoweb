@@ -100,7 +100,7 @@ $(document).ready(function() {
 	* represented in the database.
 	*/
 	$("#load-worklist-default").click(function() {
-		dynamicWorklistRetrieve(11);
+		dynamicWorklistRetrieve();
 	});	
 
 	/**
@@ -397,7 +397,7 @@ $(document).ready(function() {
 	* represented in the database.
 	*/
 	$("#load-limitslist-default").click(function() {
-		dynamicLimitsListRetrieve(1);
+		dynamicLimitsListRetrieve();
 	});		
 
 	/**
