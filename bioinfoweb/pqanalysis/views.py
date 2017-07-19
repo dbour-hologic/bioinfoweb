@@ -22,6 +22,10 @@ def create_timestamp():
 
 
 def add_attachment(request):
+    """
+    add_attachment is the main entry point of the program. A user
+    may POST or GET the page for the pqanalysis to take place.
+    """
     if request.method == "POST":
         analysis_id = request.POST['analysis_id']
         worklist_options = request.POST.get('file_upload_selection', False)
@@ -33,7 +37,7 @@ def add_attachment(request):
         combine_options = request.POST.get('combine-file')
         submitter = request.POST['submitter']
         files = request.FILES.getlist('file[]')
-
+        # Create a unique_id to tie the files uploaded to a unique group identifier
         format_analysis_id = analysis_id + create_timestamp()
 
         for a_file in files:
@@ -64,17 +68,11 @@ def add_attachment(request):
                                    graph_options,
                                    ignoreflag_options)
 
-    # Have to find a better methd for this one later
-    try:
-        worklist_template = Worklist.objects.get(filename="paraflu-default-worklist.csv")
-    except ObjectDoesNotExist:
-        worklist_template = None
 
     worklist_form = WorklistInputForm();
     limits_form = LimitsInputForm();
 
     return render(request, "pqanalysis/pqanalysis.html", {"worklist_form": worklist_form,
-                                                          "worklist_template": worklist_template,
                                                           "limits_form": limits_form})
 
 
@@ -178,6 +176,7 @@ def add_attachment_done(request,
     while True:
 
       line = logs.stdout.readline()
+      print(line)
       log_str += line + "\n"
 
       if "Execution halted" in line:
