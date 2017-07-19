@@ -1,5 +1,4 @@
 from os.path import abspath, basename, dirname, join, normpath
-from os import listdir
 from sys import path
 
 # BIOINFORMATICS WEB CONFIGURATION
@@ -117,11 +116,6 @@ WSGI_APPLICATION = 'bioinfow.wsgi.application'
 # URL CONFIGURATION
 # ---------------------------------------------------
 ROOT_URLCONF = 'bioinfow.urls'
-
-# MEDIA CONFIGURATION
-# ---------------------------------------------------
-MEDIA_ROOT = normpath(join(PROJECT_ROOT, 'files', 'media'))
-MEDIA_URL = '/media/'
 
 # STATIC FILE CONFIGURATION
 # ---------------------------------------------------

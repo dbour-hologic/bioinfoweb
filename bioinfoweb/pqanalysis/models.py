@@ -1,7 +1,4 @@
 from django.db import models
-from django.utils.timezone import now as timezone_now
-import random
-import string
 import os
 
 def upload_to(instance, filename):
