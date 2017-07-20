@@ -38,6 +38,10 @@ DATABASES = {
   }
 }
 
+# OPERATING SYSTEM
+# ---------------------------------------------------
+OPERATING_SYSTEM = get_secret("OS")
+
 # MEDIA CONFIGURATION
 # ---------------------------------------------------
 MEDIA_ROOT = normpath(join(PROJECT_ROOT, 'files', 'media'))
