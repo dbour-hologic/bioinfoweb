@@ -34,18 +34,24 @@ $(document).ready(function() {
      */
 	var get_assay_option = $('#assay_option_selection').val();
 	$('#tma_checkbox_options').hide();
+	$('#TMAAdvanced').hide();
 
 	$('#assay_option_selection').change(function() {
 	    get_assay_option = $('#assay_option_selection').val();
 		if (get_assay_option === 'tma') {
 			$('#tma_checkbox_options').show();
 			$('#fusion_checkbox_options').hide();
+			$('#FusionAdvanced').hide();
+			$('#TMAAdvanced').show();
 		}
 		else {
 			$('#tma_checkbox_options').hide();
 			$('#fusion_checkbox_options').show();
+			$('#FusionAdvanced').show();
 		}
 	});
+
+
 
 
 	/*************************************************************

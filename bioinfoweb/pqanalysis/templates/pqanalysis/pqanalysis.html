@@ -3,586 +3,636 @@
 
 <html>
 <head>
-	<!-- The above 3 meta tags must come first in the head -->
-	<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-	<link rel="stylesheet" href="{% static 'css/non-responsive.css' %}">
-	<link rel="stylesheet" href="{% static 'css/pqanalysis.css' %}">
-	<link rel="stylesheet" href="{% static 'css/jquery.fileupload-ui.css' %}">
+    <!-- The above 3 meta tags must come first in the head -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/non-responsive.css' %}">
+    <link rel="stylesheet" href="{% static 'css/pqanalysis.css' %}">
+    <link rel="stylesheet" href="{% static 'css/jquery.fileupload-ui.css' %}">
 
-	<link href='https://fonts.googleapis.com/css?family=Noto+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400,700' rel='stylesheet' type='text/css'>
 </head>
 
 <nav class="navbar navbar-inverse">
-	<div class="container-fluid">
-		<div class="nav-bar-header">
-			<a class="navbar-brand" href="#">PQ Analysis</a>
-		</div>
-	</div>
+    <div class="container-fluid">
+        <div class="nav-bar-header">
+            <a class="navbar-brand" href="#">PQ Analysis</a>
+        </div>
+    </div>
 
-	<div class="collapse navbar-collapse">
-		<ul class="nav navbar-nav">
-			<li><a href="{% url 'index' %}"><span class="glyphicon glyphicon-home"></span>  Bioinformatics Home</a></li>
-			<li><a href="{% url 'add_attachment' %}"><span class="glyphicon glyphicon-tasks"></span> PQ Home</a></li>
-			<li><a href="{% url 'view_results' %}"><span class="glyphicon glyphicon-hdd"></span> PQ Results</a></li>
-		</ul>
-	</div>
+    <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+            <li><a href="{% url 'index' %}"><span class="glyphicon glyphicon-home"></span> Bioinformatics Home</a></li>
+            <li><a href="{% url 'add_attachment' %}"><span class="glyphicon glyphicon-tasks"></span> PQ Home</a></li>
+            <li><a href="{% url 'view_results' %}"><span class="glyphicon glyphicon-hdd"></span> PQ Results</a></li>
+        </ul>
+    </div>
 </nav>
 
 
-
-
 <div class="row">
-	<div class="col-xs-2">
-	</div>
-	<div class="col-xs-6">
+    <div class="col-xs-2">
+    </div>
+    <div class="col-xs-6">
 
-		<h1>PQ Analysis</h1>
+        <h1>PQ Analysis</h1>
 
-		<form action="" method="POST" id="pqupload" enctype="multipart/form-data">
+        <form action="" method="POST" id="pqupload" enctype="multipart/form-data">
 
-			{% csrf_token %}
+            {% csrf_token %}
 
-			<div class="form-group">
-				<b>Analysis ID:</b> <input class="form-control required" type="text" id='analysis_id' name="analysis_id">
-				<p class="help-block">Enter the name of your run here. No special characters/spaces, only letters and numbers.</p>
-			</div>
+            <div class="form-group">
+                <b>Analysis ID:</b> <input class="form-control required" type="text" id='analysis_id'
+                                           name="analysis_id">
+                <p class="help-block">Enter the name of your run here. No special characters/spaces, only letters and
+                    numbers.</p>
+            </div>
 
-			<div class="form-group">
-				<b>Submitter:</b> <input class="form-control required" type="text" id='submitter' name="submitter">
-				<p class="help-block">Please enter your name.</p>
-			</div>
+            <div class="form-group">
+                <b>Submitter:</b> <input class="form-control required" type="text" id='submitter' name="submitter">
+                <p class="help-block">Please enter your name.</p>
+            </div>
 
-			<div class="checkbox">
-				<legend>Choose assay type:</legend>
-				<select class="form-control" id="assay_option_selection">
-					<option value="fusion">Fusion</option>
-					<option value="tma">TMA</option>
-				</select>
-				<div id="fusion_checkbox_options">
-					<h4>Fusion</h4>
-					<label>
-						<input type="radio" name="assay-analysis" id="paraflu" value="Paraflu"/>
-						Paraflu
-					</label>
-					<label>
-						<input type="radio" name="assay-analysis" id="flu" value="Flu A/B/RSV"/>
-						Flu
-					</label>
-					<label>
-						<input type="radio" name="assay-analysis" id="amr" value="AdV/hMPV/RV"/>
-						AMR
-					</label>
-				</div>
-				<div id="tma_checkbox_options">
-					<h4>TMA</h4>
-					<label>
-						<input type="radio" name="assay-analysis" id="qHIV" value="qHIV"/>
-						qHIV
-					</label>
-				</div>
-			</div>
-			<br>
+            <div class="checkbox">
+                <legend>Choose assay type:</legend>
+                <select class="form-control" id="assay_option_selection">
+                    <option value="fusion">Fusion</option>
+                    <option value="tma">TMA</option>
+                </select>
+                <div id="fusion_checkbox_options">
+                    <h4>Fusion</h4>
+                    <label>
+                        <input type="radio" name="assay-analysis" id="paraflu" value="Paraflu"/>
+                        Paraflu
+                    </label>
+                    <label>
+                        <input type="radio" name="assay-analysis" id="flu" value="Flu A/B/RSV"/>
+                        Flu
+                    </label>
+                    <label>
+                        <input type="radio" name="assay-analysis" id="amr" value="AdV/hMPV/RV"/>
+                        AMR
+                    </label>
+                </div>
+                <div id="tma_checkbox_options">
+                    <h4>TMA</h4>
+                    <label>
+                        <input type="radio" name="assay-analysis" id="qHIV" value="qHIV"/>
+                        qHIV
+                    </label>
+                </div>
+            </div>
+            <br>
 
-			<div class="form-group">
-				<label for="UploadFiles">Upload Files</label>
-				<input class="required" type="file" id="file[]" name="file[]" multiple/>
-			</div>
-			<p class="help-block">valid extensions: .csv, .lis</p>
+            <div class="form-group">
+                <label for="UploadFiles">Upload Files</label>
+                <input class="required" type="file" id="file[]" name="file[]" multiple/>
+            </div>
+            <p class="help-block">valid extensions: .csv, .lis</p>
 
-			<div>
-				<output id="list"></output>
-			</div>
+            <div>
+                <output id="list"></output>
+            </div>
 
-			<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-				<div class="panel panel-default">
-					<div class="panel-heading" role="tab" id="headingOne">
-						<h3 class="panel-title">
-							<a role="button" data-toggle="collapse" data-parent="#accordion" href="#advancedOptions">
-								<span class="glyphicon glyphicon-chevron-down"></span> Advanced Options
-							</a>
-						</h3>
-						<div id="advancedOptions" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-							<hr>
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingOne">
+                        <h3 class="panel-title">
+                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#advancedOptions">
+                                <span class="glyphicon glyphicon-chevron-down"></span> Advanced Options
+                            </a>
+                        </h3>
+                        <div id="advancedOptions" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingOne">
+                            <hr/>
+                            <div id="FusionAdvanced">
+                                <b>File Combiner</b>
+                                <p class="help-block">Please check this if you do not want to perform a PQ analysis
+                                    and only want a combined LIS & PCR file of all files selected above.</p>
+                                <div class="checkbox">
+                                    <label for="combinefiles">
+                                        <input type="checkbox" name="combine-file" id="combine-file"
+                                               value="combine-file"/>
+                                        Download Combined File Only
+                                    </label>
+                                </div>
+                                <hr>
 
-							<b>File Combiner</b>
-							<p class="help-block">Please check this if you do not want to perform a PQ analysis
-								and only want a combined LIS & PCR file of all files selected above.</p>
-								<div class="checkbox">
-									<label for="combinefiles">
-										<input type="checkbox" name="combine-file" id="combine-file" value="combine-file"/>
-										Download Combined File Only
-									</label>
-								</div>
-								<hr>
+                                <b>Worklist</b>
+                                <p class="help-block">The worklist is a label file specifing the negative and postive
+                                    samples.
+                                    <br>
+                                    <b>Tip:</b>
+                                    Selecting any of the previously uploaded worklists will load its content into the
+                                    worklist upload dialog.</p>
 
-								<b>Worklist</b>
-								<p class="help-block">The worklist is a label file specifing the negative and postive samples. 
-								<br>
-								<b>Tip:</b> 
-								Selecting any of the previously uploaded worklists will load its content into the worklist upload dialog.</p>
+                                {{ worklist_form.file_upload_selection_fusion }}
 
-								{{ worklist_form.file_upload_selection }}
+                                <br>
 
-								<br>
+                                <div class="row">
+                                    <div class="col-xs-12">
+											<span id="worklist-modal-button" class="btn btn-primary"
+                                                  data-target="#worklist-upload" data-toggle="modal">
+												Worklist Upload
+											</span>
+                                        <span class="btn btn-danger" data-target="#worklist-help" data-toggle="modal">
+												Help
+											</span>
+                                    </div>
+                                    <br>
+                                </div>
+                                <br>
+                                <b>Limits</b>
+                                <p class="help-block">The limits list is a value cutoff file specifing the threshold
+                                    ranges.
+                                    <br>
+                                    <b>Tip:</b>
+                                    Selecting any of the previously uploaded limits will load its content into the
+                                    limits list upload dialog.</p>
 
-								<div class="row">
-									<div class="col-xs-12">
-										<span id="worklist-modal-button" class="btn btn-primary" data-target="#worklist-upload" data-toggle="modal">
-											Worklist Upload
-										</span>
-										<span class="btn btn-danger" data-target="#worklist-help" data-toggle="modal">
-											Help
-										</span>
-									</div>
-									<br>
-								</div>
-								<br>
-								<b>Limits</b>
-								<p class="help-block">The limits list is a value cutoff file specifing the threshold ranges.
-								<br>
-								<b>Tip:</b> 
-								Selecting any of the previously uploaded limits will load its content into the limits list upload dialog.</p>
-								{{ limits_form.file_limits_upload_selection }}
+                                {{ limits_form.file_limits_upload_selection_fusion }}
 
-								<br>
+                                <br>
 
-								<div class="row">
-									<div class="col-xs-12">
-										<span class="btn btn-primary" data-target="#limits-upload" data-toggle="modal">
-											Limits Upload
-										</span>
-										<span class="btn btn-danger" data-target="#limitslist-help" data-toggle="modal">
-											Help
-										</span>										
-									</div>
-								</div>
-								<br>
+                                <div class="row">
+                                    <div class="col-xs-12">
+											<span class="btn btn-primary" data-target="#limits-upload"
+                                                  data-toggle="modal">
+												Limits Upload
+											</span>
+                                        <span class="btn btn-danger" data-target="#limitslist-help" data-toggle="modal">
+												Help
+											</span>
+                                    </div>
+                                </div>
+                                <br>
 
-								<b>Flag Options</b>
-								<p class="help-block">Ignore flags called by Panther in analysis; will not take flags into account.</p>
-									<div class="checkbox">
-										<label for="ignoreflags">
-											<input type="checkbox" name="ignoreflags" id="ignoreflags" value="ignoreflags"/>
-											Ignore flags
-										</label>
-									</div>								
-								<br>
+                                <b>Flag Options</b>
+                                <p class="help-block">Ignore flags called by Panther in analysis; will not take flags
+                                    into account.</p>
+                                <div class="checkbox">
+                                    <label for="ignoreflags">
+                                        <input type="checkbox" name="ignoreflags" id="ignoreflags" value="ignoreflags"/>
+                                        Ignore flags
+                                    </label>
+                                </div>
+                                <br>
 
-								<b>Stats Filter</b>
-								<p class="help-block">Stats filter allows selection of specific data views.</p>
-								<select class="form-control" name="stats-option">
-									<option value="none">None (default)</option>
-									<option value="LIS/Failed">LIS/Failed (Displays data that failed PQ threshold and has invalids/errors).</option>
-									<option value="LIS">LIS (Displays data that is invalid or has an error).</option>
-									<option value="Failed">Failed (Displays data that failed to meet PQ thresholds).</option> 
-								</select>
-								<br>
-								<b>Graph Options</b>
-								<p class="help-block">Select data view: FVF, Time, Instrument</p>
-								<select class="form-control" name='graph-options'>
-									<option value="time">Time (Displays graphical statistics over a specific time period).</option>
-									<option value="fvf">File vs File (Displays graphical statistics across different files).</option>
-									<option value="instrument">Instrument (Displays graphical statistics across different Panther serial numbers).</option>
-									<option value="none">None (No graphs are displayed).</option>
-								</select>
-								<hr>
-								<br>
-							</div>
-						</div>
-					</div>
-				</div>
-				<button class="btn btn-primary" type="Submit">SUBMIT</button>
-		</form>
-		</div>
-		<div class="col-xs-4">
-			<div class="row">
-				<div class="col-xs-12">
-					<h3>Description</h3>
-					<p>PQ Analysis program is designed for internal research use only.
-						The PQ Analysis program serves to generate a report on Panther data.
-					</p>
-					</div>
-					<div class="col-xs-12">
-						<h3>Instructions</h3>
-						<p>
-							<ol>
-								<li>Enter an analysis name to identify your run.</li>
-								<li>Enter your name.</li>
-								<li>Choose the assay type. </li>
-								<li>Select one or multiple PCR/LIS files <br> (tip: place all desired files in one folder)</li>
-								<li>(Optional) Set advanced options</li>
-							</ol>
-						</p>
-					</div>
-					<div class="col-xs-12">
-						<h3>Contacts</h3>
-						<p>For feature additions, bug reports, or any other additional questions, please contact
-							the following users:</p>
-							<ul>
-								<li>David Bour
-									<ul>
-										<li>Contact for any issues related to the web application/interface or general questions.</li>
-										<li>Email: <a href="mailto:david.bour@hologic.com"> david.bour@hologic.com </a></li>
-									</ul>
-								</li>
-								<li>Kyle Suico</li>
-								<ul>
-									<li>Contact for any issues involving the PQ Report; statistical display, graphical display, etc.</li>
-									<li>Email: <a href="mailto:Kyle.Suico@hologic.com"> Kyle.Suico@hologic.com </a></li>
-								</ul>
-								<li>Wilson Wang
-									<ul>
-										<li>Contact for any issues involving the PQ Report; statistical display, graphical display, etc.</li>
-										<li>Email: <a href="mailto:Wilson.Wang@hologic.com"> Wilson.Wang@hologic.com </a></li>
-									</ul>
-								</li>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-
-
-			<div class="modal fade" id="worklist-help" tabindex="-1" role="dialog">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span></button>
-								<h4 class="modal-title">Worklist Help</h4>
-							</div>
-							<div class="modal-body">
-								<p>
-									<b>Description:</b> The worklist acts
-									as a label file for the program to distinguish between positive samples, negative
-									samples, positive controls, negative controls. 
-									<br>
-									<br>
-									<b>Instructions:</b> There are three dialog boxes per row that you must fill out
-									completely. The content within in box is case sensitive. The row contents are as follows
-									<br>
-									<br>
-									<table>
-										<tr>
-											<th> Sample Name </th>
-											<th>&nbsp;&nbsp;</th>
-											<th> Sample Type </th>
-											<th>&nbsp;&nbsp;</td></th>
-											<th> Logical Vector </th>
-										</tr>
-										<tr>
-											<td>FSPANELA</td>
-											<td><b>,</b>&nbsp;&nbsp;</td>
-											<td>Panel A</td>
-											<td><b>,</b>&nbsp;&nbsp;</td>
-											<td>ns</td>
-										</tr>
-										<tr>
-											<td>POS Control</td>
-											<td><b>,</b>&nbsp;&nbsp;</td>
-											<td>Positive Control</td>
-											<td><b>,</b>&nbsp;&nbsp;</td>
-											<td>ps</td>
-										</tr>
-									</table>
-
-									<br>
-									The <b>term</b> is used to describe what the samples are labelled as. <b>Type</b> is 
-									used to describe what type of samples they are categorized as; valid type labels are 
-									Panel A, Positive Control, Negative Control, Panel C. <b>Logical vector</b> categorizes
-									the entire row as a positive sample type (ps) or negative sample type (ns). For a detailed example, 
-									please click on <u>"Load Example"</u> under the <u>Worklist Upload</u> tab. The template contains all currently known
-									labels for the Paraflu assay.
-
-								</p>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="modal modal-wide fade" id="worklist-upload" tabindex="-1" role="dialog">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h4 class="modal-title">Worklist Upload</h4>
-						</div>
-						<div class="modal-body">
-							<div style="display: none" id="success-upload" class="alert alert-success" role="alert">
-								<b>Worklist Uploaded.</b> You may exit this dialogue box.
-							</div>
-
-							<form id="fusionForm" method="post" class="form-horizontal">
-
-								<div>
-									<label for="submitterName">Submitter Name:</label>
-									<input id="worklist-submitter" class="form-control" type="text" name="submitter_name" placeholder="First & Last Name" />
-									<br/>
-									<label for="worklistName">Worklist Name:</label>
-									<input id="worklist-name-input" class="form-control" type="text" name="worklist_name" placeholder="Worklist Name" />
-								</div>
-
-								<br>
-
-								<div>
-									<button type="button" id="load-worklist-default">Load Example</button> Loads an example worklist used for Paraflu. 
-								</div>
-
-								<br>
-
-								<div class="form-group" id="datagroup" data-worklist-index="0">
-									<label class="col-xs-1 control-label">Sample</label>
-									<div class="col-xs-3">
-										<input type="text" class="worklist-input" name="worklist[0].name" placeholder="Name" />
-									</div>
-									<div class="col-xs-3">
-										<input type="text" class="worklist-input" name="worklist[0].type" placeholder="Type" />
-									</div>
-									<div class="col-xs-3">
-										<input type="text" class="worklist-input" name="worklist[0].category" placeholder="Category" />
-									</div>
-									<div class="col-xs-2">
-										<button type="button" class="btn btn-default addButton"><span class="glyphicon glyphicon-plus"></span></button>
-									</div>
-								</div>
-
-								<!-- Template -->
-
-								<div class="form-group hide" id="datagroup-template">
-
-									<label class="col-xs-1 control-label">Sample</label>
-									<div class="col-xs-3">
-										<input type="text" class="worklist-input" name="worklist.name" placeholder="Name" />
-									</div>
-									<div class="col-xs-3">
-										<input type="text" class="worklist-input" name="worklist.type" placeholder="Type" />
-									</div>
-									<div class="col-xs-3">
-										<input type="text" class="worklist-input" name="worklist.category" placeholder="Category" />
-									</div>
-									<div class="col-xs-2">
-										<button type="button" class="btn btn-default removeButton"><span class="glyphicon glyphicon-minus"></span></button>
-									</div>
-								</div>
-
-								<div class="form-group">
-									<div class="col-xs-5 col-xs-offset-1">
-										<button name="Submit" type="submit" class="btn btn-primary">Submit</button>
-										<button name="clickClear" id="clickClear" type="button" class="btn btn-danger">Clear</button>
-									</div>
-								</div>
-							</form>
+                                <b>Stats Filter</b>
+                                <p class="help-block">Stats filter allows selection of specific data views.</p>
+                                <select class="form-control" name="stats-option">
+                                    <option value="none">None (default)</option>
+                                    <option value="LIS/Failed">LIS/Failed (Displays data that failed PQ threshold and
+                                        has invalids/errors).
+                                    </option>
+                                    <option value="LIS">LIS (Displays data that is invalid or has an error).</option>
+                                    <option value="Failed">Failed (Displays data that failed to meet PQ thresholds).
+                                    </option>
+                                </select>
+                                <br>
+                                <b>Graph Options</b>
+                                <p class="help-block">Select data view: FVF, Time, Instrument</p>
+                                <select class="form-control" name='graph-options'>
+                                    <option value="time">Time (Displays graphical statistics over a specific time
+                                        period).
+                                    </option>
+                                    <option value="fvf">File vs File (Displays graphical statistics across different
+                                        files).
+                                    </option>
+                                    <option value="instrument">Instrument (Displays graphical statistics across
+                                        different Panther serial numbers).
+                                    </option>
+                                    <option value="none">None (No graphs are displayed).</option>
+                                </select>
+                                <hr>
+                                <br>
+                            </div>
+                            <div id="TMAAdvanced">
+                                Hey there, you reached the TMA
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary" type="Submit">SUBMIT</button>
+        </form>
+    </div>
+    <div class="col-xs-4">
+        <div class="row">
+            <div class="col-xs-12">
+                <h3>Description</h3>
+                <p>PQ Analysis program is designed for internal research use only.
+                    The PQ Analysis program serves to generate a report on Panther data.
+                </p>
+            </div>
+            <div class="col-xs-12">
+                <h3>Instructions</h3>
+                <p>
+                <ol>
+                    <li>Enter an analysis name to identify your run.</li>
+                    <li>Enter your name.</li>
+                    <li>Choose the assay type.</li>
+                    <li>Select one or multiple PCR/LIS files <br> (tip: place all desired files in one folder)</li>
+                    <li>(Optional) Set advanced options</li>
+                </ol>
+                </p>
+            </div>
+            <div class="col-xs-12">
+                <h3>Contacts</h3>
+                <p>For feature additions, bug reports, or any other additional questions, please contact
+                    the following users:</p>
+                <ul>
+                    <li>David Bour
+                        <ul>
+                            <li>Contact for any issues related to the web application/interface or general questions.
+                            </li>
+                            <li>Email: <a href="mailto:david.bour@hologic.com"> david.bour@hologic.com </a></li>
+                        </ul>
+                    </li>
+                    <li>Kyle Suico</li>
+                    <ul>
+                        <li>Contact for any issues involving the PQ Report; statistical display, graphical display,
+                            etc.
+                        </li>
+                        <li>Email: <a href="mailto:Kyle.Suico@hologic.com"> Kyle.Suico@hologic.com </a></li>
+                    </ul>
+                    <li>Wilson Wang
+                        <ul>
+                            <li>Contact for any issues involving the PQ Report; statistical display, graphical display,
+                                etc.
+                            </li>
+                            <li>Email: <a href="mailto:Wilson.Wang@hologic.com"> Wilson.Wang@hologic.com </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 
 
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-						</div>
-					</div>
-				</div>
-			</div>
+<div class="modal fade" id="worklist-help" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Worklist Help</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    <b>Description:</b> The worklist acts
+                    as a label file for the program to distinguish between positive samples, negative
+                    samples, positive controls, negative controls.
+                    <br>
+                    <br>
+                    <b>Instructions:</b> There are three dialog boxes per row that you must fill out
+                    completely. The content within in box is case sensitive. The row contents are as follows
+                    <br>
+                    <br>
+                <table>
+                    <tr>
+                        <th> Sample Name</th>
+                        <th>&nbsp;&nbsp;</th>
+                        <th> Sample Type</th>
+                        <th>&nbsp;&nbsp;
+                        </td></th>
+                        <th> Logical Vector</th>
+                    </tr>
+                    <tr>
+                        <td>FSPANELA</td>
+                        <td><b>,</b>&nbsp;&nbsp;</td>
+                        <td>Panel A</td>
+                        <td><b>,</b>&nbsp;&nbsp;</td>
+                        <td>ns</td>
+                    </tr>
+                    <tr>
+                        <td>POS Control</td>
+                        <td><b>,</b>&nbsp;&nbsp;</td>
+                        <td>Positive Control</td>
+                        <td><b>,</b>&nbsp;&nbsp;</td>
+                        <td>ps</td>
+                    </tr>
+                </table>
+
+                <br>
+                The <b>term</b> is used to describe what the samples are labelled as. <b>Type</b> is
+                used to describe what type of samples they are categorized as; valid type labels are
+                Panel A, Positive Control, Negative Control, Panel C. <b>Logical vector</b> categorizes
+                the entire row as a positive sample type (ps) or negative sample type (ns). For a detailed example,
+                please click on <u>"Load Example"</u> under the <u>Worklist Upload</u> tab. The template contains all
+                currently known
+                labels for the Paraflu assay.
+
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="modal modal-wide fade" id="worklist-upload" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Worklist Upload</h4>
+            </div>
+            <div class="modal-body">
+                <div style="display: none" id="success-upload" class="alert alert-success" role="alert">
+                    <b>Worklist Uploaded.</b> You may exit this dialogue box.
+                </div>
+
+                <form id="fusionForm" method="post" class="form-horizontal">
+
+                    <div>
+                        <label for="submitterName">Submitter Name:</label>
+                        <input id="worklist-submitter" class="form-control" type="text" name="submitter_name"
+                               placeholder="First & Last Name"/>
+                        <br/>
+                        <label for="worklistName">Worklist Name:</label>
+                        <input id="worklist-name-input" class="form-control" type="text" name="worklist_name"
+                               placeholder="Worklist Name"/>
+                    </div>
+
+                    <br>
+
+                    <div>
+                        <button type="button" id="load-worklist-default">Load Example</button>
+                        Loads an example worklist used for Paraflu.
+                    </div>
+
+                    <br>
+
+                    <div class="form-group" id="datagroup" data-worklist-index="0">
+                        <label class="col-xs-1 control-label">Sample</label>
+                        <div class="col-xs-3">
+                            <input type="text" class="worklist-input" name="worklist[0].name" placeholder="Name"/>
+                        </div>
+                        <div class="col-xs-3">
+                            <input type="text" class="worklist-input" name="worklist[0].type" placeholder="Type"/>
+                        </div>
+                        <div class="col-xs-3">
+                            <input type="text" class="worklist-input" name="worklist[0].category"
+                                   placeholder="Category"/>
+                        </div>
+                        <div class="col-xs-2">
+                            <button type="button" class="btn btn-default addButton"><span
+                                    class="glyphicon glyphicon-plus"></span></button>
+                        </div>
+                    </div>
+
+                    <!-- Template -->
+
+                    <div class="form-group hide" id="datagroup-template">
+
+                        <label class="col-xs-1 control-label">Sample</label>
+                        <div class="col-xs-3">
+                            <input type="text" class="worklist-input" name="worklist.name" placeholder="Name"/>
+                        </div>
+                        <div class="col-xs-3">
+                            <input type="text" class="worklist-input" name="worklist.type" placeholder="Type"/>
+                        </div>
+                        <div class="col-xs-3">
+                            <input type="text" class="worklist-input" name="worklist.category" placeholder="Category"/>
+                        </div>
+                        <div class="col-xs-2">
+                            <button type="button" class="btn btn-default removeButton"><span
+                                    class="glyphicon glyphicon-minus"></span></button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-xs-5 col-xs-offset-1">
+                            <button name="Submit" type="submit" class="btn btn-primary">Submit</button>
+                            <button name="clickClear" id="clickClear" type="button" class="btn btn-danger">Clear
+                            </button>
+                        </div>
+                    </div>
+                </form>
 
 
-			<div class="modal fade" id="limitslist-help" tabindex="-1" role="dialog">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span></button>
-								<h4 class="modal-title">Limits List Help</h4>
-							</div>
-							<div class="modal-body">
-								<p>
-									<b>Description:</b> The limits list is used to determine the cutoff values for
-									specific channels when the program runs the analysis. Samples that do not meet the 
-									specified cutoff value will be flagged as passing or not passing the criteria set. 
-									<br>
-									<br>
-									<b>Instructions:</b> Fill out the dialog boxes for the sample name and threshold. The
-									sample names are case sensitive, so please fill them out the same exact way that was 
-									used for the Panther output. The row contents are as follows.
-									<br>
-									<br>
-									<table>
-										<tr>
-											<th> Sample Name </th>
-											<th>&nbsp;&nbsp;</th>
-											<th> Channel </th>
-											<th>&nbsp;&nbsp;</td></th>
-											<th> Logic </th>
-											<th>&nbsp;&nbsp;</td></th>
-											<th> Threshold </th>
-										</tr>
-										<tr>
-											<td>Negative Control</td>
-											<td><b>,</b>&nbsp;&nbsp;</td>
-											<td>ROX</td>
-											<td><b>,</b>&nbsp;&nbsp;</td>
-											<td>&#8804;</td>
-											<td><b>,</b>&nbsp;&nbsp;</td>
-											<td>500</td>
-										</tr>
-										<tr>
-											<td>Positive Control</td>
-											<td><b>,</b>&nbsp;&nbsp;</td>
-											<td>FAM</td>
-											<td><b>,</b>&nbsp;&nbsp;</td>
-											<td>&#x2265;</td>
-											<td><b>,</b>&nbsp;&nbsp;</td>
-											<td>1200</td>
-										</tr>
-									</table>
-
-									<br>
-									The <b>sample name</b> is used to describe what the samples are labelled as. <b>Channel</b> is 
-									the Panther channel being analyzed such as FAM, HEX, ROX.. etc. <b>Logic</b> describes the minimum
-									and maximum values for each sample. For a detailed example, 
-									please click on <u>"Load Example"</u> under the <u>Limits Upload</u> tab. The default limits is 
-									for Paraflu assay only!
-
-								</p>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="modal modal-wide fade" id="limits-upload" tabindex="-1" role="dialog">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h4 class="modal-title">Limits Upload</h4>
-						</div>
-						<div class="modal-body">
-							<div style="display: none" id="limits-success-upload" class="alert alert-success" role="alert">
-								<b>Limits Uploaded.</b> You may exit this dialogue box.
-							</div>
-
-							<form id="fusionLimitsForm" method="post" class="form-horizontal">
-
-								{% csrf_token %}
-
-								<div>
-									<label for="submitterName-limits">Submitter Name:</label>
-									<input id="limitsList-submitter" class="form-control" type="text" name="submitter_name_limits" placeholder="First & Last Name" />
-									<br/>
-									<label for="limitsName">Limits Name:</label>
-									<input id="limits-name-input" class="form-control" type="text" name="limits_name" placeholder="Limits Name" />
-								</div>
-
-								<br>
-
-								<div>
-									<button type="button" id="load-limitslist-default">Load Example</button> Loads an example limits list used for Paraflu. 
-								</div>
-
-								<br>
-
-								<div class="form-group" id="datagroup-limits" data-limitslist-index="0">
-									<label class="col-xs-1 control-label">Sample</label>
-									<div class="col-xs-3">
-										<input type="text" class="limitslist-input form-control" name="limitslist[0].name" placeholder="Name" />
-									</div>
-									<div class="col-xs-2">
-										<select name="limitslist[0].channel" class="form-control">
-											<option value="HEX">HEX</option>
-											<option value="FAM">FAM</option>
-											<option value="ROX">ROX</option>
-											<option value="RED647">RED647</option>
-											<option value="IC">IC</option>
-										</select>
-									</div>
-									<div class="col-xs-2">
-										<select name="limitslist[0].logic" class="form-control">
-											<option value="min"> &#x2265; </option>
-											<option value="max"> &#8804; </option>
-										</select>
-									</div>
-									<div class="col-xs-2">
-										<input type="text" class="limitslist-input form-control" name="limitslist[0].threshold" placeholder="Threshold" />
-									</div>
-									<div class="col-xs-2">
-										<button type="button" class="btn btn-default addLimitsButton"><span class="glyphicon glyphicon-plus"></span></button>
-									</div>
-								</div>
-
-								<!-- Template -->
-
-								<div class="form-group hide" id="datagroup-template-limits">
-
-									<label class="col-xs-1 control-label">Sample</label>
-									<div class="col-xs-3">
-										<input type="text" class="limitslist-input form-control" name="limitslist.name" placeholder="Name" />
-									</div>
-									<div class="col-xs-2">
-										<select name="limitslist.channel" class="form-control">
-											<option value="HEX">HEX</option>
-											<option value="FAM">FAM</option>
-											<option value="ROX">ROX</option>
-											<option value="RED647">RED647</option>
-											<option value="IC">IC</option>
-										</select>
-									</div>
-									<div class="col-xs-2">
-										<select name="limitslist.logic" class="form-control">
-											<option value="min"> &#x2265; </option>
-											<option value="max"> &#8804; </option>
-										</select>
-									</div>
-									<div class="col-xs-2">
-										<input type="text" class="limitslist-input form-control" name="limitslist.threshold" placeholder="Threshold" />
-									</div>
-									<div class="col-xs-2">
-										<button type="button" class="btn btn-default removeButton"><span class="glyphicon glyphicon-minus"></span></button>
-									</div>
-
-								</div>
-
-								<div class="form-group">
-									<div class="col-xs-5 col-xs-offset-1">
-										<button name="Submit" type="submit" class="btn btn-primary">Submit</button>
-										<button name="clickClear" id="clickClearLimits" type="button" class="btn btn-danger">Clear</button>
-									</div>
-								</div>
-							</form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-						</div>
-					</div>
-				</div>
-			</div>
+<div class="modal fade" id="limitslist-help" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Limits List Help</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    <b>Description:</b> The limits list is used to determine the cutoff values for
+                    specific channels when the program runs the analysis. Samples that do not meet the
+                    specified cutoff value will be flagged as passing or not passing the criteria set.
+                    <br>
+                    <br>
+                    <b>Instructions:</b> Fill out the dialog boxes for the sample name and threshold. The
+                    sample names are case sensitive, so please fill them out the same exact way that was
+                    used for the Panther output. The row contents are as follows.
+                    <br>
+                    <br>
+                <table>
+                    <tr>
+                        <th> Sample Name</th>
+                        <th>&nbsp;&nbsp;</th>
+                        <th> Channel</th>
+                        <th>&nbsp;&nbsp;
+                        </td></th>
+                        <th> Logic</th>
+                        <th>&nbsp;&nbsp;
+                        </td></th>
+                        <th> Threshold</th>
+                    </tr>
+                    <tr>
+                        <td>Negative Control</td>
+                        <td><b>,</b>&nbsp;&nbsp;</td>
+                        <td>ROX</td>
+                        <td><b>,</b>&nbsp;&nbsp;</td>
+                        <td>&#8804;</td>
+                        <td><b>,</b>&nbsp;&nbsp;</td>
+                        <td>500</td>
+                    </tr>
+                    <tr>
+                        <td>Positive Control</td>
+                        <td><b>,</b>&nbsp;&nbsp;</td>
+                        <td>FAM</td>
+                        <td><b>,</b>&nbsp;&nbsp;</td>
+                        <td>&#x2265;</td>
+                        <td><b>,</b>&nbsp;&nbsp;</td>
+                        <td>1200</td>
+                    </tr>
+                </table>
+
+                <br>
+                The <b>sample name</b> is used to describe what the samples are labelled as. <b>Channel</b> is
+                the Panther channel being analyzed such as FAM, HEX, ROX.. etc. <b>Logic</b> describes the minimum
+                and maximum values for each sample. For a detailed example,
+                please click on <u>"Load Example"</u> under the <u>Limits Upload</u> tab. The default limits is
+                for Paraflu assay only!
+
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="modal modal-wide fade" id="limits-upload" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Limits Upload</h4>
+            </div>
+            <div class="modal-body">
+                <div style="display: none" id="limits-success-upload" class="alert alert-success" role="alert">
+                    <b>Limits Uploaded.</b> You may exit this dialogue box.
+                </div>
+
+                <form id="fusionLimitsForm" method="post" class="form-horizontal">
+
+                    {% csrf_token %}
+
+                    <div>
+                        <label for="submitterName-limits">Submitter Name:</label>
+                        <input id="limitsList-submitter" class="form-control" type="text" name="submitter_name_limits"
+                               placeholder="First & Last Name"/>
+                        <br/>
+                        <label for="limitsName">Limits Name:</label>
+                        <input id="limits-name-input" class="form-control" type="text" name="limits_name"
+                               placeholder="Limits Name"/>
+                    </div>
+
+                    <br>
+
+                    <div>
+                        <button type="button" id="load-limitslist-default">Load Example</button>
+                        Loads an example limits list used for Paraflu.
+                    </div>
+
+                    <br>
+
+                    <div class="form-group" id="datagroup-limits" data-limitslist-index="0">
+                        <label class="col-xs-1 control-label">Sample</label>
+                        <div class="col-xs-3">
+                            <input type="text" class="limitslist-input form-control" name="limitslist[0].name"
+                                   placeholder="Name"/>
+                        </div>
+                        <div class="col-xs-2">
+                            <select name="limitslist[0].channel" class="form-control">
+                                <option value="HEX">HEX</option>
+                                <option value="FAM">FAM</option>
+                                <option value="ROX">ROX</option>
+                                <option value="RED647">RED647</option>
+                                <option value="IC">IC</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-2">
+                            <select name="limitslist[0].logic" class="form-control">
+                                <option value="min"> &#x2265;</option>
+                                <option value="max"> &#8804;</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-2">
+                            <input type="text" class="limitslist-input form-control" name="limitslist[0].threshold"
+                                   placeholder="Threshold"/>
+                        </div>
+                        <div class="col-xs-2">
+                            <button type="button" class="btn btn-default addLimitsButton"><span
+                                    class="glyphicon glyphicon-plus"></span></button>
+                        </div>
+                    </div>
+
+                    <!-- Template -->
+
+                    <div class="form-group hide" id="datagroup-template-limits">
+
+                        <label class="col-xs-1 control-label">Sample</label>
+                        <div class="col-xs-3">
+                            <input type="text" class="limitslist-input form-control" name="limitslist.name"
+                                   placeholder="Name"/>
+                        </div>
+                        <div class="col-xs-2">
+                            <select name="limitslist.channel" class="form-control">
+                                <option value="HEX">HEX</option>
+                                <option value="FAM">FAM</option>
+                                <option value="ROX">ROX</option>
+                                <option value="RED647">RED647</option>
+                                <option value="IC">IC</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-2">
+                            <select name="limitslist.logic" class="form-control">
+                                <option value="min"> &#x2265;</option>
+                                <option value="max"> &#8804;</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-2">
+                            <input type="text" class="limitslist-input form-control" name="limitslist.threshold"
+                                   placeholder="Threshold"/>
+                        </div>
+                        <div class="col-xs-2">
+                            <button type="button" class="btn btn-default removeButton"><span
+                                    class="glyphicon glyphicon-minus"></span></button>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-xs-5 col-xs-offset-1">
+                            <button name="Submit" type="submit" class="btn btn-primary">Submit</button>
+                            <button name="clickClear" id="clickClearLimits" type="button" class="btn btn-danger">Clear
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
-// Checks if the browser is comptabile with HTML5 File API
-if (window.File && window.FileReader && window.FileList && window.Blob) {
-	// Browser has the FileReader API
-} else {
-	alert("The FILE APIs may not be fully supported in this browser.")
-}
+    // Checks if the browser is comptabile with HTML5 File API
+    if (window.File && window.FileReader && window.FileList && window.Blob) {
+        // Browser has the FileReader API
+    } else {
+        alert("The FILE APIs may not be fully supported in this browser.")
+    }
 
-function handleFileSelect(evt) {
-	var files = evt.target.files;
-	var output = [];
-	for (var i = 0, f; f = files[i]; i++) {
-		output.push('<li><strong>', escape(f.name), '</strong></li>');
-	}
-	document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
-}
+    function handleFileSelect(evt) {
+        var files = evt.target.files;
+        var output = [];
+        for (var i = 0, f; f = files[i]; i++) {
+            output.push('<li><strong>', escape(f.name), '</strong></li>');
+        }
+        document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+    }
 
-document.getElementById('file[]').addEventListener('change', handleFileSelect, false);
+    document.getElementById('file[]').addEventListener('change', handleFileSelect, false);
 </script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.14.0/jquery.validate.js"></script>
 <script type="text/javascript" src="http://cdn.jsdelivr.net/jquery.validation/1.14.0/additional-methods.js"></script>
 
 
@@ -594,83 +644,83 @@ document.getElementById('file[]').addEventListener('change', handleFileSelect, f
 
 <script>
 
-	{% if error_msg %}
-	alert("{{ error_msg }}");
-	{% endif %}
+    {% if error_msg %}
+    alert("{{ error_msg }}");
+    {%endif %}
 
-	var update_list = function() {
-		$.getJSON("{% url 'update-worklist' %}", function(data) {
-			$("#id_file_upload_selection").empty();
-			$.each(data, function() {
-				$("#id_file_upload_selection").append(
-					$("<option></option>").text(this.filename).val(this.id)
-					);
-			});
-		});
-	}
+    var update_list = function () {
+        $.getJSON("{% url 'update-worklist' %}", function (data) {
+            $("#id_file_upload_selection").empty();
+            $.each(data, function () {
+                $("#id_file_upload_selection").append(
+                    $("<option></option>").text(this.filename).val(this.id)
+                );
+            });
+        });
+    }
 
-	var update_limits_list = function() {
-		$.getJSON("{% url 'update-limitslist' %}", function(data) {
-			$("#id_file_limits_upload_selection").empty();
-			$.each(data, function() {
-				$("#id_file_limits_upload_selection").append(
-					$("<option></option>").text(this.filename).val(this.id)
-					);
-			});
-		});
-	}
+    var update_limits_list = function () {
+        $.getJSON("{% url 'update-limitslist' %}", function (data) {
+            $("#id_file_limits_upload_selection").empty();
+            $.each(data, function () {
+                $("#id_file_limits_upload_selection").append(
+                    $("<option></option>").text(this.filename).val(this.id)
+                );
+            });
+        });
+    }
 
 </script>
 
 <script>
 
-	function csrfSafeMethod(method) {
-	// These HTTP methods do not require CSRF protection
-	return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-}
+    function csrfSafeMethod(method) {
+        // These HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
 
-$(function () {
-	'use strict';
-	// Change this to the location of server-side upload handler;
-	var url = 'upload/';
-	var csrftoken = $.cookie('csrftoken');
-	$('#fileupload').fileupload({
-		url: url,
-		crossDomain: false,
-		beforeSend: function(xhr, settings) {
-			if (!csrfSafeMethod(settings.type)) {
-				xhr.setRequestHeader("X-CSRFToken", csrftoken);
-			}
-		},
-		dataType: 'json',
-		processQueue: [
-		{
-			action: 'validate',
-			always: true,
-			acceptFileTypes: /(\.|\/)(txt|csv)$/i
-		}
-		],
-		processfail: function(e, data) {
-			$('#files').empty();
-			$('<p/>').text("File extension invalid, please upload a .csv file").appendTo('#files');
-		},
-		done: function(e, data) {
-			$.each(data.files, function(index, file) {
-				$('#files').empty();
-				$('<p/>').text("File upload complete.").appendTo('#files');
-				update_list();
-			});
-		},
-		progressall: function(e, data) {
-			var progress = parseInt(data.loaded / data.total * 100, 10);
-			$('#progress .progress-bar').css(
-				'width',
-				progress + '%'
-				);
-		},
-	}).prop('disabled', !$.support.fileInput)
-	.parent().addClass($.support.fileInput ? undefined : 'disabled');
-})
+    $(function () {
+        'use strict';
+        // Change this to the location of server-side upload handler;
+        var url = 'upload/';
+        var csrftoken = $.cookie('csrftoken');
+        $('#fileupload').fileupload({
+            url: url,
+            crossDomain: false,
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            },
+            dataType: 'json',
+            processQueue: [
+                {
+                    action: 'validate',
+                    always: true,
+                    acceptFileTypes: /(\.|\/)(txt|csv)$/i
+                }
+            ],
+            processfail: function (e, data) {
+                $('#files').empty();
+                $('<p/>').text("File extension invalid, please upload a .csv file").appendTo('#files');
+            },
+            done: function (e, data) {
+                $.each(data.files, function (index, file) {
+                    $('#files').empty();
+                    $('<p/>').text("File upload complete.").appendTo('#files');
+                    update_list();
+                });
+            },
+            progressall: function (e, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#progress .progress-bar').css(
+                    'width',
+                    progress + '%'
+                );
+            },
+        }).prop('disabled', !$.support.fileInput)
+            .parent().addClass($.support.fileInput ? undefined : 'disabled');
+    })
 
 </script>
 
@@ -680,7 +730,10 @@ $(function () {
 
 
 <script src="//static.getclicky.com/js" type="text/javascript"></script>
-<script type="text/javascript">try{ clicky.init(100988674); }catch(e){}</script>
-<noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/100988674ns.gif" /></p></noscript>
+<script type="text/javascript">try {
+    clicky.init(100988674);
+} catch (e) {
+}</script>
+<noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/100988674ns.gif"/></p></noscript>
 
 </html>
