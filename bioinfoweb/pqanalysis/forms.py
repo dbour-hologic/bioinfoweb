@@ -1,5 +1,5 @@
 from django import forms
-from .models import Worklist, Limits
+from .models import Worklist, Limits, RecoveryRate
 
 
 class WorklistInputForm(forms.Form):
@@ -16,6 +16,18 @@ class WorklistInputForm(forms.Form):
 
   file_upload_selection_fusion = forms.ModelChoiceField(
     queryset=Worklist.objects.filter(worklist_type__iexact='fusion'),
+    initial=1,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+
+
+class RecoveryRateInputForm(forms.Form):
+  class Meta:
+    model = RecoveryRate
+    fields = ['file']
+
+  recovery_file_upload = forms.ModelChoiceField(
+    queryset=RecoveryRate.objects.all(),
     initial=1,
     widget=forms.Select(attrs={'class': 'form-control'})
   )

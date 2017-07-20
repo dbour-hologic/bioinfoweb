@@ -10,8 +10,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
 
-from .models import PqAttachment, Worklist, CombineResults, Limits
-from .forms import WorklistInputForm, LimitsInputForm
+from .models import PqAttachment, Worklist, CombineResults, Limits, RecoveryRate
+from .forms import WorklistInputForm, LimitsInputForm, RecoveryRateInputForm
 
 from rcall.rcaller import R_Caller
 
@@ -69,11 +69,17 @@ def add_attachment(request):
                                    ignoreflag_options)
 
 
-    worklist_form = WorklistInputForm();
-    limits_form = LimitsInputForm();
+    worklist_form = WorklistInputForm()
+    limits_form = LimitsInputForm()
+    recovery_form = RecoveryRateInputForm()
+    print("hi", recovery_form)
+    print("hello", limits_form)
+    print("hola", worklist_form)
 
     return render(request, "pqanalysis/pqanalysis.html", {"worklist_form": worklist_form,
-                                                          "limits_form": limits_form})
+                                                          "limits_form": limits_form,
+                                                          "recovery_form": recovery_form
+                                                          })
 
 
 def create_and_serve_combined_file(request, format_analysis_id):
@@ -105,13 +111,15 @@ def create_and_serve_combined_file(request, format_analysis_id):
       except ObjectDoesNotExist:
         worklist_template = None
 
-      worklist_form = WorklistInputForm();
+      worklist_form = WorklistInputForm()
       limits_form = LimitsInputForm()
+      recovery_form = RecoveryRateInputForm()
 
       return render(request, "pqanalysis/pqanalysis.html", {"error_msg": error_msg,
                                                             "worklist_form": worklist_form,
                                                             "worklist_template": worklist_template,
-                                                            "limits_form": limits_form})
+                                                            "limits_form": limits_form,
+                                                            "recovery_form": recovery_form})
 
     data_save = os.path.join(SAVE_DATA_DIR, format_analysis_id + "_combined.xlsx")
     f.write_combined_multiple(data_save)

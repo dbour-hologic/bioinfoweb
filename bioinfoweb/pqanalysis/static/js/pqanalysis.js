@@ -46,6 +46,7 @@ $(document).ready(function() {
 		}
 		else {
 			$('#tma_checkbox_options').hide();
+			$('#TMAAdvanced').hide();
 			$('#fusion_checkbox_options').show();
 			$('#FusionAdvanced').show();
 		}

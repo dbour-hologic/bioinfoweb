@@ -208,7 +208,82 @@
                                 <br>
                             </div>
                             <div id="TMAAdvanced">
-                                Hey there, you reached the TMA
+
+                                <b>Worklist</b>
+                                <p class="help-block">The worklist is a label file specifing the negative and postive
+                                    samples.
+                                    <br>
+                                    <b>Tip:</b>
+                                    Selecting any of the previously uploaded worklists will load its content into the
+                                    worklist upload dialog.</p>
+
+                                {{ worklist_form.file_upload_selection_tma }}
+
+                                <br>
+
+                                <div class="row">
+                                    <div class="col-xs-12">
+											<span id="worklist-tma-modal-button" class="btn btn-primary"
+                                                  data-target="#worklist-upload" data-toggle="modal">
+												Worklist Upload
+											</span>
+                                        <span class="btn btn-danger" data-target="#worklist-help" data-toggle="modal">
+												Help
+											</span>
+                                    </div>
+                                    <br>
+                                </div>
+                                <br>
+
+                                <b>Limits</b>
+                                <p class="help-block">The limits list is a value cutoff file specifing the threshold
+                                    ranges.
+                                    <br>
+                                    <b>Tip:</b>
+                                    Selecting any of the previously uploaded limits will load its content into the
+                                    limits list upload dialog.</p>
+
+                                {{ limits_form.file_limits_upload_selection_tma }}
+
+                                <br>
+
+                                <div class="row">
+                                    <div class="col-xs-12">
+											<span class="btn btn-primary" data-target="#limits-upload"
+                                                  data-toggle="modal">
+												Limits Upload
+											</span>
+                                        <span class="btn btn-danger" data-target="#limitslist-help" data-toggle="modal">
+												Help
+											</span>
+                                    </div>
+                                </div>
+                                <br>
+
+                                <b>Recovery</b>
+                                <p class="help-block">The expected recovery rate for a specific analyte.
+                                    <br>
+                                    <b>Tip:</b>
+                                    Selecting any previously uploaded recovery rates will load its content into the
+                                    recovery upload dialog.</p>
+
+                                {{ recovery_form.recovery_file_upload }}
+
+                                <br>
+
+                                <div class="row">
+                                    <div class="col-xs-12">
+											<span class="btn btn-primary" data-target="#recovery-upload"
+                                                  data-toggle="modal">
+												Recovery Rate Upload
+											</span>
+                                        <span class="btn btn-danger" data-target="#recovery-help" data-toggle="modal">
+												Help
+											</span>
+                                    </div>
+                                </div>
+                                <br>
+
                             </div>
                         </div>
                     </div>

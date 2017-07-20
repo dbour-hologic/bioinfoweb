@@ -46,6 +46,24 @@ class CombineResults(models.Model):
   date_uploaded = models.DateField(auto_now_add=True)
 
 
+class RecoveryRate(models.Model):
+  class Meta:
+    verbose_name = "recovery"
+    verbose_name_plural = "recovery"
+
+  filename = models.CharField(max_length=1000)
+  file = models.FileField(upload_to="recovery")
+  slug = models.SlugField(max_length=1000, blank=True)
+  upload_date = models.DateField(auto_now_add=True)
+  recovery_type = models.CharField(max_length=1000)
+
+  def __str__(self):
+    return self.filename
+
+  def __unicode__(self):
+    return self.filename
+
+
 class Worklist(models.Model):
 
   class Meta:
