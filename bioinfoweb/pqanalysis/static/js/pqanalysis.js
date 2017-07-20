@@ -24,6 +24,32 @@ $(document).ready(function() {
 
 	/*************************************************************
 	*
+	* Below is a list of functions show/display
+	*
+	**************************************************************/
+
+    /**
+	 * Hide/Show assay selection options
+     *
+     */
+	var get_assay_option = $('#assay_option_selection').val();
+	$('#tma_checkbox_options').hide();
+
+	$('#assay_option_selection').change(function() {
+	    get_assay_option = $('#assay_option_selection').val();
+		if (get_assay_option === 'tma') {
+			$('#tma_checkbox_options').show();
+			$('#fusion_checkbox_options').hide();
+		}
+		else {
+			$('#tma_checkbox_options').hide();
+			$('#fusion_checkbox_options').show();
+		}
+	});
+
+
+	/*************************************************************
+	*
 	* Below is a list of functions for the dynamic workflow.
 	*
 	**************************************************************/
@@ -74,7 +100,7 @@ $(document).ready(function() {
 	* represented in the database.
 	*/
 	$("#load-worklist-default").click(function() {
-		dynamicWorklistRetrieve(11);
+		dynamicWorklistRetrieve();
 	});	
 
 	/**
@@ -371,7 +397,7 @@ $(document).ready(function() {
 	* represented in the database.
 	*/
 	$("#load-limitslist-default").click(function() {
-		dynamicLimitsListRetrieve(1);
+		dynamicLimitsListRetrieve();
 	});		
 
 	/**

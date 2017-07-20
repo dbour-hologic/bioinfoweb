@@ -6,6 +6,7 @@ import subprocess
 import shlex
 
 from subprocess import Popen, PIPE, STDOUT
+from django.conf import settings
 
 class R_Caller():
 
@@ -106,7 +107,6 @@ class R_Caller():
             except KeyError:
                 print("MISSING ARGUMENTS")
 
- 
         return logs
 
     def __call_r_markdown(self, markdown_file, output_dir, user_name, data_dir, 
@@ -150,6 +150,15 @@ class R_Caller():
         GRPH_TYPE = graphing_type
         IGN_FLAG = ignore_flags
 
+        # FOR WINDOWS
+        if settings.OPERATING_SYSTEM == "Windows":
+          RMD_FILE = RMD_FILE.replace("\\","/")
+          OUTPUT_DIR = OUTPUT_DIR.replace("\\","/")
+          DATA_DIR = DATA_DIR.replace("\\","/")
+          WRKLIST = WRKLIST.replace("\\","/")
+          LIM_FILE = LIM_FILE.replace("\\","/")
+
+
 
         FINAL_CMD = "\"rmarkdown::render(input='%s', output_file='%s', params=list(name='%s',"\
                                                                                   "directory='%s',"\
@@ -177,17 +186,17 @@ class R_Caller():
         logs = subprocess.Popen(args, stdin=PIPE, stdout=PIPE, stderr=STDOUT, shell=True)
 
         # run_completed = True
-
+        #
         # while True:
-
+        #
         #     line = logs.stdout.readline()
         #     print(">>> ", line)
-
+        #
         #     if "Execution halted" in line:
         #         print("IT BROKE!!!!!!!!!")
         #         run_completed = False
         #         break
-
+        #
         #     if line == '':
         #         break
 
