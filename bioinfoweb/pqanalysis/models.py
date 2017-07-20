@@ -58,6 +58,7 @@ class Worklist(models.Model):
   file = models.FileField(upload_to="worklist")
   slug = models.SlugField(max_length=1000, blank=True)
   upload_date = models.DateField(auto_now_add=True)
+  worklist_type = models.CharField(max_length=1000)
 
 
   def __str__(self):
@@ -93,6 +94,7 @@ class Limits(models.Model):
     file = models.FileField(upload_to="limits")
     slug = models.SlugField(max_length=1000, blank=True)
     upload_date = models.DateField(auto_now_add=True)
+    limits_type = models.CharField(max_length=1000)
 
     def __str__(self):
         return self.filename
