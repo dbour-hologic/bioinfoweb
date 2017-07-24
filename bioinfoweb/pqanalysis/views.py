@@ -423,7 +423,7 @@ def limitslist_get(request, pk):
 
 
 @csrf_exempt
-def ajax_uploaded_limits(request):
+def ajax_uploaded_limits(request, type_of):
   import csv
 
   if request.is_ajax():
@@ -470,6 +470,7 @@ def ajax_uploaded_limits(request):
           csv_writer.writerow(line_to_write)
 
       limits_save_file = Limits()
+      limits_save_file.limits_type = type_of
       limits_save_file.filename = limitslist_name
       limits_save_file.file = os.path.join("limits", file_name_generator)
       limits_save_file.save()
@@ -478,7 +479,7 @@ def ajax_uploaded_limits(request):
 
 
 @csrf_exempt
-def ajax_uploaded_worklist(request):
+def ajax_uploaded_worklist(request, type_of):
   import csv
 
   if request.is_ajax():
@@ -521,6 +522,7 @@ def ajax_uploaded_worklist(request):
           csv_writer.writerow(line_to_write)
 
       worklist_save_file = Worklist()
+      worklist_save_file.worklist_type = type_of
       worklist_save_file.filename = worklist_name
       worklist_save_file.file = os.path.join("worklist", file_name_generator)
       worklist_save_file.save()

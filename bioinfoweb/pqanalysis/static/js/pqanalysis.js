@@ -22,6 +22,155 @@ $(document).ready(function() {
 		}
 	});
 
+	/**
+	* Validation method for dynamically generated
+	* workflow form.
+	*
+	**/
+	$("#fusionForm").validate({
+		// Initializing initial rules for static content - necessary before "adding" more rules
+		rules: {
+			'worklist[0].name': {
+				required: true,
+				alphaOnly: false,
+			},
+			'worklist[0].type': {
+				required: true,
+				alphaOnly: true
+			},
+			'worklist[0].category': {
+				required: true,
+				alphaOnly: true
+			},
+			'submitter_name': {
+				required: true
+			},
+			'worklist_name': {
+				required: false,
+				alphaOnly: true
+			}
+		},
+		messages: {
+			'worklist[0].name': {
+				alphaOnly: "Only letters and numbers."
+			},
+			'worklist[0].type': {
+				alphaOnly: "Only letters and numbers."
+			},
+			'worklist[0].category': {
+				alphaOnly: "Only letters and numbers."
+			},
+			'worklist_name': {
+				alphaOnly: "Only letters and numbers."
+			}
+		},
+
+		submitHandler: function(form) {
+
+
+			var data_collection = data_collect();
+
+			// Check the time of worklist being submitted
+			// i.e. either 'fusion' or 'tma'
+			var assaytype;
+			var get_assay_option = $('#assay_option_selection').val();
+			if (get_assay_option === 'tma') {
+				assaytype = 'tma';
+			} else {
+				assaytype = 'fusion';
+			}
+
+
+			$.ajax({
+				type: "POST",
+				url: "worklist-upload/" + assaytype + "/",
+				data: JSON.stringify(data_collection),
+				datatype: "application/json",
+				cache: false,
+				success: function(json_data) {
+					clear_form($("#fusionForm"));
+					$("#success-upload").show();
+					// Calls a django view to get the updated list
+					update_list();
+					return true;
+				},
+				error: function() {
+					alert("ERROR");
+				}
+			});
+		}
+	});
+
+	/**
+	* Validation method for dynamically generated
+	* workflow form.
+	*
+	**/
+	$("#fusionLimitsForm").validate({
+		// Initializing initial rules for static content - necessary before "adding" more rules
+		rules: {
+			'limitslist[0].name': {
+				required: true,
+				alphaOnly: true,
+			},
+			'limitslist[0].threshold': {
+				required: true,
+				number: true
+			},
+			'submitter_name_limits': {
+				required: true
+			},
+			'limits_name': {
+				required: true
+			}
+		},
+		messages: {
+			'limitslist[0].name': {
+				alphaOnly: "Only letters and numbers."
+			},
+			'limitslist[0].threshold': {
+				number: "Only numbers."
+			}
+		},
+
+		submitHandler: function(form, event) {
+
+			// Needed to prevent default action
+			event.preventDefault();
+
+			var data_collection = limits_data_collect();
+
+			// Check the time of worklist being submitted
+			// i.e. either 'fusion' or 'tma'
+			var assaytype;
+			var get_assay_option = $('#assay_option_selection').val();
+			if (get_assay_option === 'tma') {
+				assaytype = 'tma';
+			} else {
+				assaytype = 'fusion';
+			}
+
+			$.ajax({
+				type: "POST",
+				url: "limits-upload/" + assaytype + "/",
+				data: JSON.stringify(data_collection),
+				datatype: "application/json",
+				cache: false,
+				success: function(json_data) {
+					clear_form($("#fusionLimitsForm"));
+					$("#limits-success-upload").show();
+					update_limits_list();
+					return true;
+				},
+				error: function() {
+					alert("ERROR");
+				}
+			});
+			return false;
+		}
+	});
+
+
 	/*************************************************************
 	*
 	* Below is a list of functions show/display
@@ -32,18 +181,25 @@ $(document).ready(function() {
 	 * Hide/Show assay selection options
      *
      */
+
 	var get_assay_option = $('#assay_option_selection').val();
+	$('#fusionAdvancedOptions').show();
 	$('#tma_checkbox_options').hide();
+	$('#tmaAdvancedOptions').hide();
 
 	$('#assay_option_selection').change(function() {
 	    get_assay_option = $('#assay_option_selection').val();
 		if (get_assay_option === 'tma') {
 			$('#tma_checkbox_options').show();
+			$('#tmaAdvancedOptions').show();
+			$('#fusionAdvancedOptions').hide();
 			$('#fusion_checkbox_options').hide();
 		}
 		else {
 			$('#tma_checkbox_options').hide();
+			$('#tmaAdvancedOptions').hide();
 			$('#fusion_checkbox_options').show();
+			$('#fusionAdvancedOptions').show();
 		}
 	});
 
@@ -180,9 +336,8 @@ $(document).ready(function() {
 			});
 
 		});
-	};
-
-	/**
+    }
+    /**
 	* Feature to add/remove rows of data for workflow.
 	* 
 	**/
@@ -205,7 +360,7 @@ $(document).ready(function() {
 			$clone
 			.find('[name="worklist.name"]').attr('name', 'worklist[' + worklistIndex + '].name').end()
 			.find('[name="worklist.category"]').attr('name', 'worklist[' + worklistIndex + '].category').end()
-			.find('[name="worklist.type"]').attr('name', 'worklist[' + worklistIndex + '].type').end()
+			.find('[name="worklist.type"]').attr('name', 'worklist[' + worklistIndex + '].type').end();
 
 			$('.worklist-input').each(function() {
 
@@ -239,72 +394,7 @@ $(document).ready(function() {
 		return this.optional(element) || /^[a-z0-9\s]+$/i.test(value); 
 	});
 
-	/**
-	* Validation method for dynamically generated
-	* workflow form.
-	*
-	**/
-	$("#fusionForm").validate({
-		// Initializing initial rules for static content - necessary before "adding" more rules
-		rules: {
-			'worklist[0].name': {
-				required: true,
-				alphaOnly: false,
-			},
-			'worklist[0].type': {
-				required: true,
-				alphaOnly: true
-			},
-			'worklist[0].category': {
-				required: true,
-				alphaOnly: true
-			},
-			'submitter_name': {
-				required: true
-			},
-			'worklist_name': {
-				required: false,
-				alphaOnly: true
-			}
-		},
-		messages: {
-			'worklist[0].name': {
-				alphaOnly: "Only letters and numbers."
-			},
-			'worklist[0].type': {
-				alphaOnly: "Only letters and numbers."
-			},
-			'worklist[0].category': {
-				alphaOnly: "Only letters and numbers."
-			},
-			'worklist_name': {
-				alphaOnly: "Only letters and numbers."
-			}
-		},
 
-		submitHandler: function(form) {
-
-			var data_collection = data_collect();
-
-			$.ajax({
-				type: "POST",
-				url: "worklist-upload/",
-				data: JSON.stringify(data_collection),
-				datatype: "application/json",
-				cache: false,
-				success: function(json_data) {
-					clear_form($("#fusionForm"));
-					$("#success-upload").show();
-					// Calls a django view to get the updated list
-					update_list();
-					return true;
-				},
-				error: function() {
-					alert("ERROR");
-				}
-			});
-		}		
-	})
 
 	/**
 	* clear_form() is a function that is used
@@ -313,9 +403,8 @@ $(document).ready(function() {
 
 	function clear_form($form) {
 		$form.find('input:text').val('');
-	};
-
-	/**
+    }
+    /**
 	* data_collect() is a function that is used for collecting
 	* data from a dynamically generated form that creates rows
 	* and returns this data as a JSON object.
@@ -348,10 +437,8 @@ $(document).ready(function() {
 		};
 
 		return json_data
-	};
-
-
-	/*************************************************************
+    }
+    /*************************************************************
 	*
 	* Below is a list of functions for the dynamic limits.
 	*
@@ -427,11 +514,11 @@ $(document).ready(function() {
 			if ($(this).attr("data-limitslist-index") != null) {
 				$(this).remove();	
 			}
-		});		
+		});
 
-		var limitsListIndex = 0;;
 
-		$.each(getData, function(index, value) {
+var limitsListIndex = 0;
+        $.each(getData, function(index, value) {
 
 
 			var sampletype = value.sampletype;
@@ -451,7 +538,7 @@ $(document).ready(function() {
 			.find('[name="limitslist.name"]').attr('name', 'limitslist[' + limitsListIndex + '].name').end()
 			.find('[name="limitslist.channel"]').attr('name', 'limitslist[' + limitsListIndex + '].channel').end()
 			.find('[name="limitslist.logic"]').attr('name', 'limitslist[' + limitsListIndex + '].logic').end()
-			.find('[name="limitslist.threshold"]').attr('name', 'limitslist[' + limitsListIndex + '].threshold').end()
+			.find('[name="limitslist.threshold"]').attr('name', 'limitslist[' + limitsListIndex + '].threshold').end();
 
 
 			$("input[name='limitslist["+limitsListIndex+"].name']").val(value.sampletype);
@@ -479,10 +566,8 @@ $(document).ready(function() {
 			});
 
 		});
-	};
-
-
-	/**
+    }
+    /**
 	* Feature to add/remove rows of data for workflow.
 	* 
 	**/
@@ -506,7 +591,7 @@ $(document).ready(function() {
 			.find('[name="limitslist.name"]').attr('name', 'limitslist[' + limitsListIndex + '].name').end()
 			.find('[name="limitslist.channel"]').attr('name', 'limitslist[' + limitsListIndex + '].channel').end()
 			.find('[name="limitslist.logic"]').attr('name', 'limitslist[' + limitsListIndex + '].logic').end()
-			.find('[name="limitslist.threshold"]').attr('name', 'limitslist[' + limitsListIndex + '].threshold').end()
+			.find('[name="limitslist.threshold"]').attr('name', 'limitslist[' + limitsListIndex + '].threshold').end();
 
 			$('.limitslist-input').each(function() {
 				$(this).rules("add", {
@@ -522,64 +607,7 @@ $(document).ready(function() {
 		var $row = $(this).parents(".form-group").remove();
 	});	
 
-	/**
-	* Validation method for dynamically generated
-	* workflow form.
-	*
-	**/
-	$("#fusionLimitsForm").validate({
-		// Initializing initial rules for static content - necessary before "adding" more rules
-		rules: {
-			'limitslist[0].name': {
-				required: true,
-				alphaOnly: true,
-			},
-			'limitslist[0].threshold': {
-				required: true,
-				number: true
-			},
-			'submitter_name_limits': {
-				required: true
-			},
-			'limits_name': {
-				required: true
-			}
-		},
-		messages: {
-			'limitslist[0].name': {
-				alphaOnly: "Only letters and numbers."
-			},
-			'limitslist[0].threshold': {
-				number: "Only numbers."
-			}
-		},
 
-		submitHandler: function(form, event) {
-
-			// Needed to prevent default action
-			event.preventDefault();
-
-			var data_collection = limits_data_collect();
-
-			$.ajax({
-				type: "POST",
-				url: "limits-upload/",
-				data: JSON.stringify(data_collection),
-				datatype: "application/json",
-				cache: false,
-				success: function(json_data) {
-					clear_form($("#fusionLimitsForm"));
-					$("#limits-success-upload").show();
-					update_limits_list();
-					return true;
-				},
-				error: function() {
-					alert("ERROR");
-				}
-			});
-			return false;
-		}	
-	});
 
 	/**
 	* limits_data_collect() is a function that is used for collecting
@@ -614,8 +642,6 @@ $(document).ready(function() {
 		};
 
 		return json_data
-	};
-
-
+    }
 // <--- Document on load --->
 });
