@@ -269,7 +269,8 @@ def get_worklist_update(request):
     for element in worklist_list.values():
       work_list_all.append(
         {'id': element['id'],
-         'filename': element['filename']}
+         'filename': element['filename'],
+         'filetype': element['worklist_type']}
       )
 
     return HttpResponse(json.dumps(work_list_all), content_type='application/json')
@@ -496,6 +497,8 @@ def ajax_uploaded_worklist(request, type_of):
     with open(file_save_path, "wb") as worklist_file:
 
       worklist_headers = ["term", "type", "logical vector"]
+      if type_of == 'tma':
+        worklist_headers = ["SearchTerm", "SampleType"]
 
       csv_writer = csv.writer(worklist_file, delimiter=",")
 
@@ -513,13 +516,24 @@ def ajax_uploaded_worklist(request, type_of):
             "category": "",
           }
 
-          for category, data_value in value.iteritems():
-            parse_value = category.split(".")[1]
-            temp_data_storage[parse_value] = data_value
+          if type_of == 'fusion':
 
-          line_to_write = [temp_data_storage["name"], temp_data_storage["type"],
-                           temp_data_storage["category"]]
-          csv_writer.writerow(line_to_write)
+              for category, data_value in value.iteritems():
+                parse_value = category.split(".")[1]
+                temp_data_storage[parse_value] = data_value
+
+              line_to_write = [temp_data_storage["name"], temp_data_storage["type"],
+                               temp_data_storage["category"]]
+              csv_writer.writerow(line_to_write)
+
+          else:
+
+            for category, data_value in value.iteritems():
+              parse_value = category.split(".")[1]
+              temp_data_storage[parse_value] = data_value
+
+            line_to_write = [temp_data_storage["name"], temp_data_storage["type"]]
+            csv_writer.writerow(line_to_write)
 
       worklist_save_file = Worklist()
       worklist_save_file.worklist_type = type_of

@@ -226,8 +226,8 @@
 
                                 <div class="row">
                                     <div class="col-xs-12">
-										<span id="worklist-modal-button" class="btn btn-primary"
-                                              data-target="#worklist-upload" data-toggle="modal">
+										<span id="worklist-tma-modal-button" class="btn btn-primary"
+                                              data-target="#worklist-upload-tma" data-toggle="modal">
 											Worklist Upload
 										</span>
                                         <span class="btn btn-danger" data-target="#worklist-help" data-toggle="modal">
@@ -250,10 +250,10 @@
                                 <br>
                                 <div class="row">
                                     <div class="col-xs-12">
-										<span class="btn btn-primary" data-target="#limits-upload" data-toggle="modal">
+										<span class="btn btn-primary" data-target="#limits-upload-tma" data-toggle="modal">
 											Limits Upload
 										</span>
-                                        <span class="btn btn-danger" data-target="#limitslist-help" data-toggle="modal">
+                                        <span class="btn btn-danger" data-target="#limitslist-help-tma" data-toggle="modal">
 											Help
 										</span>
                                     </div>
@@ -315,6 +315,214 @@
                         </ul>
                     </li>
                 </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal modal-wide fade" id="worklist-upload-tma" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Worklist Upload</h4>
+            </div>
+            <div class="modal-body">
+                <div style="display: none" id="success-upload-tma" class="alert alert-success" role="alert">
+                    <b>Worklist Uploaded.</b> You may exit this dialogue box.
+                </div>
+
+                <form id="tmaForm" method="post" class="form-horizontal">
+                    {% csrf_token %}
+                    <div>
+                        <label for="submitterName">Submitter Name:</label>
+                        <input id="worklist-submitter-tma" class="form-control" type="text" name="submitter_name"
+                               placeholder="First & Last Name"/>
+                        <br/>
+                        <label for="worklistName">Worklist Name:</label>
+                        <input id="worklist-name-input-tma" class="form-control" type="text" name="worklist_name"
+                               placeholder="Worklist Name"/>
+                    </div>
+
+                    <br>
+
+                    <div>
+                        <button type="button" id="load-worklist-default-tma">Load Example</button>
+                        Loads an example worklist used for Paraflu.
+                    </div>
+
+                    <br>
+
+                    <div class="form-group" id="datagroup-tma" data-worklist-index="0">
+                        <label class="col-xs-1 control-label">Sample</label>
+                        <div class="col-xs-3">
+                            <input type="text" class="worklist-input-tma" name="worklist[0].name" placeholder="Name"/>
+                        </div>
+                        <div class="col-xs-3">
+                            <input type="text" class="worklist-input-tma" name="worklist[0].type" placeholder="Type"/>
+                        </div>
+                        <div class="col-xs-2">
+                            <button type="button" class="btn btn-default addButton"><span
+                                    class="glyphicon glyphicon-plus"></span></button>
+                        </div>
+                    </div>
+
+                    <!-- Template -->
+
+                    <div class="form-group hide" id="datagroup-template-tma">
+
+                        <label class="col-xs-1 control-label">Sample</label>
+                        <div class="col-xs-3">
+                            <input type="text" class="worklist-input-tma" name="worklist.name" placeholder="Name"/>
+                        </div>
+                        <div class="col-xs-3">
+                            <input type="text" class="worklist-input-tma" name="worklist.type" placeholder="Type"/>
+                        </div>
+                        <div class="col-xs-2">
+                            <button type="button" class="btn btn-default removeButton"><span
+                                    class="glyphicon glyphicon-minus"></span></button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-xs-5 col-xs-offset-1">
+                            <button name="Submit" type="submit" class="btn btn-primary">Submit</button>
+                            <button name="clickClear" id="clickClearTMA" type="button" class="btn btn-danger">Clear
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal modal-wide fade" id="limits-upload-tma" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Limits Upload</h4>
+            </div>
+            <div class="modal-body">
+                <div style="display: none" id="limits-success-upload-tma" class="alert alert-success" role="alert">
+                    <b>Limits Uploaded.</b> You may exit this dialogue box.
+                </div>
+
+                <form id="tmaLimitsForm" method="post" class="form-horizontal">
+
+                    {% csrf_token %}
+
+                    <div>
+                        <label for="submitterName-limits">Submitter Name:</label>
+                        <input id="limitsList-submitter-tma" class="form-control" type="text" name="submitter_name_limits"
+                               placeholder="First & Last Name"/>
+                        <br/>
+                        <label for="limitsName">Limits Name:</label>
+                        <input id="limits-name-input-tma" class="form-control" type="text" name="limits_name"
+                               placeholder="Limits Name"/>
+                    </div>
+
+                    <br>
+
+                    <div>
+                        <button type="button" id="load-limitslist-default-tma">Load Example</button>
+                        Loads an example limits list used for Paraflu.
+                    </div>
+
+                    <br>
+
+                    <div class="col-xs-12">
+                        <div class="col-xs-3">
+                            <b>Sample Name</b>
+                        </div>
+                        <div class="col-xs-2">
+                            <b>Interpretation Min</b>
+                        </div>
+                        <div class="col-xs-2">
+                            <b>Interpretation Max</b>
+                        </div>
+                        <div class="col-xs-2">
+                            <b>IC TTime Max</b>
+                        </div>
+                        <div class="col-xs-2">
+                        </div>
+                    </div>
+                    <div class="form-group" id="datagroup-limits-tma" data-limitslist-index="0">
+                        <div class="col-xs-3">
+                            <input type="text" class="limitslist-input-tma form-control" name="limitslist[0].name"
+                                   placeholder="Name"/>
+                        </div>
+                        <div class="col-xs-2">
+                            <input type="text" class="limitslist-input-tma form-control" name="limitslist[0].minthreshold"
+                                   placeholder="Threshold"/>
+                        </div>
+                        <div class="col-xs-2">
+                            <input type="text" class="limitslist-input-tma form-control" name="limitslist[0].maxthreshold"
+                                   placeholder="Threshold"/>
+                        </div>
+                        <div class="col-xs-2">
+                            <input type="text" class="limitslist-input-tma form-control" name="limitslist[0].icthreshold"
+                                   placeholder="Threshold"/>
+                        </div>
+                        <div class="col-xs-3">
+                            <button type="button" class="btn btn-default addLimitsButton"><span
+                                    class="glyphicon glyphicon-plus"></span></button>
+                        </div>
+                    </div>
+
+                    <!-- Template -->
+
+                    <div class="form-group hide" id="datagroup-template-limits-tma">
+
+                        <label class="col-xs-1 control-label">Sample</label>
+                        <div class="col-xs-3">
+                            <input type="text" class="limitslist-input-tma form-control" name="limitslist.name"
+                                   placeholder="Name"/>
+                        </div>
+                        <div class="col-xs-2">
+                            <select name="limitslist.channel" class="form-control">
+                                <option value="HEX">HEX</option>
+                                <option value="FAM">FAM</option>
+                                <option value="ROX">ROX</option>
+                                <option value="RED647">RED647</option>
+                                <option value="IC">IC</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-2">
+                            <select name="limitslist.logic" class="form-control">
+                                <option value="min"> &#x2265;</option>
+                                <option value="max"> &#8804;</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-2">
+                            <input type="text" class="limitslist-input-tma form-control" name="limitslist.threshold"
+                                   placeholder="Threshold"/>
+                        </div>
+                        <div class="col-xs-2">
+                            <button type="button" class="btn btn-default removeButton"><span
+                                    class="glyphicon glyphicon-minus"></span></button>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-xs-5 col-xs-offset-1">
+                            <button name="Submit" type="submit" class="btn btn-primary">Submit</button>
+                            <button name="clickClear" id="clickClearLimitsTMA" type="button" class="btn btn-danger">Clear
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -701,10 +909,25 @@
     var update_list = function () {
         $.getJSON("{% url 'update-worklist' %}", function (data) {
             $("#id_file_upload_selection").empty();
-            $.each(data, function () {
-                $("#id_file_upload_selection").append(
-                    $("<option></option>").text(this.filename).val(this.id)
-                );
+            $.each(data, function (index) {
+                if (data[index].filetype === 'fusion') {
+                    $("#id_file_upload_selection").append(
+                        $("<option></option>").text(this.filename).val(this.id)
+                    );
+                }
+            });
+        });
+    }
+
+    var update_tma_list = function() {
+        $.getJSON("{% url 'update-worklist' %}", function (data) {
+            $("#id_file_upload_selection_tma").empty();
+            $.each(data, function(index) {
+                if (data[index].filetype === 'tma') {
+                    $("#id_file_upload_selection_tma").append(
+                        $("<option></option>").text(this.filename).val(this.id)
+                    );
+                }
             });
         });
     }
@@ -712,10 +935,12 @@
     var update_limits_list = function () {
         $.getJSON("{% url 'update-limitslist' %}", function (data) {
             $("#id_file_limits_upload_selection").empty();
-            $.each(data, function () {
-                $("#id_file_limits_upload_selection").append(
-                    $("<option></option>").text(this.filename).val(this.id)
-                );
+            $.each(data, function (index) {
+                if (data[index].filetype === 'fusion') {
+                    $("#id_file_limits_upload_selection").append(
+                        $("<option></option>").text(this.filename).val(this.id)
+                    );
+                }
             });
         });
     }

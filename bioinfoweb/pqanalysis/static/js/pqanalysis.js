@@ -100,7 +100,79 @@ $(document).ready(function() {
 			});
 		}
 	});
+	/**
+	* Validation method for dynamically generated
+	* workflow form.
+	*
+	**/
+	$("#tmaForm").validate({
+		// Initializing initial rules for static content - necessary before "adding" more rules
+		rules: {
+			'worklist[0].name': {
+				required: true,
+				alphaOnly: false,
+			},
+			'worklist[0].type': {
+				required: true,
+				alphaOnly: true
+			},
+			'submitter_name': {
+				required: true
+			},
+			'worklist_name': {
+				required: false,
+				alphaOnly: true
+			}
+		},
+		messages: {
+			'worklist[0].name': {
+				alphaOnly: "Only letters and numbers."
+			},
+			'worklist[0].type': {
+                alphaOnly: "Only letters and numbers."
+            },
+			'worklist_name': {
+				alphaOnly: "Only letters and numbers."
+			}
+		},
 
+		submitHandler: function(form) {
+
+
+			// Needed to prevent default action
+			event.preventDefault();
+
+			var data_collection = data_collect_tma();
+
+			// Check the time of worklist being submitted
+			// i.e. either 'fusion' or 'tma'
+			var assaytype;
+			var get_assay_option = $('#assay_option_selection').val();
+			if (get_assay_option === 'tma') {
+				assaytype = 'tma';
+			} else {
+				assaytype = 'fusion';
+			}
+
+			$.ajax({
+				type: "POST",
+				url: "worklist-upload/" + assaytype + "/",
+				data: JSON.stringify(data_collection),
+				datatype: "application/json",
+				cache: false,
+				success: function(json_data) {
+					clear_form($("#tmaForm"));
+					$("#success-upload-tma").show();
+					// Calls a django view to get the updated list
+					update_tma_list();
+					return true;
+				},
+				error: function() {
+					alert("ERROR");
+				}
+			});
+		}
+	});
 	/**
 	* Validation method for dynamically generated
 	* workflow form.
@@ -215,6 +287,7 @@ $(document).ready(function() {
 	**/
 	$(document).click(function() {
 		$("#success-upload").hide();
+		$("#success-upload-tma").hide();
 	});
 
 	/**
@@ -266,6 +339,9 @@ $(document).ready(function() {
 		clear_form($("#fusionForm"))
 	});
 
+	$("#clickClearTMA").click(function() {
+		clear_form($("#tmaForm"))
+	});
 
 	/**
 	 * Helper function to dynamically populate the worklist form with 
@@ -384,7 +460,52 @@ $(document).ready(function() {
 	})()).on("click", ".removeButton", function() {
 		var $row = $(this).parents(".form-group").remove();
 	});
+    /**
+	* Feature to add/remove rows of data for workflow.
+	*
+	**/
+	$("#tmaForm").on("click", ".addButton", (function() {
 
+		var worklistIndex = 0;
+
+		return function() {
+
+			worklistIndex++;
+
+			var $template = $("#datagroup-template-tma"),
+			$clone = $template
+			.clone()
+			.removeClass("hide")
+			.removeAttr("id")
+			.attr("data-worklist-index", worklistIndex)
+			.insertBefore($template);
+
+			$clone
+			.find('[name="worklist.name"]').attr('name', 'worklist[' + worklistIndex + '].name').end()
+			.find('[name="worklist.category"]').attr('name', 'worklist[' + worklistIndex + '].category').end()
+
+			$('.worklist-input-tma').each(function() {
+
+				// Add a different rule to the name field which allows other characters
+				if (this.name.indexOf("name") == -1) {
+					$(this).rules("add", {
+						required: true,
+						alphaOnly: true,
+						messages: {
+							alphaOnly: "Only letters and numbers."
+						}
+					});
+				} else {
+					$(this).rules("add", {
+						required: true,
+					});
+				}
+			});
+		};
+
+	})()).on("click", ".removeButton", function() {
+		var $row = $(this).parents(".form-group").remove();
+	});
 	/**
 	* Add validation method that only accepts
 	* alphanumerics.
@@ -410,6 +531,34 @@ $(document).ready(function() {
 	* and returns this data as a JSON object.
 	*
 	**/
+
+    function data_collect_tma() {
+        // Holds the group of data per row
+        data_results = {};
+        $("#tmaForm > div").each(function (index) {
+            if ($(this).attr("#data-worklist-index") != null) {
+                data_results[index] = {};
+                $(this).children().find("[name]").each(function () {
+                    var propertyName = $(this).attr("name");
+                    var propertyValue = $(this).val();
+                    data_results[index][propertyName] = propertyValue
+                });
+            }
+        });
+
+        var submitter_name = $("#worklist-submitter-tma").val();
+        var worklist_name = $("#worklist-name-input-tma").val();
+
+        data_results["submitter_name"] = submitter_name;
+        data_results["worklist_name"] = worklist_name;
+
+        var json_data = {
+        	json: data_results
+		};
+
+        return json_data
+    }
+
 	function data_collect() {
 		// Holds the group of data per row
 		data_results = {};
