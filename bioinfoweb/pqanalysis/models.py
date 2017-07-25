@@ -96,6 +96,12 @@ class RunRecovery(models.Model):
   slug = models.SlugField(max_length=1000, blank=True)
   upload_date = models.DateField(auto_now_add=True)
 
+  def __str__(self):
+    return self.filename
+
+  def __unicode__(self):
+    return self.filename
+
 
 class Limits(models.Model):
     """ Storing user worklist """

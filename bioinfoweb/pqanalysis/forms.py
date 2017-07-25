@@ -1,5 +1,17 @@
 from django import forms
-from .models import Worklist, Limits
+from .models import Worklist, Limits, RunRecovery
+
+
+class RunRecoveryForm(forms.Form):
+  class Meta:
+    model = RunRecovery
+    fields = ['file']
+
+  file_upload_selection = forms.ModelChoiceField(
+    queryset=RunRecovery.objects.all(),
+    initial=1,
+    widget=forms.Select(attrs={'class':'form-control'})
+  )
 
 
 class WorklistInputForm(forms.Form):

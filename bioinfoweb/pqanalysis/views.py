@@ -10,8 +10,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
 
-from .models import PqAttachment, Worklist, CombineResults, Limits
-from .forms import WorklistInputForm, LimitsInputForm
+from .models import PqAttachment, Worklist, CombineResults, Limits, RunRecovery
+from .forms import WorklistInputForm, LimitsInputForm, RunRecoveryForm
 
 from rcall.rcaller import R_Caller
 
@@ -71,9 +71,11 @@ def add_attachment(request):
 
     worklist_form = WorklistInputForm();
     limits_form = LimitsInputForm();
+    recovery_form = RunRecoveryForm();
 
     return render(request, "pqanalysis/pqanalysis.html", {"worklist_form": worklist_form,
-                                                          "limits_form": limits_form})
+                                                          "limits_form": limits_form,
+                                                          "recovery_form": recovery_form})
 
 
 def create_and_serve_combined_file(request, format_analysis_id):
@@ -105,13 +107,15 @@ def create_and_serve_combined_file(request, format_analysis_id):
       except ObjectDoesNotExist:
         worklist_template = None
 
-      worklist_form = WorklistInputForm();
+      worklist_form = WorklistInputForm()
       limits_form = LimitsInputForm()
+      recovery_form = RunRecoveryForm()
 
       return render(request, "pqanalysis/pqanalysis.html", {"error_msg": error_msg,
                                                             "worklist_form": worklist_form,
                                                             "worklist_template": worklist_template,
-                                                            "limits_form": limits_form})
+                                                            "limits_form": limits_form,
+                                                            "recovery_form": recovery_form})
 
     data_save = os.path.join(SAVE_DATA_DIR, format_analysis_id + "_combined.xlsx")
     f.write_combined_multiple(data_save)
@@ -513,7 +517,6 @@ def ajax_uploaded_worklist(request, type_of):
 
   if request.is_ajax():
 
-
     worklist_response_data = json.loads(request.body)
 
     media_path = os.path.join(settings.MEDIA_ROOT, "worklist")
@@ -534,8 +537,6 @@ def ajax_uploaded_worklist(request, type_of):
 
       csv_writer.writerow(worklist_headers)
 
-      print(worklist_response_data, "<<<<<<<<<<<<")
-
       for key, value in worklist_response_data['json'].iteritems():
         if key == "worklist_name" or key == "submitter_name":
           continue
@@ -547,8 +548,6 @@ def ajax_uploaded_worklist(request, type_of):
             "type": "",
             "category": "",
           }
-
-          print("Type of: ", type_of)
 
           if type_of == 'fusion':
 
@@ -570,8 +569,6 @@ def ajax_uploaded_worklist(request, type_of):
               parse_value = category.split(".")[1]
               temp_data_storage[parse_value] = data_value
 
-            print(temp_data_storage["name"], temp_data_storage["type"], "<---")
-
             line_to_write = [temp_data_storage["name"], temp_data_storage["type"]]
             csv_writer.writerow(line_to_write)
 
@@ -582,3 +579,55 @@ def ajax_uploaded_worklist(request, type_of):
       worklist_save_file.save()
 
   return HttpResponse("success")
+
+@csrf_exempt
+def ajax_uploaded_recovery(request):
+  import csv
+
+  if request.is_ajax():
+
+    recovery_response_data = json.loads(request.body)
+    media_path = os.path.join(settings.MEDIA_ROOT, "recovery")
+    recovery_name = recovery_response_data['json']['recovery_filename']
+    submission_name = recovery_response_data['json']['submitter_name']
+
+    file_name_generator = recovery_name + create_timestamp() + ".csv"
+    file_save_path = os.path.join(media_path, file_name_generator)
+
+    with open(file_save_path, "wb") as recovery_file:
+      recovery_headers = ["Run.ID", "Lot.Number", "POL.truth", "LTR.truth"]
+
+      csv_writer = csv.writer(recovery_file, delimiter=",")
+      csv_writer.writerow(recovery_headers)
+
+      for key, value in recovery_response_data['json'].iteritems():
+        if key == 'recovery_filename' or key == 'submitter_name':
+          continue
+        else:
+          temp_data_storage = {
+            'runid':'',
+            'lot':'',
+            'pol':'',
+            'ltr':''
+          }
+
+          for category, data_value in value.iteritems():
+            parse_value = category.split(".")[1]
+            temp_data_storage[parse_value] = data_value
+
+          line_to_write = [
+            temp_data_storage['runid'],
+            temp_data_storage['lot'],
+            temp_data_storage['pol'],
+            temp_data_storage['ltr']
+          ]
+
+          csv_writer.writerow(line_to_write)
+
+      recovery_save_file = RunRecovery()
+      recovery_save_file.filename = recovery_name
+      recovery_save_file.file = os.path.join("recovery", file_name_generator)
+      recovery_save_file.save()
+  return HttpResponse("success")
+
+

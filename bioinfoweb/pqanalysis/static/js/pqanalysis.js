@@ -175,7 +175,7 @@ $(document).ready(function() {
 	});
 	/**
 	* Validation method for dynamically generated
-	* workflow form.
+	* limits form.
 	*
 	**/
 	$("#fusionLimitsForm").validate({
@@ -319,6 +319,71 @@ $(document).ready(function() {
 			return false;
 		}
 	});
+	/**
+	* Validation method for dynamically generated
+	* recovery form
+	*
+	**/
+	$("#tmaRecoveryForm").validate({
+		// Initializing initial rules for static content - necessary before "adding" more rules
+		rules: {
+			'recovery[0].runid': {
+				required: true,
+			},
+			'reocvery[0].lot': {
+				required: true
+			},
+			'recovery[0].pol': {
+				required: true,
+				number: true
+			},
+			'recovery[0].ltr': {
+				required: true,
+				number: true
+			},
+			'submitter_name': {
+				required: true
+			},
+			'recovery_filename': {
+				required: true
+			}
+		},
+		messages: {
+			'recovery[0].pol': {
+				number: "Only numbers."
+			},
+			'recovery[0].ltr': {
+				number: "Only number."
+			},
+		},
+
+		submitHandler: function(form, event) {
+
+			// Needed to prevent default action
+			event.preventDefault();
+
+			var data_collection = recovery_data_collect_tma();
+
+
+			$.ajax({
+				type: "POST",
+				url: "recovery-upload/",
+				data: JSON.stringify(data_collection),
+				datatype: "application/json",
+				cache: false,
+				success: function(json_data) {
+					clear_form($("#tmaRecoveryForm"));
+					$("#success-upload-recovery-tma").show();
+					// update_tma_limits_list();
+					return true;
+				},
+				error: function() {
+					alert("ERROR");
+				}
+			});
+			return false;
+		}
+	});
 	/*************************************************************
 	*
 	* Below is a list of functions show/display
@@ -364,6 +429,7 @@ $(document).ready(function() {
 	$(document).click(function() {
 		$("#success-upload").hide();
 		$("#success-upload-tma").hide();
+		$("#success-upload-recovery-tma").hide();
 	});
 
 	/**
@@ -419,6 +485,10 @@ $(document).ready(function() {
 
 	$("#clickClearTMA").click(function() {
 		clear_form($("#tmaForm"))
+	});
+
+	$("#clickClearRecoveryTMA").click(function() {
+		clear_form($("#tmaRecoveryForm"))
 	});
 
 	/**
@@ -949,5 +1019,88 @@ $(document).ready(function() {
 
 		return json_data
     }
+
+
+	/*************************************************************
+	*
+	* Below is a list of functions for the recovery list
+	*
+	**************************************************************/
+    /**
+	* Feature to add/remove rows of data for workflow.
+	*
+	**/
+	$("#tmaRecoveryForm").on("click", ".addButton", (function() {
+
+		var recoveryIndex = 0;
+
+		return function() {
+
+			recoveryIndex++;
+
+			var $template = $("#datagroup-template-recovery-tma"),
+			$clone = $template
+			.clone()
+			.removeClass("hide")
+			.removeAttr("id")
+			.attr("data-recovery-index", recoveryIndex)
+			.insertBefore($template);
+
+			$clone
+			.find('[name="recovery.runid"]').attr('name', 'recovery[' + recoveryIndex + '].runid').end()
+			.find('[name="recovery.lot"]').attr('name', 'recovery[' + recoveryIndex + '].lot').end()
+			.find('[name="recovery.pol"]').attr('name', 'recovery[' + recoveryIndex + '].pol').end()
+			.find('[name="recovery.ltr"]').attr('name', 'recovery[' + recoveryIndex + '].ltr').end();
+
+			$('.recovery-input-tma').each(function() {
+
+				// Add a different rule to the name field which allows other characters
+				if (this.name.indexOf("name") == -1) {
+					$(this).rules("add", {
+						required: true,
+						alphaOnly: true,
+						messages: {
+							alphaOnly: "Only letters and numbers."
+						}
+					});
+				} else {
+					$(this).rules("add", {
+						required: true,
+					});
+				}
+			});
+		};
+
+	})()).on("click", ".removeButton", function() {
+		var $row = $(this).parents(".form-group").remove();
+	});
+
+	function recovery_data_collect_tma() {
+		var data_results = {}
+
+		$("#tmaRecoveryForm > div").each(function(index, element) {
+			if ($(this).attr("data-recovery-index") != null) {
+				data_results[index] = {};
+				$(this).children().find("[name]").each(function() {
+					var propertyName = $(this).attr("name");
+					var propertyValue = $(this).val();
+					data_results[index][propertyName] = propertyValue
+				});
+			}
+		});
+
+		var submitter_name = $("#recovery-submitter-tma").val();
+		var recovery_filename = $("#recovery-name-input-tma").val();
+
+		data_results["submitter_name"] = submitter_name;
+		data_results["recovery_filename"] = recovery_filename;
+
+		var json_data = {
+			json: data_results
+		};
+
+		return json_data
+	}
+
 // <--- Document on load --->
 });

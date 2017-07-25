@@ -30,10 +30,8 @@
 
 
 <div class="row">
-    <div class="col-xs-2">
-    </div>
+    <div class="col-xs-2"></div>
     <div class="col-xs-6">
-
         <h1>PQ Analysis</h1>
 
         <form action="" method="POST" id="pqupload" enctype="multipart/form-data">
@@ -212,6 +210,7 @@
                             </div>
                             <div id="tmaAdvancedOptions">
                               <hr>
+                                <!-- TMA WORKLIST UPLOAD SECTION -->
                                 <b>Worklist</b>
                                 <p class="help-block">The worklist is a label file specifing the negative and postive
                                     samples.
@@ -237,6 +236,7 @@
                                     <br>
                                 </div>
                                 <br>
+                                <!-- TMA LIMITS UPLOAD SECTION -->
                                 <b>Limits</b>
                                 <p class="help-block">The limits list is a value cutoff file specifing the threshold
                                     ranges.
@@ -246,7 +246,6 @@
                                     limits
                                     list upload dialog.</p>
                                 {{ limits_form.file_limits_upload_selection_tma }}
-
                                 <br>
                                 <div class="row">
                                     <div class="col-xs-12">
@@ -254,6 +253,27 @@
 											Limits Upload
 										</span>
                                         <span class="btn btn-danger" data-target="#limitslist-help-tma" data-toggle="modal">
+											Help
+										</span>
+                                    </div>
+                                </div>
+                                <br>
+                                <!-- TMA RECOVERY SECTION -->
+                                <b>Recovery</b>
+                                <p class="help-block">Set the recovery rate for the run.
+                                    <br>
+                                    <b>Tip:</b>
+                                    Selecting any of the previously uploaded limits will load its content into the
+                                    limits
+                                    list upload dialog.</p>
+                                {{ recovery_form.file_upload_selection }}
+                                <br>
+                                <div class="row">
+                                    <div class="col-xs-12">
+										<span class="btn btn-primary" data-target="#recovery-upload-tma" data-toggle="modal">
+											Recovery Upload
+										</span>
+                                        <span class="btn btn-danger" data-target="#recovery-help-tma" data-toggle="modal">
 											Help
 										</span>
                                     </div>
@@ -320,6 +340,134 @@
     </div>
 </div>
 
+<div class="modal modal-wide fade" id="recovery-upload-tma" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Recovery Upload</h4>
+            </div>
+            <div class="modal-body">
+                <div style="display: none" id="success-upload-recovery-tma" class="alert alert-success" role="alert">
+                    <b>Recovery Rates Uploaded.</b> You may exit this dialogue box.
+                </div>
+
+                <form id="tmaRecoveryForm" method="post" class="form-horizontal">
+                    {% csrf_token %}
+                    <div>
+                        <label for="submitterName">Submitter Name:</label>
+                        <input id="recovery-submitter-tma"
+                               class="form-control"
+                               type="text"
+                               name="submitter_name"
+                               placeholder="First & Last Name"/>
+                        <br/>
+                        <label for="recoveryFilename">Recovery Filename:</label>
+                        <input id="recovery-name-input-tma"
+                               class="form-control"
+                               type="text"
+                               name="recovery_filename"
+                               placeholder="Recovery File Name"/>
+                    </div>
+
+                    <br>
+
+                    <div>
+                        <button type="button" id="load-recovery-default-tma">Load Example</button>
+                        Loads an example worklist used for qHIV.
+                    </div>
+
+                    <br>
+
+                    <div class="row">
+                        <div class="col-xs-3"><b>Run ID</b></div>
+                        <div class="col-xs-2"><b>Lot Number</b></div>
+                        <div class="col-xs-2"><b>Pol Truth</b></div>
+                        <div class="col-xs-2"><b>LTR Truth</b></div>
+                        <div class="col-xs-3"></div>
+                    </div>
+
+                    <div class="form-group" id="datagroup-recovery-tma" data-recovery-index="0">
+                        <div class="col-xs-3">
+                            <input type="text"
+                                   class="recovery-input-tma"
+                                   name="recovery[0].runid"
+                                   placeholder="Run ID"/>
+                        </div>
+                        <div class="col-xs-2">
+                            <input type="text"
+                                   class="recovery-input-tma"
+                                   name="recovery[0].lot"
+                                   placeholder="Lot Number"/>
+                        </div>
+                        <div class="col-xs-2">
+                            <input type="text"
+                                   class="recovery-input-tma"
+                                   name="recovery[0].pol"
+                                   placeholder="Pol Truth"/>
+                        </div>
+                        <div class="col-xs-2">
+                            <input type="text"
+                                   class="recovery-input-tma"
+                                   name="recovery[0].ltr"
+                                   placeholder="Ltr Truth"/>
+                        </div>
+                        <div class="col-xs-3">
+                            <button type="button" class="btn btn-default addButton"><span
+                                    class="glyphicon glyphicon-plus"></span></button>
+                        </div>
+                    </div>
+
+                    <!-- Template -->
+
+                    <div class="form-group hide" id="datagroup-template-recovery-tma">
+
+                        <div class="col-xs-3">
+                            <input type="text"
+                                   class="recovery-input-tma"
+                                   name="recovery[0].runid"
+                                   placeholder="Run ID"/>
+                        </div>
+                        <div class="col-xs-2">
+                            <input type="text"
+                                   class="recovery-input-tma"
+                                   name="recovery[0].lot"
+                                   placeholder="Lot Number"/>
+                        </div>
+                        <div class="col-xs-2">
+                            <input type="text"
+                                   class="recovery-input-tma"
+                                   name="recovery[0].pol"
+                                   placeholder="Pol Truth"/>
+                        </div>
+                        <div class="col-xs-2">
+                            <input type="text"
+                                   class="recovery-input-tma"
+                                   name="recovery[0].ltr"
+                                   placeholder="Ltr Truth"/>
+                        </div>
+                        <div class="col-xs-3">
+                            <button type="button" class="btn btn-default removeButton"><span
+                                    class="glyphicon glyphicon-minus"></span></button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-xs-5 col-xs-offset-1">
+                            <button name="Submit" type="submit" class="btn btn-primary">Submit</button>
+                            <button name="clickClear" id="clickClearRecoveryTMA" type="button" class="btn btn-danger">Clear
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="modal modal-wide fade" id="worklist-upload-tma" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
@@ -520,7 +668,6 @@
     </div>
 </div>
 
-
 <div class="modal fade" id="worklist-help" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -581,7 +728,6 @@
             </div>
         </div>
     </div>
-</div>
 </div>
 
 <div class="modal modal-wide fade" id="worklist-upload" tabindex="-1" role="dialog">
@@ -672,7 +818,6 @@
     </div>
 </div>
 
-
 <div class="modal fade" id="limitslist-help" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -739,7 +884,6 @@
             </div>
         </div>
     </div>
-</div>
 </div>
 
 <div class="modal modal-wide fade" id="limits-upload" tabindex="-1" role="dialog">
