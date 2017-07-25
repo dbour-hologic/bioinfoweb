@@ -490,13 +490,13 @@ def ajax_uploaded_limits(request, type_of):
               parse_value = category.split(".")[1]
               temp_data_storage_tma[parse_value] = data_value
 
-            line_to_write = [
-              temp_data_storage_tma["name"],
-              temp_data_storage_tma["minthreshold"],
-              temp_data_storage_tma["maxthreshold"],
-              temp_data_storage_tma["icthreshold"]
-            ]
-            csv_writer.writerow(line_to_write)
+              line_to_write = [
+                temp_data_storage_tma["name"],
+                temp_data_storage_tma["minthreshold"],
+                temp_data_storage_tma["maxthreshold"],
+                temp_data_storage_tma["icthreshold"]
+              ]
+              csv_writer.writerow(line_to_write)
 
       limits_save_file = Limits()
       limits_save_file.limits_type = type_of
@@ -512,6 +512,7 @@ def ajax_uploaded_worklist(request, type_of):
   import csv
 
   if request.is_ajax():
+
 
     worklist_response_data = json.loads(request.body)
 
@@ -533,6 +534,8 @@ def ajax_uploaded_worklist(request, type_of):
 
       csv_writer.writerow(worklist_headers)
 
+      print(worklist_response_data, "<<<<<<<<<<<<")
+
       for key, value in worklist_response_data['json'].iteritems():
         if key == "worklist_name" or key == "submitter_name":
           continue
@@ -545,21 +548,29 @@ def ajax_uploaded_worklist(request, type_of):
             "category": "",
           }
 
+          print("Type of: ", type_of)
+
           if type_of == 'fusion':
-
-              for category, data_value in value.iteritems():
-                parse_value = category.split(".")[1]
-                temp_data_storage[parse_value] = data_value
-
-              line_to_write = [temp_data_storage["name"], temp_data_storage["type"],
-                               temp_data_storage["category"]]
-              csv_writer.writerow(line_to_write)
-
-          else:
 
             for category, data_value in value.iteritems():
               parse_value = category.split(".")[1]
               temp_data_storage[parse_value] = data_value
+
+            line_to_write = [temp_data_storage["name"], temp_data_storage["type"],
+                             temp_data_storage["category"]]
+
+            csv_writer.writerow(line_to_write)
+
+            print(temp_data_storage["name"], temp_data_storage["type"], "<---FUSION")
+
+          else:
+
+            for category, data_value in value.iteritems():
+
+              parse_value = category.split(".")[1]
+              temp_data_storage[parse_value] = data_value
+
+            print(temp_data_storage["name"], temp_data_storage["type"], "<---")
 
             line_to_write = [temp_data_storage["name"], temp_data_storage["type"]]
             csv_writer.writerow(line_to_write)

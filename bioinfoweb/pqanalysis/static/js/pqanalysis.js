@@ -374,6 +374,8 @@ $(document).ready(function() {
 	**/
 	function dynamicWorklistRetrieve(primaryKey) {
 
+		var getValue;
+
 		if (typeof primaryKey === 'undefined') {
 			getValue = $("#id_file_upload_selection option:selected").val();
 		} else {
@@ -386,7 +388,7 @@ $(document).ready(function() {
 			url: "prepopulate-worklist/" + getValue,
 			success: function(fileData)
 			{
-				parsed_JSON = JSON.parse(fileData);
+				var parsed_JSON = JSON.parse(fileData);
 				addWorklistRows(parsed_JSON.rows)
 			}
 		});
@@ -456,9 +458,9 @@ $(document).ready(function() {
 			.find('[name="worklist.type"]').attr('name', 'worklist[' + worklistIndex + '].type').end();
 
 
-			$("input[name='worklist["+worklistIndex+"].name']").val(value.term);
-			$("input[name='worklist["+worklistIndex+"].type']").val(value.type);
-			$("input[name='worklist["+worklistIndex+"].category']").val(value.logvector);
+			$("#worklist-upload input[name='worklist["+worklistIndex+"].name']").val(value.term);
+			$("#worklist-upload input[name='worklist["+worklistIndex+"].type']").val(value.type);
+			$("#worklist-upload input[name='worklist["+worklistIndex+"].category']").val(value.logvector);
 
 			// Resets the first icon to a plus since template creates removal buttons
 			if (worklistIndex == 0) {
@@ -610,13 +612,16 @@ $(document).ready(function() {
 
     function data_collect_tma() {
         // Holds the group of data per row
-        data_results = {};
-        $("#tmaForm > div").each(function (index) {
-            if ($(this).attr("#data-worklist-index") != null) {
+        var data_results = {};
+        $("#tmaForm > div").each(function (index, element) {
+
+            if ($(this).attr("data-worklist-index") != null) {
                 data_results[index] = {};
                 $(this).children().find("[name]").each(function () {
+
                     var propertyName = $(this).attr("name");
                     var propertyValue = $(this).val();
+
                     data_results[index][propertyName] = propertyValue
                 });
             }
@@ -637,7 +642,7 @@ $(document).ready(function() {
 
 	function data_collect() {
 		// Holds the group of data per row
-		data_results = {};
+		var data_results = {};
 
 		$("#fusionForm > div").each(function(index, element) {
 			if ($(this).attr("data-worklist-index") != null) {
@@ -645,6 +650,11 @@ $(document).ready(function() {
 				$(this).children().find("[name]").each(function() {
 					var propertyName = $(this).attr("name");
 					var propertyValue = $(this).val();
+
+					console.log(data_results);
+					console.log("Property name: ", propertyName);
+                    console.log("Property value: ", propertyValue);
+
 					data_results[index][propertyName] = propertyValue
 				});
 			}
@@ -884,7 +894,7 @@ $(document).ready(function() {
 	**/
 
 	function limits_data_collect_tma() {
-		data_results = {}
+		var data_results = {}
 
 		$("#tmaLimitsForm > div").each(function(index, element) {
 			if ($(this).attr("data-limitslist-index") != null) {
@@ -913,7 +923,7 @@ $(document).ready(function() {
 
 	function limits_data_collect() {
 		// Holds the group of data per row
-		data_results = {};
+		var data_results = {};
 
 		$("#fusionLimitsForm > div").each(function(index, element) {
 			if ($(this).attr("data-limitslist-index") != null) {
