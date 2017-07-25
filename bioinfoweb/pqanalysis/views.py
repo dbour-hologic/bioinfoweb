@@ -284,7 +284,8 @@ def get_limitslist_update(request):
     for element in limits_list.values():
       limits_list_all.append(
         {'id': element['id'],
-         'filename': element['filename']}
+         'filename': element['filename'],
+         'filetype': element['limits_type']}
       )
 
   return HttpResponse(json.dumps(limits_list_all), content_type='application/json')
@@ -441,6 +442,8 @@ def ajax_uploaded_limits(request, type_of):
     with open(file_save_path, "wb") as limitslist_file:
 
       limits_headers = ["sample.type", "Channel", "threshold", "direction"]
+      if type_of == 'tma':
+        limits_headers = ["SampleType", "Interpretation.2_min", "Interpretation.2_max", "GIC.TT_max"]
 
       csv_writer = csv.writer(limitslist_file, delimiter=",")
 
@@ -451,24 +454,49 @@ def ajax_uploaded_limits(request, type_of):
           continue
         else:
 
-          # Temporary storage to parse the JSON data into a predictable format
-          temp_data_storage = {
-            "name": "",
-            "channel": "",
-            "threshold": "",
-            "logic": ""
-          }
 
-          for category, data_value in value.iteritems():
-            parse_value = category.split(".")[1]
-            temp_data_storage[parse_value] = data_value
+          if type_of == 'fusion':
 
-          line_to_write = [temp_data_storage["name"],
-                           temp_data_storage["channel"],
-                           temp_data_storage["threshold"],
-                           temp_data_storage["logic"]]
+            # Temporary storage to parse the JSON data into a predictable format
+            temp_data_storage = {
+              "name": "",
+              "channel": "",
+              "threshold": "",
+              "logic": ""
+            }
 
-          csv_writer.writerow(line_to_write)
+            for category, data_value in value.iteritems():
+              parse_value = category.split(".")[1]
+              temp_data_storage[parse_value] = data_value
+
+            line_to_write = [temp_data_storage["name"],
+                             temp_data_storage["channel"],
+                             temp_data_storage["threshold"],
+                             temp_data_storage["logic"]]
+
+            csv_writer.writerow(line_to_write)
+
+          else:
+
+            # Temporary storage to parse the JSON data into a predictable format
+            temp_data_storage_tma = {
+              "name": "",
+              "minthreshold": "",
+              "maxthreshold": "",
+              "icthreshold": ""
+            }
+
+            for category, data_value in value.iteritems():
+              parse_value = category.split(".")[1]
+              temp_data_storage_tma[parse_value] = data_value
+
+            line_to_write = [
+              temp_data_storage_tma["name"],
+              temp_data_storage_tma["minthreshold"],
+              temp_data_storage_tma["maxthreshold"],
+              temp_data_storage_tma["icthreshold"]
+            ]
+            csv_writer.writerow(line_to_write)
 
       limits_save_file = Limits()
       limits_save_file.limits_type = type_of
@@ -497,6 +525,7 @@ def ajax_uploaded_worklist(request, type_of):
     with open(file_save_path, "wb") as worklist_file:
 
       worklist_headers = ["term", "type", "logical vector"]
+
       if type_of == 'tma':
         worklist_headers = ["SearchTerm", "SampleType"]
 

@@ -242,7 +242,83 @@ $(document).ready(function() {
 		}
 	});
 
+	$("#tmaLimitsForm").validate({
+		// Initializing initial rules for static content - necessary before "adding" more rules
+		rules: {
+			'limitslist[0].name': {
+				required: true,
+				alphaOnly: true,
+			},
+			'limitslist[0].minthreshold': {
+				required: true,
+				number: true
+			},
+			'limitslist[0].maxthreshold': {
+				required: true,
+				number: true
+			},
+			'limitslist[0].icthreshold': {
+				required: true,
+				number: true
+			},
+			'submitter_name_limits': {
+				required: true
+			},
+			'limits_name': {
+				required: true
+			}
+		},
+		messages: {
+			'limitslist[0].name': {
+				alphaOnly: "Only letters and numbers."
+			},
+			'limitslist[0].minthreshold': {
+				number: "Only numbers."
+			},
+			'limitslist[0].maxthreshold': {
+				number: "Only number."
+			},
+			'limitslist[0].icthreshold': {
+				number: "Only number."
+			}
+		},
 
+		submitHandler: function(form, event) {
+
+			// Needed to prevent default action
+			event.preventDefault();
+
+			var data_collection = limits_data_collect_tma();
+
+			// Check the time of worklist being submitted
+			// i.e. either 'fusion' or 'tma'
+			var assaytype;
+			var get_assay_option = $('#assay_option_selection').val();
+			if (get_assay_option === 'tma') {
+				assaytype = 'tma';
+			} else {
+				assaytype = 'fusion';
+			}
+
+			$.ajax({
+				type: "POST",
+				url: "limits-upload/" + assaytype + "/",
+				data: JSON.stringify(data_collection),
+				datatype: "application/json",
+				cache: false,
+				success: function(json_data) {
+					clear_form($("#tmaLimitsForm"));
+					$("#limits-success-upload-tma").show();
+					update_tma_limits_list();
+					return true;
+				},
+				error: function() {
+					alert("ERROR");
+				}
+			});
+			return false;
+		}
+	});
 	/*************************************************************
 	*
 	* Below is a list of functions show/display
@@ -641,6 +717,7 @@ $(document).ready(function() {
 	**/
 	$(document).click(function() {
 		$("#limits-success-upload").hide();
+		$("#limits-success-upload-tma").hide();
 	});
 
 	/**
@@ -649,7 +726,9 @@ $(document).ready(function() {
 	$("#clickClearLimits").click(function() {
 		clear_form($("#fusionLimitsForm"))
 	});
-
+	$("#clickClearTMA").click(function() {
+		clear_form($("#tmaLimitsForm"))
+	});
 
 	/**
 	 * Helper function to dynamically populate the limits list form with 
@@ -666,7 +745,7 @@ $(document).ready(function() {
 		});
 
 
-var limitsListIndex = 0;
+		var limitsListIndex = 0;
         $.each(getData, function(index, value) {
 
 
@@ -717,7 +796,7 @@ var limitsListIndex = 0;
 		});
     }
     /**
-	* Feature to add/remove rows of data for workflow.
+	* Feature to add/remove rows of data for limits,
 	* 
 	**/
 	$("#fusionLimitsForm").on("click", ".addLimitsButton", (function() {
@@ -755,6 +834,45 @@ var limitsListIndex = 0;
 	})()).on("click", ".removeButton", function() {
 		var $row = $(this).parents(".form-group").remove();
 	});	
+    /**
+	* Feature to add/remove rows of data for limits,
+	*
+	**/
+	$("#tmaLimitsForm").on("click", ".addLimitsButton", (function() {
+
+		var limitsListIndex = 0;
+
+		return function() {
+
+			limitsListIndex++;
+
+			var $template = $("#datagroup-template-limits-tma"),
+			$clone = $template
+			.clone()
+			.removeClass("hide")
+			.removeAttr("id")
+			.attr("data-limitslist-index", limitsListIndex)
+			.insertBefore($template);
+
+			$clone
+			.find('[name="limitslist.name"]').attr('name', 'limitslist[' + limitsListIndex + '].name').end()
+			.find('[name="limitslist.minthresholdl"]').attr('name', 'limitslist[' + limitsListIndex + '].minthreshold').end()
+			.find('[name="limitslist.maxthreshold"]').attr('name', 'limitslist[' + limitsListIndex + '].maxthreshold').end()
+			.find('[name="limitslist.icthreshold"]').attr('name', 'limitslist[' + limitsListIndex + '].icthreshold').end();
+
+			$('.limitslist-input-tma').each(function() {
+				$(this).rules("add", {
+					required: true,
+					alphaOnly: true,
+					messages: {
+						alphaOnly: "Only letters and numbers."
+					}
+				});
+			});
+		};
+	})()).on("click", ".removeButton", function() {
+		var $row = $(this).parents(".form-group").remove();
+	});
 
 
 
@@ -764,6 +882,35 @@ var limitsListIndex = 0;
 	* and returns this data as a JSON object.
 	*
 	**/
+
+	function limits_data_collect_tma() {
+		data_results = {}
+
+		$("#tmaLimitsForm > div").each(function(index, element) {
+			if ($(this).attr("data-limitslist-index") != null) {
+				data_results[index] = {};
+				$(this).children().find("[name]").each(function() {
+					var propertyName = $(this).attr("name");
+					var propertyValue = $(this).val();
+					data_results[index][propertyName] = propertyValue
+				});
+			}
+		});
+
+		var submitter_name = $("#limitsList-submitter-tma").val();
+		var limitslist_name = $("#limits-name-input-tma").val();
+
+		data_results["submitter_name"] = submitter_name;
+		data_results["limitslist_name"] = limitslist_name;
+
+		var json_data = {
+			json: data_results
+		};
+
+		return json_data
+	}
+
+
 	function limits_data_collect() {
 		// Holds the group of data per row
 		data_results = {};
