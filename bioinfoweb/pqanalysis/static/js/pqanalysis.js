@@ -15,12 +15,24 @@ $(document).ready(function() {
 			'submitter': {
 				required: true,
 				rangelength:[1,99]
+			},
+			'assay-analysis': {
+				required: true
 			}
 		},
 		messages: {
 			'analysis_id': 'Only letters and numbers allowed.'
+		},
+		errorPlacement: function(error, element) {
+			if ( element.is(":radio") ) {
+				error.appendTo($('.checkboxError'));
+			} else {
+				error.insertAfter(element);
+			}
+
 		}
 	});
+
 
 	/**
 	* Validation method for dynamically generated
@@ -87,7 +99,7 @@ $(document).ready(function() {
 				data: JSON.stringify(data_collection),
 				datatype: "application/json",
 				cache: false,
-				success: function(json_data) {
+				success: function(json_data) {assay_option_selection
 					clear_form($("#fusionForm"));
 					$("#success-upload").show();
 					// Calls a django view to get the updated list
@@ -109,30 +121,16 @@ $(document).ready(function() {
 		// Initializing initial rules for static content - necessary before "adding" more rules
 		rules: {
 			'worklist[0].name': {
-				required: true,
-				alphaOnly: false,
+				required: true
 			},
 			'worklist[0].type': {
-				required: true,
-				alphaOnly: true
+				required: true
 			},
 			'submitter_name': {
 				required: true
 			},
 			'worklist_name': {
-				required: false,
-				alphaOnly: true
-			}
-		},
-		messages: {
-			'worklist[0].name': {
-				alphaOnly: "Only letters and numbers."
-			},
-			'worklist[0].type': {
-                alphaOnly: "Only letters and numbers."
-            },
-			'worklist_name': {
-				alphaOnly: "Only letters and numbers."
+				required: false
 			}
 		},
 
@@ -245,19 +243,18 @@ $(document).ready(function() {
 	$("#tmaLimitsForm").validate({
 		// Initializing initial rules for static content - necessary before "adding" more rules
 		rules: {
-			'limitslist[0].name': {
+			'limitslist-tma[0].name': {
 				required: true,
-				alphaOnly: true,
 			},
-			'limitslist[0].minthreshold': {
-				required: true,
-				number: true
-			},
-			'limitslist[0].maxthreshold': {
+			'limitslist-tma[0].minthreshold': {
 				required: true,
 				number: true
 			},
-			'limitslist[0].icthreshold': {
+			'limitslist-tma[0].maxthreshold': {
+				required: true,
+				number: true
+			},
+			'limitslist-tma[0].icthreshold': {
 				required: true,
 				number: true
 			},
@@ -269,16 +266,13 @@ $(document).ready(function() {
 			}
 		},
 		messages: {
-			'limitslist[0].name': {
-				alphaOnly: "Only letters and numbers."
-			},
-			'limitslist[0].minthreshold': {
+			'limitslist-tma[0].minthreshold': {
 				number: "Only numbers."
 			},
-			'limitslist[0].maxthreshold': {
+			'limitslist-tma[0].maxthreshold': {
 				number: "Only number."
 			},
-			'limitslist[0].icthreshold': {
+			'limitslist-tma[0].icthreshold': {
 				number: "Only number."
 			}
 		},
@@ -481,6 +475,10 @@ $(document).ready(function() {
 		clear_form($("#tmaRecoveryForm"))
 	});
 
+	$("#clickClearLimitsTMA").click(function() {
+		clear_form($("#tmaLimitsForm"))
+	});
+
 	/**
 	 * Helper function to dynamically populate the worklist form with 
 	 * previously uploaded worklist. The way it performs addition of 
@@ -579,19 +577,9 @@ $(document).ready(function() {
 			$('.worklist-input').each(function() {
 
 				// Add a different rule to the name field which allows other characters
-				if (this.name.indexOf("name") == -1) {
-					$(this).rules("add", {
-						required: true,
-						alphaOnly: true,
-						messages: {
-							alphaOnly: "Only letters and numbers."
-						}
-					});
-				} else {
 					$(this).rules("add", {
 						required: true,
 					});
-				}
 			});
 		};
 
@@ -619,25 +607,16 @@ $(document).ready(function() {
 			.insertBefore($template);
 
 			$clone
-			.find('[name="worklist.name"]').attr('name', 'worklist[' + worklistIndex + '].name').end()
-			.find('[name="worklist.category"]').attr('name', 'worklist[' + worklistIndex + '].category').end()
+			.find('[name="worklist-tma.name"]').attr('name', 'worklist-tma[' + worklistIndex + '].name').end()
+			.find('[name="worklist-tma.type"]').attr('name', 'worklist-tma[' + worklistIndex + '].type').end()
 
 			$('.worklist-input-tma').each(function() {
 
 				// Add a different rule to the name field which allows other characters
-				if (this.name.indexOf("name") == -1) {
-					$(this).rules("add", {
-						required: true,
-						alphaOnly: true,
-						messages: {
-							alphaOnly: "Only letters and numbers."
-						}
-					});
-				} else {
-					$(this).rules("add", {
-						required: true,
-					});
-				}
+
+				$(this).rules("add", {
+					required: true,
+				});
 			});
 		};
 
@@ -662,6 +641,8 @@ $(document).ready(function() {
 
 	function clear_form($form) {
 		$form.find('input:text').val('');
+		// Default values when reset
+		$form.find('.limitslist-input-tma-ictt').val('99');
     }
     /**
 	* data_collect() is a function that is used for collecting
@@ -889,7 +870,8 @@ $(document).ready(function() {
 			.find('[name="limitslist.name"]').attr('name', 'limitslist[' + limitsListIndex + '].name').end()
 			.find('[name="limitslist.channel"]').attr('name', 'limitslist[' + limitsListIndex + '].channel').end()
 			.find('[name="limitslist.logic"]').attr('name', 'limitslist[' + limitsListIndex + '].logic').end()
-			.find('[name="limitslist.threshold"]').attr('name', 'limitslist[' + limitsListIndex + '].threshold').end();
+			.find('[name="limitslist.threshold"]').attr('name', 'limitslist[' + limitsListIndex + '].threshold').end()
+			.find('[name="limitslist.threshold"]').attr('value', '99').end();
 
 			$('.limitslist-input').each(function() {
 				$(this).rules("add", {
@@ -910,33 +892,33 @@ $(document).ready(function() {
 	**/
 	$("#tmaLimitsForm").on("click", ".addLimitsButton", (function() {
 
-		var limitsListIndex = 0;
+		var limitsListIndexTMA = 0;
+
 
 		return function() {
 
-			limitsListIndex++;
+			limitsListIndexTMA++;
+			console.log(limitsListIndexTMA);
 
 			var $template = $("#datagroup-template-limits-tma"),
 			$clone = $template
 			.clone()
 			.removeClass("hide")
 			.removeAttr("id")
-			.attr("data-limitslist-index", limitsListIndex)
+			.attr("data-limitslist-index", limitsListIndexTMA)
 			.insertBefore($template);
 
 			$clone
-			.find('[name="limitslist.name"]').attr('name', 'limitslist[' + limitsListIndex + '].name').end()
-			.find('[name="limitslist.minthresholdl"]').attr('name', 'limitslist[' + limitsListIndex + '].minthreshold').end()
-			.find('[name="limitslist.maxthreshold"]').attr('name', 'limitslist[' + limitsListIndex + '].maxthreshold').end()
-			.find('[name="limitslist.icthreshold"]').attr('name', 'limitslist[' + limitsListIndex + '].icthreshold').end();
+			.find('[name="limitslist-tma.name"]').attr('name', 'limitslist-tma[' + limitsListIndexTMA + '].name').end()
+			.find('[name="limitslist-tma.minthreshold"]').attr('name', 'limitslist-tma[' + limitsListIndexTMA + '].minthreshold').end()
+			.find('[name="limitslist-tma.maxthreshold"]').attr('name', 'limitslist-tma[' + limitsListIndexTMA + '].maxthreshold').end()
+			.find('[name="limitslist-tma.icthreshold"]').attr('name', 'limitslist-tma[' + limitsListIndexTMA + '].icthreshold').end();
 
 			$('.limitslist-input-tma').each(function() {
+				// Add a different rule to the name field which allows other characters
+				console.log($(this));
 				$(this).rules("add", {
-					required: true,
-					alphaOnly: true,
-					messages: {
-						alphaOnly: "Only letters and numbers."
-					}
+					required: true
 				});
 			});
 		};
