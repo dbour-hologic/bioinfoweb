@@ -7,7 +7,7 @@ class RunRecoveryForm(forms.Form):
     model = RunRecovery
     fields = ['file']
 
-  file_upload_selection = forms.ModelChoiceField(
+  file_upload_selection_recovery = forms.ModelChoiceField(
     queryset=RunRecovery.objects.all(),
     initial=1,
     widget=forms.Select(attrs={'class':'form-control'})
@@ -38,7 +38,7 @@ class LimitsInputForm(forms.Form):
     fields = ['file']
 
   file_limits_upload_selection = forms.ModelChoiceField(
-    queryset=Limits.objects.all(),
+    queryset=Limits.objects.filter(limits_type__iexact='fusion'),
     initial=1,
     widget=forms.Select(attrs={'class': 'form-control'})
   )

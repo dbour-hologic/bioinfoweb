@@ -52,7 +52,7 @@
 
             <div class="checkbox">
                 <legend>Choose assay type:</legend>
-                <select class="form-control" id="assay_option_selection">
+                <select class="form-control" id="assay_option_selection" name="assay-option-selection">
                     <option value="fusion">Fusion</option>
                     <option value="tma">TMA</option>
                 </select>
@@ -266,7 +266,7 @@
                                     Selecting any of the previously uploaded limits will load its content into the
                                     limits
                                     list upload dialog.</p>
-                                {{ recovery_form.file_upload_selection }}
+                                {{ recovery_form.file_upload_selection_recovery }}
                                 <br>
                                 <div class="row">
                                     <div class="col-xs-12">

@@ -334,12 +334,10 @@ $(document).ready(function() {
 				required: true
 			},
 			'recovery[0].pol': {
-				required: true,
-				number: true
+				required: true
 			},
 			'recovery[0].ltr': {
-				required: true,
-				number: true
+				required: true
 			},
 			'submitter_name': {
 				required: true
@@ -347,14 +345,6 @@ $(document).ready(function() {
 			'recovery_filename': {
 				required: true
 			}
-		},
-		messages: {
-			'recovery[0].pol': {
-				number: "Only numbers."
-			},
-			'recovery[0].ltr': {
-				number: "Only number."
-			},
 		},
 
 		submitHandler: function(form, event) {
@@ -1057,15 +1047,11 @@ $(document).ready(function() {
 				// Add a different rule to the name field which allows other characters
 				if (this.name.indexOf("name") == -1) {
 					$(this).rules("add", {
-						required: true,
-						alphaOnly: true,
-						messages: {
-							alphaOnly: "Only letters and numbers."
-						}
+						required: true
 					});
 				} else {
 					$(this).rules("add", {
-						required: true,
+						required: true
 					});
 				}
 			});

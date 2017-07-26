@@ -13,7 +13,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from .models import PqAttachment, Worklist, CombineResults, Limits, RunRecovery
 from .forms import WorklistInputForm, LimitsInputForm, RunRecoveryForm
 
-from rcall.rcaller import R_Caller
+from rcall.rcaller import R_Caller, R_Caller_TMA
 
 
 def create_timestamp():
@@ -27,47 +27,69 @@ def add_attachment(request):
     may POST or GET the page for the pqanalysis to take place.
     """
     if request.method == "POST":
-        analysis_id = request.POST['analysis_id']
-        worklist_options = request.POST.get('file_upload_selection', False)
-        stats_options = request.POST.get('stats-option', "None")
-        limit_options = request.POST.get('file_limits_upload_selection', False)
-        assay_options = request.POST.getlist('assay-analysis')[0]
-        graph_options = request.POST.getlist('graph-options')[0]
-        ignoreflag_options = request.POST.getlist('ignoreflags')
-        combine_options = request.POST.get('combine-file')
-        submitter = request.POST['submitter']
+
+        get_assay_type = request.POST.get('analysis-option-selection')
+
+        analysis_id = request.POST.get('analysis_id')
+        submitter = request.POST.get('submitter')
         files = request.FILES.getlist('file[]')
+
         # Create a unique_id to tie the files uploaded to a unique group identifier
         format_analysis_id = analysis_id + create_timestamp()
 
         for a_file in files:
-            instance = PqAttachment(
-              analysis_id=format_analysis_id,
-              file_name=a_file.name,
-              attachment=a_file,
-              submitter=submitter
+          instance = PqAttachment(
+            analysis_id=format_analysis_id,
+            file_name=a_file.name,
+            attachment=a_file,
+            submitter=submitter
           )
 
-        instance.save()
+          instance.save()
 
-        if combine_options:
-            return create_and_serve_combined_file(request, format_analysis_id)
+        if get_assay_type == 'Fusion':
 
-        if ignoreflag_options:
-            ignoreflag_options = "TRUE"
+            worklist_options = request.POST.get('file_upload_selection', False)
+            stats_options = request.POST.get('stats-option', "None")
+            limit_options = request.POST.get('file_limits_upload_selection', False)
+            assay_options = request.POST.getlist('assay-analysis')[0]
+            graph_options = request.POST.getlist('graph-options')[0]
+            ignoreflag_options = request.POST.getlist('ignoreflags')
+            combine_options = request.POST.get('combine-file')
+
+            if combine_options:
+                return create_and_serve_combined_file(request, format_analysis_id)
+
+            if ignoreflag_options:
+                ignoreflag_options = "TRUE"
+            else:
+                ignoreflag_options = "FALSE"
+
+            return add_attachment_done(request,
+                                       submitter,
+                                       stats_options,
+                                       assay_options,
+                                       format_analysis_id,
+                                       worklist_options,
+                                       limit_options,
+                                       graph_options,
+                                       ignoreflag_options)
         else:
-            ignoreflag_options = "FALSE"
 
-        return add_attachment_done(request,
-                                   submitter,
-                                   stats_options,
-                                   assay_options,
-                                   format_analysis_id,
-                                   worklist_options,
-                                   limit_options,
-                                   graph_options,
-                                   ignoreflag_options)
+            worklist_options = request.POST.get('file_upload_selection_tma')
+            limit_options = request.POST.get('file_limits_upload_selection_tma')
+            recovery_options = request.POST.get('file_upload_selection_recovery')
+            assay_options = request.POST.getlist('assay-analysis')[0]
 
+            return add_attachment_done_tma(
+              request,
+              submitter,
+              format_analysis_id,
+              assay_options,
+              worklist_options,
+              limit_options,
+              recovery_options
+            )
 
     worklist_form = WorklistInputForm();
     limits_form = LimitsInputForm();
@@ -132,6 +154,50 @@ def create_and_serve_combined_file(request, format_analysis_id):
     return response
 
 
+# Used for TMA Only
+def add_attachment_done_tma(
+  request,
+  user_name,
+  format_analysis_id,
+  assay_option,
+  worklist_file,
+  limits_file,
+  recovery_file
+):
+    query_db = PqAttachment.objects.filter(analysis_id__iexact=format_analysis_id)
+    files_dir = os.path.join(settings.MEDIA_ROOT, "/".join(query_db.values()[0]['attachment'].split("/")[:-1]))
+
+    worklist_query = Worklist.objects.get(id=worklist_file)
+    worklist_path = os.path.join(settings.MEDIA_ROOT, str(worklist_query.file))
+    limits_query = Limits.objects.get(id=limits_file)
+    limits_path = os.path.join(settings.MEDIA_ROOT, str(limits_query.file))
+    recovery_query = RunRecovery.objects.get(id=recovery_file)
+    recovery_path = os.path.join(settings.MEDIA_ROOT, str(recovery_query.file))
+
+    r = R_Caller_TMA(user_name, assay_option, format_analysis_id, files_dir, worklist_path, limits_path, recovery_path)
+    logs = r.execute()
+
+    log_str = ""
+    run_completed = True
+
+
+    while True:
+      line = logs.stdout.readline()
+      print(line)
+      log_str += line + "\n"
+
+      if "Execution halted" in line:
+        print("Found an error.")
+        run_completed = False
+        break
+      if line == '':
+        break
+      if not run_completed:
+        return render(request, "pqanalysis/pqerror.html", {"error_out": log_str})
+    return view_results(request)
+
+
+# Used for Fusion Only
 def add_attachment_done(request,
                         user_name,
                         stats_options,
@@ -155,11 +221,9 @@ def add_attachment_done(request,
     r = R_Caller(user_name, stats_options, assay, files_dir, format_analysis_id, graph_options)
 
     worklist_query = Worklist.objects.get(id=worklist_options)
-    worklist_filename = str(worklist_query.filename)
     worklist_path = os.path.join(settings.MEDIA_ROOT, str(worklist_query.file))
 
     limitslist_query = Limits.objects.get(id=limit_options)
-    limitslist_filename = str(limitslist_query.filename)
     limitslist_path = os.path.join(settings.MEDIA_ROOT, str(limitslist_query.file))
 
     logs = r.execute(default=False,
@@ -446,6 +510,7 @@ def ajax_uploaded_limits(request, type_of):
     with open(file_save_path, "wb") as limitslist_file:
 
       limits_headers = ["sample.type", "Channel", "threshold", "direction"]
+
       if type_of == 'tma':
         limits_headers = ["SampleType", "Interpretation.2_min", "Interpretation.2_max", "GIC.TT_max"]
 
@@ -494,13 +559,13 @@ def ajax_uploaded_limits(request, type_of):
               parse_value = category.split(".")[1]
               temp_data_storage_tma[parse_value] = data_value
 
-              line_to_write = [
-                temp_data_storage_tma["name"],
-                temp_data_storage_tma["minthreshold"],
-                temp_data_storage_tma["maxthreshold"],
-                temp_data_storage_tma["icthreshold"]
-              ]
-              csv_writer.writerow(line_to_write)
+            line_to_write = [
+              temp_data_storage_tma["name"],
+              temp_data_storage_tma["minthreshold"],
+              temp_data_storage_tma["maxthreshold"],
+              temp_data_storage_tma["icthreshold"]
+            ]
+            csv_writer.writerow(line_to_write)
 
       limits_save_file = Limits()
       limits_save_file.limits_type = type_of
