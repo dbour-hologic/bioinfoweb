@@ -8,6 +8,79 @@ import shlex
 from subprocess import Popen, PIPE, STDOUT
 from django.conf import settings
 
+class R_Caller_TMA():
+
+    def __init__(self, user_name, assay_type, analysis_id, data_dir, worklist_dir, limits_dir, recovery_dir):
+        self.user_name = user_name
+        self.assay_type = assay_type
+        self.analysis_id = analysis_id
+        self.data_dir = data_dir
+        self.worklist_dir = worklist_dir
+        self.limits_dir = limits_dir
+        self.recovery_dir = recovery_dir
+
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        self.markdown_file = os.path.join(base_dir, 'pqresults', 'rscripts', 'tma', 'flexdashboard_test.Rmd')
+        self.wrapper_script_file = os.path.join(base_dir, 'pqresults', 'rscripts', 'tma', 'wrapper.R')
+        self.join_vl_lis_script_file = os.path.join(base_dir, 'pqresults', 'rscripts', 'tma', 'join_vl_lis.R')
+
+    def execute(self):
+
+        COMMAND = 'Rscript'
+        PARAM = '-e'
+
+        RMD_SCRIPT_PATH = self.markdown_file
+        R_WRAPPER_PATH = self.wrapper_script_file
+        R_JOIN_VLI_LIS_PATH = self.join_vl_lis_script_file
+        OUTPUT_DIR = os.path.join(settings.MEDIA_ROOT, 'pqresults', 'results')
+        USER_NAME = self.user_name
+        INPUT_DIR = self.data_dir
+        WORKLIST_PATH = self.worklist_dir
+        LIMITS_PATH = self.limits_dir
+        ANALYSIS_ID = self.analysis_id
+        RECOVERY_PATH = self.recovery_dir
+        ASSAY_TYPE = self.assay_type
+
+        if settings.OPERATING_SYSTEM == "Windows":
+
+          RMD_SCRIPT_PATH = RMD_SCRIPT_PATH.replace("\\","/")
+          R_WRAPPER_PATH = R_WRAPPER_PATH.replace("\\","/")
+          R_JOIN_VLI_LIS_PATH = R_JOIN_VLI_LIS_PATH.replace("\\","/")
+          OUTPUT_DIR = OUTPUT_DIR.replace("\\","/")
+          INPUT_DIR = INPUT_DIR.replace("\\","/")
+          WORKLIST_PATH = WORKLIST_PATH.replace("\\","/")
+          LIMITS_PATH = LIMITS_PATH.replace("\\","/")
+          RECOVERY_PATH = RECOVERY_PATH.replace("\\","/")
+
+        FINAL_CMD = '{0} "{1}" "{2}" "{3}" "{4}" "{5}" "{6}" "{7}" "{8}" "{9}" "{10}" "{11}" "{12}" "{13}"'.format(
+          R_WRAPPER_PATH,
+          R_JOIN_VLI_LIS_PATH,
+          RMD_SCRIPT_PATH,
+          OUTPUT_DIR,
+          USER_NAME,
+          INPUT_DIR,
+          "NA",
+          ASSAY_TYPE,
+          WORKLIST_PATH,
+          LIMITS_PATH,
+          ANALYSIS_ID,
+          "NA",
+          "NA",
+          RECOVERY_PATH
+        )
+
+        execute_cmd = [COMMAND, FINAL_CMD]
+        execute_to_str = " ".join(execute_cmd)
+
+        print(execute_to_str)
+
+        args = execute_to_str
+        logs = subprocess.Popen(args, stdin=PIPE, stdout=PIPE, stderr=STDOUT, shell=True)
+        return logs
+
+
+
+
 class R_Caller():
 
     def __init__(self, user_name, stats_option, assay_type, data_dir, analysis_id, graph, output_dir="./",):
@@ -17,6 +90,7 @@ class R_Caller():
         self.assay = assay_type
         self.data_dir = data_dir
         self.output_dir = output_dir + analysis_id + ".html"
+        print(self.output_dir)
         self.analysis_id = analysis_id
         self.graph_type = graph
 
@@ -139,7 +213,7 @@ class R_Caller():
         COMMAND = "Rscript"
         PARAM = "-e"
         RMD_FILE = markdown_file
-        OUTPUT_DIR = output_dir
+        OUTPUT_DIR = os.path.join(settings.MEDIA_ROOT, 'pqresults', 'results', analysis_id + ".html")
         USR_NAME = user_name
         DATA_DIR = data_dir
         STAT_TYPE = stat_type

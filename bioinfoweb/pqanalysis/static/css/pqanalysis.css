@@ -89,5 +89,35 @@ span.glyph-mod {
 }
 
 .modal.modal-wide .modal-dialog {
-	width: 70%;
+	width: 75%;
+}
+
+.pq-tma-example {
+	border: 2px dashed black;
+}
+
+div#page_loader {
+	text-align: center;
+	padding-top: 200px;
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	background-color: white;
+	z-index: 99;
+}
+
+.loader {
+	border: 16px solid #f3f3f3;
+	border-top: 16px solid #3E5F84;
+	border-bottom: 16px solid #3E5F84;
+	border-radius: 50%;
+	width: 180px;
+	height: 180px;
+	animation: spin 3s linear infinite;
+	margin: auto;
+}
+
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
 }

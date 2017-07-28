@@ -1,0 +1,317 @@
+---
+title: "qHIV PQ Report Generator"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+---
+
+Results
+=======================================================================
+
+
+```{r setup, include=FALSE}
+# load("C:/Users/KS0316/Documents/qhivtest/AnalysisID1234/Analysis1234.RData")
+require(flexdashboard)
+require(DT)
+require(plotly)
+require(formattable)
+require(dplyr)
+require(tidyr)
+
+```
+
+Row {data-height = 200}
+-----------------------------------------------------------------------
+<!-- Row {data-height = 350} -->
+
+### Pass/fail of each run
+
+```{r}
+remove_outlier <- function(x, na.rm = TRUE, ...) {
+  qnt <- quantile(x, probs=c(.25, .75), na.rm = na.rm, ...)
+  H <- 1.5 * IQR(x, na.rm = na.rm)
+  lv <- (x < (qnt[1] - H)) | (x > (qnt[2] +H))
+  if(any(lv)){
+    cat("Outlier(s) detected!", sep="\n")
+    outliers <- x[lv]
+    absolute.distance <- abs(outliers-mean(x, na.rm=TRUE))
+    max.out <- max(abs(outliers-mean(x, na.rm=TRUE)))
+    ind <- which(max.out == absolute.distance)
+    cat(outliers[ind], "\n")
+    after.removing <- c(outliers[-ind], x[!lv])
+    return(after.removing)
+  } else{
+    cat("Exiting, either error occurred our outlier could not be identified", sep="\n")
+    return(FALSE)
+  }
+}
+
+stdCntrlB <- join.wlid.limits.ic.hiv %>%
+  filter(SampleType == "CONTROL B") %>%
+  group_by(Run.ID) %>%
+  summarise(sdHIV=sd(Interpretation.2.num, na.rm=TRUE),
+            unidentified=sum(is.na(Interpretation.2.num)))
+CntrlB.table <- stdCntrlB %>% ungroup %>%
+  mutate(PassCntrlBStDevCritieria=round(sdHIV, digits=3)<0.2)
+
+CntrlB.table$RetryElligible <- ifelse(CntrlB.table$PassCntrlBStDevCritieria == FALSE & CntrlB.table$unidentified == 0, TRUE, FALSE)
+
+#testing parameters for recalculation
+# CntrlB.table$PassCntrlBStDevCritieria = FALSE
+# CntrlB.table$RetryElligible = TRUE
+retry.lv <- CntrlB.table$RetryElligible == TRUE & CntrlB.table$PassCntrlBStDevCritieria == FALSE
+
+#logic: if any are retry elligible then recalculate
+if(any(retry.lv)){
+  for(runid in CntrlB.table$Run.ID){
+    cat(runid, sep="\n")
+    retry_sd <- join.wlid.limits.ic.hiv %>%
+      filter(SampleType == "CONTROL B") %>%
+      filter(Run.ID == runid) %>%
+      group_by(SampleType, Run.ID) %>%
+      summarise(retry_sd=sd(remove_outlier(Interpretation.2.num), na.rm=TRUE)) %>%
+      # print() #for debugging
+      ungroup %>% select(retry_sd) %>% unlist
+    CntrlB.table$sdHIV[CntrlB.table$Run.ID == runid] <- retry_sd
+  }
+  CntrlB.table$PassCntrlBStDevCritieria <- round(CntrlB.table$sdHIV, digits=2) >= 0.2
+}
+
+
+join.wlid.limits.ic.hiv %>%
+  left_join(CntrlB.table) %>%
+  rename(StDevLogCntrlB = sdHIV) %>%
+  filter(SampleType != "Uncategorized") %>%
+  group_by(Run.ID, ReportStyle, StDevLogCntrlB, PassCntrlBStDevCritieria) %>%
+  summarise(Samples=n(), GICsuccess=sum(GIC.pass), HIVsuccess=sum(HIVSpecPass),
+            Recovery.spec.N =sum(!is.na(recovery.spec.pass)), Recovery.spec.success=sum(recovery.spec.pass, na.rm=TRUE)) %>%
+  mutate(GICpasses=paste(GICsuccess, Samples, sep="/"),
+         HIVpasses=paste(HIVsuccess,Samples,sep="/"),
+         Targets = Samples*2,
+         TargetsMeetSpec=GICsuccess+HIVsuccess) %>%
+  mutate(Targetpasses=paste(TargetsMeetSpec, Targets, sep="/")) %>%
+  mutate(RecoverySpecPasses=paste(Recovery.spec.success, Recovery.spec.N, sep="/")) %>%
+  mutate(Result = ifelse(TargetsMeetSpec != Targets | PassCntrlBStDevCritieria == FALSE | Recovery.spec.N != Recovery.spec.success, "Fail", "Success")) %>%
+  ungroup %>% mutate(StDevLogCntrlB = round(StDevLogCntrlB, digits=2)) %>%
+  formattable(list(GICsuccess=FALSE, HIVsuccess=FALSE, Targets=FALSE, TargetsMeetSpec=FALSE, PassCntrlBStDevCritieria =FALSE,
+                   Recovery.spec.N=FALSE, Recovery.spec.success=FALSE,
+                   Result=formatter("span",
+                                    style=~style(color=ifelse(TargetsMeetSpec != Targets | PassCntrlBStDevCritieria == FALSE | Recovery.spec.N != Recovery.spec.success, "red", "green")))))
+
+uncategorized.observations <- join.wlid.limits.ic.hiv %>% filter(SampleType == "Uncategorized") %>% dim
+if(uncategorized.observations[1] == 0){
+  print("Every sample has been categorized.")
+} else{
+  print("Double check Work List ID, some samples have been uncategorized and excluded from analysis. Number of uncategorized samples:",
+        uncategorized.observations[1])
+}
+
+```
+
+Row
+-----------------------------------------------------------------------
+
+### Failing Samples
+
+```{r}
+# print("Ex: Sample 1 has p flag, RDFS flag")
+join.wlid.limits.ic.hiv %>%
+  filter(FALSE == (GIC.pass & HIVSpecPass)) %>%
+  select(Run.ID, Specimen.Barcode, SampleType, Test.order, Interpretation.2, GIC.TT, GIC.pass, HIVSpecPass) %>%
+  mutate(GIC.TT=round(GIC.TT)) %>%
+  datatable()
+```
+
+Summary Statistics
+=======================================================================
+
+Row {.tabset .tabset-fade}
+-----------------------------------------------------------------------
+
+### Summary Statistics - RFU Range
+
+```{r}
+join.wlid.limits.ic.hiv %>%
+  group_by(Run.ID, SampleType) %>%
+  summarize(N=n(),
+            MeanRFU.GIC=mean(GIC.RR, na.rm=TRUE), StdRFU.GIC=sd(GIC.RR, na.rm=TRUE),
+            MeanRFU.LTR=mean(LTR.RR, na.rm=TRUE), StdRFU.LTR=sd(LTR.RR, na.rm=TRUE),
+            MeanRFU.POL=mean(POL.RR, na.rm=TRUE), StdRFU.POL=sd(POL.RR, na.rm=TRUE)
+            ) %>%
+  mutate(GIC.RR = paste(round(MeanRFU.GIC), "+/-", round(StdRFU.GIC)),
+         LTR.RR = paste(round(MeanRFU.LTR), "+/-", round(StdRFU.LTR)),
+         POL.RR = paste(round(MeanRFU.POL), "+/-", round(StdRFU.POL))) %>%
+  select(Run.ID, SampleType, N, contains(".RR")) %>%
+  datatable(filter='top', options=list())
+
+```
+
+### Summary Statistics - TTime
+
+```{r}
+join.wlid.limits.ic.hiv %>%
+  group_by(Run.ID, SampleType) %>%
+  summarize(N=n(),
+            MeanTTime.GIC=mean(GIC.TT, na.rm=TRUE), StdTTime.GIC=sd(GIC.TT, na.rm=TRUE),
+            MeanTTime.LTR=mean(LTR.TT, na.rm=TRUE), StdTTime.LTR=sd(LTR.TT, na.rm=TRUE),
+            MeanTTime.POL=mean(POL.TT, na.rm=TRUE), StdTTime.POL=sd(POL.TT, na.rm=TRUE)
+            ) %>%
+  mutate(GIC.TT = paste(round(MeanTTime.GIC, digits=1), "+/-", round(StdTTime.GIC, digits=1)),
+         LTR.TT = paste(round(MeanTTime.LTR, digits=1), "+/-", round(StdTTime.LTR, digits=1)),
+         POL.TT = paste(round(MeanTTime.POL, digits=1), "+/-", round(StdTTime.POL, digits=1))) %>%
+  select(Run.ID, SampleType, N, contains(".TT")) %>%
+  datatable(filter='top', options=list())
+
+```
+
+### Summary Statistics - Specifications
+
+```{r}
+print("RFU Range for all Samples") #addressed!
+print("Recovery for all samples (log copies/mL)") #Work in progress... if expressed as %, need theoretical log copies/mL per sample type
+print("TTIME for all Channels and all Samples") #addressed!
+print("SD TTIME FOR EACH SAMPLE TYPE") #addressed!
+```
+
+Data Table
+=======================================================================
+
+### Joined LIS and Viral Load Export
+
+```{r}
+
+hiding.vector <- c()
+datatable(join.wlid.limits.ic.hiv,
+          extensions = c('Buttons'),
+          options=list(dom='Bfrtip', buttons=c('copy', 'csv', I('colvis')),
+                       columnDefs=list(list(targets=hiding.vector,
+                                            visible=FALSE))))
+
+# datatable(
+#   NCS,
+#   extensions = c('Buttons'),
+#   options = list(dom = 'Bfrtip', buttons = c('copy', 'csv', I('colvis')), pageLength = 10,
+#                  columnDefs = list(list(targets = hiding.vect.NCS,
+#                                         visible = FALSE)))
+# )
+
+```
+
+Recovery Rate
+=======================================================================
+
+### Log10 Copies of HIV per mL for all Samples
+```{r}
+join.wlid.limits.ic.hiv %>%
+  mutate(Interpretation.2 = ifelse(Interpretation.2 == "Not Detected" |
+                                     Interpretation.2 == "", "0", Interpretation.2)) %>%
+  mutate(Interpretation.2 = as.numeric(Interpretation.2)) %>%
+  mutate(SampleTestOrder = paste(Sample.Name, Test.order)) %>%
+  plot_ly(x=~SampleTestOrder, y=~Interpretation.2, type='scatter',
+          color=~SampleType) %>%
+  layout(showlegend=FALSE,
+         xaxis=list(title="Sample", visible=FALSE),
+         yaxis=list(title="HIV (log10copies)/mL"))
+```
+
+RFU Range Plots
+=======================================================================
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### GIC RFU RANGE
+
+```{r}
+join.wlid.limits.ic.hiv %>%
+  mutate(SampleTestOrder = paste(Sample.Name, Test.order)) %>%
+  plot_ly(x=~SampleTestOrder, y=~GIC.RR, type='scatter',
+          color=~SampleType) %>%
+  layout(showlegend=FALSE,
+         xaxis=list(title="Sample", visible=FALSE),
+         yaxis=list(title="RFU RANGE"))
+```
+
+### LTR RFU RANGE
+
+```{r}
+join.wlid.limits.ic.hiv %>%
+  mutate(SampleTestOrder = paste(Sample.Name, Test.order)) %>%
+  plot_ly(x=~SampleTestOrder, y=~LTR.RR, type='scatter',
+          color=~SampleType) %>%
+  layout(showlegend=FALSE,
+         xaxis=list(title="Sample", visible=FALSE),
+         yaxis=list(title="RFU RANGE"))
+```
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### POL RFU RANGE
+
+```{r}
+join.wlid.limits.ic.hiv %>%
+  mutate(SampleTestOrder = paste(Sample.Name, Test.order)) %>%
+  plot_ly(x=~SampleTestOrder, y=~POL.RR, type='scatter',
+          color=~SampleType) %>%
+  layout(showlegend=FALSE,
+         xaxis=list(title="Sample", visible=FALSE),
+         yaxis=list(title="RFU RANGE"))
+```
+
+### TBD
+
+```{r}
+
+```
+
+TTime Plots
+=======================================================================
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### GIC TTIME
+
+```{r}
+join.wlid.limits.ic.hiv %>%
+  mutate(SampleTestOrder = paste(Sample.Name, Test.order)) %>%
+  plot_ly(x=~SampleTestOrder, y=~GIC.TT, type='scatter',
+          color=~SampleType) %>%
+  layout(showlegend=FALSE,
+         xaxis=list(title="Sample", visible=FALSE),
+         yaxis=list(title="TTIME"))
+```
+
+### POL TTIME
+
+```{r}
+join.wlid.limits.ic.hiv %>%
+  mutate(SampleTestOrder = paste(Sample.Name, Test.order)) %>%
+  plot_ly(x=~SampleTestOrder, y=~POL.TT, type='scatter',
+          color=~SampleType) %>%
+  layout(showlegend=FALSE,
+         xaxis=list(title="Sample", visible=FALSE),
+         yaxis=list(title="TTIME"))
+```
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### LTR TTIME
+
+```{r}
+join.wlid.limits.ic.hiv %>%
+  mutate(SampleTestOrder = paste(Sample.Name, Test.order)) %>%
+  plot_ly(x=~SampleTestOrder, y=~LTR.TT, type='scatter',
+          color=~SampleType) %>%
+  layout(showlegend=FALSE,
+         xaxis=list(title="Sample", visible=FALSE),
+         yaxis=list(title="TTIME"))
+```
+
+### TBD
+
+```{r}
+save.image(file=paste0(params$OUTPUT_DIR, "/", params$ANA_ID, "dashboard.RData"))
+```
