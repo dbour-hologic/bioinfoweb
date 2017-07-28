@@ -325,7 +325,7 @@ $(document).ready(function() {
 				required: true,
 			},
 			'reocvery[0].lot': {
-				required: true
+				required: false
 			},
 			'recovery[0].pol': {
 				required: true
@@ -358,7 +358,7 @@ $(document).ready(function() {
 				success: function(json_data) {
 					clear_form($("#tmaRecoveryForm"));
 					$("#success-upload-recovery-tma").show();
-					// update_tma_limits_list();
+					update_tma_recovery_list();
 					return true;
 				},
 				error: function() {
@@ -400,6 +400,10 @@ $(document).ready(function() {
 		}
 	});
 
+	// Show loader
+	function showLoader() {
+		$(".page_loader").show();
+	}
 
 	/*************************************************************
 	*
@@ -1027,11 +1031,18 @@ $(document).ready(function() {
 			$('.recovery-input-tma').each(function() {
 
 				// Add a different rule to the name field which allows other characters
-				if (this.name.indexOf("name") == -1) {
+				if (this.name.indexOf("lot") > -1) {
+					$(this).rules("add", {
+						required: false
+                    });
+				}
+				else if (this.name.indexOf("name") == -1) {
+
 					$(this).rules("add", {
 						required: true
 					});
-				} else {
+				}
+				else {
 					$(this).rules("add", {
 						required: true
 					});

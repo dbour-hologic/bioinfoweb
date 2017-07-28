@@ -28,13 +28,18 @@
     </div>
 </nav>
 
+<div id="page_loader" style="visibility:hidden">
+    <h2>Processing your request...</h2>
+    <br/>
+    <div class="loader"></div>
+</div>
 
 <div class="row">
     <div class="col-xs-2"></div>
     <div class="col-xs-6">
         <h1>PQ Analysis</h1>
 
-        <form action="" method="POST" id="pqupload" enctype="multipart/form-data">
+        <form onsubmit={document.getElementById("page_loader").style.visibility="visible";} action="" method="POST" id="pqupload" enctype="multipart/form-data">
 
             {% csrf_token %}
 
@@ -223,9 +228,6 @@
                                 <p class="help-block">The worklist is a label file specifing the negative and postive
                                     samples.
                                     <br>
-                                    <b>Tip:</b>
-                                    Selecting any of the previously uploaded worklists will load its content into the
-                                    worklist upload dialog.</p>
 
                                 {{ worklist_form.file_upload_selection_tma }}
 
@@ -237,8 +239,8 @@
                                               data-target="#worklist-upload-tma" data-toggle="modal">
 											Worklist Upload
 										</span>
-                                        <span class="btn btn-danger" data-target="#worklist-help" data-toggle="modal">
-											Help
+                                        <span class="btn btn-danger" data-target="#worklist-tma-example" data-toggle="modal">
+											View Example
 										</span>
                                     </div>
                                     <br>
@@ -249,10 +251,6 @@
                                 <p class="help-block">The limits list is a value cutoff file specifing the threshold
                                     ranges.
                                     <br>
-                                    <b>Tip:</b>
-                                    Selecting any of the previously uploaded limits will load its content into the
-                                    limits
-                                    list upload dialog.</p>
                                 {{ limits_form.file_limits_upload_selection_tma }}
                                 <br>
                                 <div class="row">
@@ -260,8 +258,8 @@
 										<span class="btn btn-primary" data-target="#limits-upload-tma" data-toggle="modal">
 											Limits Upload
 										</span>
-                                        <span class="btn btn-danger" data-target="#limitslist-help-tma" data-toggle="modal">
-											Help
+                                        <span class="btn btn-danger" data-target="#limits-tma-example" data-toggle="modal">
+											View Example
 										</span>
                                     </div>
                                 </div>
@@ -270,10 +268,6 @@
                                 <b>Recovery</b>
                                 <p class="help-block">Set the recovery rate for the run.
                                     <br>
-                                    <b>Tip:</b>
-                                    Selecting any of the previously uploaded limits will load its content into the
-                                    limits
-                                    list upload dialog.</p>
                                 {{ recovery_form.file_upload_selection_recovery }}
                                 <br>
                                 <div class="row">
@@ -281,8 +275,8 @@
 										<span class="btn btn-primary" data-target="#recovery-upload-tma" data-toggle="modal">
 											Recovery Upload
 										</span>
-                                        <span class="btn btn-danger" data-target="#recovery-help-tma" data-toggle="modal">
-											Help
+                                        <span class="btn btn-danger" data-target="#recovery-tma-example" data-toggle="modal">
+											View Example
 										</span>
                                     </div>
                                 </div>
@@ -343,6 +337,22 @@
                         </ul>
                     </li>
                 </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal modal-wide fade" id="processing-run" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Limits Upload</h4>
+            </div>
+            <div class="modal-body">
+                PROCESSING
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -508,11 +518,10 @@
                     <!--</div>-->
                     <div>
                         <h4>Worklist Details</h4>
-                        <p>
-                            "Sample Name" is the name of the specimen to be ran and "Sample Type"
-                            corresponds to types such as Control A, Control B, etc.. Please note
-                            all sample names and sample types are <b>case sensitive</b>.
-                        </p>
+                        <ul>
+                            <li><b>Sample Name: </b> name of specimen to be ran. (case sensitive)</li>
+                            <li><b>Sample Type: </b> name of the type of sample (i.e. Control A) (case sensitive)</li>
+                        </ul>
                     </div>
 
                     <br>
@@ -719,6 +728,60 @@
                 </form>
 
 
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="worklist-tma-example" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Worklist Example</h4>
+            </div>
+            <div class="modal-body">
+                <img class="pq-tma-example img-responsive" src="{% static 'img/example_worklist.jpg' %}"/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="limits-tma-example" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Limits Example</h4>
+            </div>
+            <div class="modal-body">
+                <img class="pq-tma-example img-responsive" src="{% static 'img/example_limits.jpg' %}"/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="recovery-tma-example" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Recovery Example</h4>
+            </div>
+            <div class="modal-body">
+                <img class="pq-tma-example img-responsive" src="{% static 'img/example_recovery.jpg' %}"/>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -1137,6 +1200,17 @@
                         $("<option></option>").text(this.filename).val(this.id)
                     );
                 }
+            });
+        });
+    };
+
+    var update_tma_recovery_list = function () {
+        $.getJSON("{% url 'update-recoverylist' %}", function (data) {
+            $("#id_file_upload_selection_recovery").empty();
+            $.each(data, function (index) {
+                $("#id_file_upload_selection_recovery").append(
+                    $("<option></option>").text(this.filename).val(this.id)
+                );
             });
         });
     };

@@ -11,6 +11,7 @@ urlpatterns = [
   url(r'^prepopulate-limitslist/(?P<pk>\d+)$', views.limitslist_get, name='pp-limitslist'),
   url(r'^worklist-upload/(?P<type_of>\w+)/$', views.ajax_uploaded_worklist, name='ajax-upload-worklist'),
   url(r'^limits-upload/(?P<type_of>\w+)/$', views.ajax_uploaded_limits, name='ajax-upload-limits'),
-url(r'^recovery-upload/$', views.ajax_uploaded_recovery, name='ajax-upload-recovery'),
-  url(r'^limitslist/$', views.get_limitslist_update, name='update-limitslist')
+  url(r'^recovery-upload/$', views.ajax_uploaded_recovery, name='ajax-upload-recovery'),
+  url(r'^limitslist/$', views.get_limitslist_update, name='update-limitslist'),
+  url(r'^recoverylist/$', views.get_recovery_update, name='update-recoverylist')
 ]

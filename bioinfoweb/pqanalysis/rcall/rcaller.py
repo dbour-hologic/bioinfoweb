@@ -90,6 +90,7 @@ class R_Caller():
         self.assay = assay_type
         self.data_dir = data_dir
         self.output_dir = output_dir + analysis_id + ".html"
+        print(self.output_dir)
         self.analysis_id = analysis_id
         self.graph_type = graph
 
@@ -212,7 +213,7 @@ class R_Caller():
         COMMAND = "Rscript"
         PARAM = "-e"
         RMD_FILE = markdown_file
-        OUTPUT_DIR = output_dir
+        OUTPUT_DIR = os.path.join(settings.MEDIA_ROOT, 'pqresults', 'results', analysis_id + ".html")
         USR_NAME = user_name
         DATA_DIR = data_dir
         STAT_TYPE = stat_type
@@ -249,7 +250,7 @@ class R_Caller():
 
         execute_cmd = [COMMAND, PARAM, FINAL_CMD]
         execute_to_str = " ".join(execute_cmd)
-        # print(execute_to_str)
+        print(execute_to_str)
 
         # // LATER FIX -- WHY DOESN'T CENTOS NOT LIKE SHLEX.SPLIT??
         args=execute_to_str

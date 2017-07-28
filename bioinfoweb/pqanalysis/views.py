@@ -28,7 +28,7 @@ def add_attachment(request):
     """
     if request.method == "POST":
 
-        get_assay_type = request.POST.get('analysis-option-selection')
+        get_assay_type = request.POST.get('assay-option-selection')
 
         analysis_id = request.POST.get('analysis_id')
         submitter = request.POST.get('submitter')
@@ -47,7 +47,7 @@ def add_attachment(request):
 
           instance.save()
 
-        if get_assay_type == 'Fusion':
+        if get_assay_type == 'fusion':
 
             worklist_options = request.POST.get('file_upload_selection', False)
             stats_options = request.POST.get('stats-option', "None")
@@ -183,7 +183,6 @@ def add_attachment_done_tma(
 
     while True:
       line = logs.stdout.readline()
-      print(line)
       log_str += line + "\n"
 
       if "Execution halted" in line:
@@ -192,8 +191,10 @@ def add_attachment_done_tma(
         break
       if line == '':
         break
-      if not run_completed:
-        return render(request, "pqanalysis/pqerror.html", {"error_out": log_str})
+
+    if not run_completed:
+      return render(request, "pqanalysis/pqerror.html", {"error_out": log_str})
+
     return view_results(request)
 
 
@@ -244,7 +245,6 @@ def add_attachment_done(request,
     while True:
 
       line = logs.stdout.readline()
-      print(line)
       log_str += line + "\n"
 
       if "Execution halted" in line:
@@ -258,7 +258,7 @@ def add_attachment_done(request,
     if not run_completed:
       return render(request, "pqanalysis/pqerror.html", {"error_out": log_str})
 
-    program_timed_out = shuttle_dir('rscripts')
+    # program_timed_out = shuttle_dir('rscripts')
 
     return view_results(request)
 
@@ -345,15 +345,32 @@ def get_worklist_update(request):
 
 
 @csrf_exempt
+def get_recovery_update(request):
+  if request.method == 'GET':
+    recovery_list = RunRecovery.objects.all()
+    recovery_list_all = []
+    for element in recovery_list.values():
+      recovery_list_all.append(
+        {
+          'id': element['id'],
+          'filename': element['filename']
+        }
+      )
+  return HttpResponse(json.dumps(recovery_list_all), content_type='application/json')
+
+
+@csrf_exempt
 def get_limitslist_update(request):
   if request.method == 'GET':
     limits_list = Limits.objects.all()
     limits_list_all = []
     for element in limits_list.values():
       limits_list_all.append(
-        {'id': element['id'],
+        {
+         'id': element['id'],
          'filename': element['filename'],
-         'filetype': element['limits_type']}
+         'filetype': element['limits_type']
+        }
       )
 
   return HttpResponse(json.dumps(limits_list_all), content_type='application/json')
@@ -625,7 +642,6 @@ def ajax_uploaded_worklist(request, type_of):
 
             csv_writer.writerow(line_to_write)
 
-            print(temp_data_storage["name"], temp_data_storage["type"], "<---FUSION")
 
           else:
 
