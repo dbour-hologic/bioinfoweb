@@ -6,7 +6,7 @@
 
 #For debugging and interacting
 # args <- c("C:/Users/KS0316/Documents/qHIV-1 Report Generator/config4.txt")
-config <- read.table(args[1], header=TRUE, sep="\t", stringsAsFactors = FALSE)
+#config <- read.table(args[1], header=TRUE, sep="\t", stringsAsFactors = FALSE)
 
 ###Dependencies and functions
 #Packages
@@ -35,7 +35,8 @@ lof.lis <- list.files(pattern="@Pt", full.names = TRUE)
 lof.vl <- list.files(pattern="@VLI", full.names = TRUE)
 
 #logic and potential error handling do inputs match?
-cat("Error-checking for Viral Export and LIS inputs...", sep="\n")
+
+cat("Checking a mismatch in Viral Export and LIS inputs...", sep="\n")
 if(length(lof.lis) == length(lof.vl)){
   lof.lis.short <- lof.lis %>% str_split(pattern=".lis") %>% sapply(`[`, 1) %>% str_split(pattern="-") %>% lapply(`[`, 4:6) %>% sapply(paste, collapse="-")
   lof.vl.short <- lof.vl %>% str_split(pattern=".csv") %>% sapply(`[`, 1) %>% str_split(pattern="-") %>% lapply(`[`, 4:6) %>% sapply(paste, collapse="-")
@@ -45,8 +46,13 @@ if(length(lof.lis) == length(lof.vl)){
     cat("Non-matching files exist.", sep="\n")
   }
 } else{
-  cat("Upload correct number of files.", sep="\n")
+  cat("Please upload the correct number of files.", sep="\n")
   cat("There exists a non-matching set of LIS and VL files.", sep="\n")
+  lof.lis.short <- lof.lis %>% str_split(pattern=".lis") %>% sapply(`[`, 1) %>% str_split(pattern="-") %>% lapply(`[`, 4:6) %>% sapply(paste, collapse="-")
+  lof.vl.short <- lof.vl %>% str_split(pattern=".csv") %>% sapply(`[`, 1) %>% str_split(pattern="-") %>% lapply(`[`, 4:6) %>% sapply(paste, collapse="-")
+  cat("Inputs will be filtered down to only matching files.", sep="\n")
+  lof.lis <- lof.lis[lof.lis.short %in% lof.vl.short]
+  lof.vl <- lof.vl[lof.vl.short %in% lof.lis.short]
 }
 
 #Load the lis and viral export data
@@ -121,7 +127,7 @@ joined$Lot.Number <- joined$Sample.Name %>% str_split(" - Lot ") %>% sapply(`[`,
 
 #config input: control specification
 contspecs <- read.csv(file = params$CNTRL_SPEC, stringsAsFactors = FALSE, colClasses = c("Lot.Number"="character"))
-joined.wlid.spec <- left_join(joined, contspecs, by=c("Run.ID", "Lot.Number"))
+joined.wlid.spec <- left_join(joined, contspecs, by=c("SampleType", "Lot.Number"))
 
 #config input: limits file
 limits <- read.csv(params$LIM_FILE, stringsAsFactors = FALSE)

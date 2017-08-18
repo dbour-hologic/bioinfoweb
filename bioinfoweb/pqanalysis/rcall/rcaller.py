@@ -20,7 +20,7 @@ class R_Caller_TMA():
         self.recovery_dir = recovery_dir
 
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        self.markdown_file = os.path.join(base_dir, 'pqresults', 'rscripts', 'tma', 'flexdashboard_test.Rmd')
+        self.markdown_file = os.path.join(base_dir, 'pqresults', 'rscripts', 'tma', 'qhiv_reportgen.Rmd')
         self.wrapper_script_file = os.path.join(base_dir, 'pqresults', 'rscripts', 'tma', 'wrapper.R')
         self.join_vl_lis_script_file = os.path.join(base_dir, 'pqresults', 'rscripts', 'tma', 'join_vl_lis.R')
 

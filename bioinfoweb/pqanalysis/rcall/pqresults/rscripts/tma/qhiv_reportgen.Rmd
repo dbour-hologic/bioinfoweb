@@ -46,6 +46,8 @@ remove_outlier <- function(x, na.rm = TRUE, ...) {
   }
 }
 
+# remove_outlier(x=c(1.2,2.2,3.2,1.2,2.2,3.2,9.2, 9))
+
 stdCntrlB <- join.wlid.limits.ic.hiv %>%
   filter(SampleType == "CONTROL B") %>%
   group_by(Run.ID) %>%
@@ -61,10 +63,11 @@ CntrlB.table$RetryElligible <- ifelse(CntrlB.table$PassCntrlBStDevCritieria == F
 # CntrlB.table$RetryElligible = TRUE
 retry.lv <- CntrlB.table$RetryElligible == TRUE & CntrlB.table$PassCntrlBStDevCritieria == FALSE
 
-#logic: if any are retry elligible then recalculate
+#logic: if any are retries available then recalculate
 if(any(retry.lv)){
   for(runid in CntrlB.table$Run.ID){
-    cat(runid, sep="\n")
+    # cat(runid, sep="\n")
+    print("Outliers were removed.")
     retry_sd <- join.wlid.limits.ic.hiv %>%
       filter(SampleType == "CONTROL B") %>%
       filter(Run.ID == runid) %>%
@@ -75,6 +78,8 @@ if(any(retry.lv)){
     CntrlB.table$sdHIV[CntrlB.table$Run.ID == runid] <- retry_sd
   }
   CntrlB.table$PassCntrlBStDevCritieria <- round(CntrlB.table$sdHIV, digits=2) >= 0.2
+} else{
+  print("Spec passes and no outliers were filtered.")
 }
 
 
@@ -98,12 +103,13 @@ join.wlid.limits.ic.hiv %>%
                    Result=formatter("span",
                                     style=~style(color=ifelse(TargetsMeetSpec != Targets | PassCntrlBStDevCritieria == FALSE | Recovery.spec.N != Recovery.spec.success, "red", "green")))))
 
-uncategorized.observations <- join.wlid.limits.ic.hiv %>% filter(SampleType == "Uncategorized") %>% dim
-if(uncategorized.observations[1] == 0){
+uncategorized.observations <- join.wlid.limits.ic.hiv %>% filter(SampleType == "Uncategorized")
+if(dim(uncategorized.observations)[1] == 0){
   print("Every sample has been categorized.")
 } else{
-  print("Double check Work List ID, some samples have been uncategorized and excluded from analysis. Number of uncategorized samples:",
-        uncategorized.observations[1])
+  print(paste0("Double check Work List ID, some samples have been uncategorized and excluded from analysis. Number of uncategorized samples:",
+        dim(uncategorized.observations)[1],". See uncategorized sample names below:"))
+  print(join.wlid.limits.ic.hiv %>% filter(SampleType == "Uncategorized") %>% select(Sample.Name) %>% unique)
 }
 
 ```
@@ -114,12 +120,20 @@ Row
 ### Failing Samples
 
 ```{r}
-# print("Ex: Sample 1 has p flag, RDFS flag")
 join.wlid.limits.ic.hiv %>%
-  filter(FALSE == (GIC.pass & HIVSpecPass)) %>%
-  select(Run.ID, Specimen.Barcode, SampleType, Test.order, Interpretation.2, GIC.TT, GIC.pass, HIVSpecPass) %>%
+  filter(FALSE == GIC.pass |
+           FALSE == HIVSpecPass |
+           (!is.na(recovery.spec.pass) & !recovery.spec.pass)) %>%
+  select(Run.ID, Sample.Name, SampleType, Test.order, Instrument.Flags, Interpretation.2_min, Interpretation.2, Interpretation.2_max, GIC.TT, GIC.TT_max,
+         GIC.pass, HIVSpecPass, Logdiff, recovery.spec.pass) %>%
   mutate(GIC.TT=round(GIC.TT)) %>%
-  datatable()
+  datatable(extensions = 'FixedColumns',
+            options = list(
+              scrollX = TRUE,
+              scrollY= TRUE,
+              fixedColumns = list(leftColumns = 5)
+              )
+            )
 ```
 
 Summary Statistics
@@ -164,14 +178,14 @@ join.wlid.limits.ic.hiv %>%
 
 ```
 
-### Summary Statistics - Specifications
+<!-- ### Summary Statistics - Specifications -->
 
-```{r}
-print("RFU Range for all Samples") #addressed!
-print("Recovery for all samples (log copies/mL)") #Work in progress... if expressed as %, need theoretical log copies/mL per sample type
-print("TTIME for all Channels and all Samples") #addressed!
-print("SD TTIME FOR EACH SAMPLE TYPE") #addressed!
-```
+<!-- ```{r} -->
+<!-- print("RFU Range for all Samples") #addressed! -->
+<!-- print("Recovery for all samples (log copies/mL)") #Work in progress... if expressed as %, need theoretical log copies/mL per sample type -->
+<!-- print("TTIME for all Channels and all Samples") #addressed! -->
+<!-- print("SD TTIME FOR EACH SAMPLE TYPE") #addressed! -->
+<!-- ``` -->
 
 Data Table
 =======================================================================
@@ -293,6 +307,14 @@ join.wlid.limits.ic.hiv %>%
   layout(showlegend=FALSE,
          xaxis=list(title="Sample", visible=FALSE),
          yaxis=list(title="TTIME"))
+
+# library(plotly)
+# a <- join.wlid.limits.ic.hiv %>%
+#   mutate(SampleTestOrder = paste(Sample.Name, Test.order)) %>%
+#   ggplot(aes(x=SampleTestOrder, y=POL.TT)) + geom_point(aes(color=SampleType)) +
+#   facet_wrap(~Serial.Number)
+# ggplotly(a)
+
 ```
 
 Column {data-width=500}
@@ -313,5 +335,91 @@ join.wlid.limits.ic.hiv %>%
 ### TBD
 
 ```{r}
+#save.image(file=paste0(params$OUTPUT_DIR, "/", params$ANA_ID, "dashboard.RData"))
+```
+
+Instrument-to-Instrument Plots
+=======================================================================
+Row {.tabset .tabset-fade}
+-----------------------------------------------------------------------
+###GIC TT
+
+```{r}
+require(plotly)
+a <- join.wlid.limits.ic.hiv %>%
+  mutate(SampleTestOrder = paste(Sample.Name, Test.order)) %>%
+  ggplot(aes(x=SampleTestOrder, y=GIC.TT)) + geom_point(aes(color=SampleType)) +
+  facet_wrap(~Serial.Number, nrow=1) +
+  theme(axis.text.x=element_blank())
+
+ggplotly(a, width=1000, height=500)
+
+```
+
+###POL TT
+
+```{r}
+b <- join.wlid.limits.ic.hiv %>%
+  mutate(SampleTestOrder = paste(Sample.Name, Test.order)) %>%
+  ggplot(aes(x=SampleTestOrder, y=POL.TT)) + geom_point(aes(color=SampleType)) +
+  facet_wrap(~Serial.Number, nrow=1) +
+  theme(axis.text.x=element_blank())
+
+ggplotly(b, width=1000, height=500)
+
+```
+
+###LTR TT
+
+```{r}
+c <- join.wlid.limits.ic.hiv %>%
+  mutate(SampleTestOrder = paste(Sample.Name, Test.order)) %>%
+  ggplot(aes(x=SampleTestOrder, y=LTR.TT)) + geom_point(aes(color=SampleType)) +
+  facet_wrap(~Serial.Number, nrow=1) +
+  theme(axis.text.x=element_blank())
+
+ggplotly(c, width=1000, height=500)
+
+```
+
+###GIC RR
+
+```{r}
+require(plotly)
+d <- join.wlid.limits.ic.hiv %>%
+  mutate(SampleTestOrder = paste(Sample.Name, Test.order)) %>%
+  ggplot(aes(x=SampleTestOrder, y=GIC.RR)) + geom_point(aes(color=SampleType)) +
+  facet_wrap(~Serial.Number, nrow=1) +
+  theme(axis.text.x=element_blank())
+
+ggplotly(d, width=1000, height=500)
+
+```
+
+###POL RR
+
+```{r}
+e <- join.wlid.limits.ic.hiv %>%
+  mutate(SampleTestOrder = paste(Sample.Name, Test.order)) %>%
+  ggplot(aes(x=SampleTestOrder, y=POL.RR)) + geom_point(aes(color=SampleType)) +
+  facet_wrap(~Serial.Number, nrow=1) +
+  theme(axis.text.x=element_blank())
+
+ggplotly(e, width=1000, height=500)
+
+```
+
+###LTR RR
+
+```{r}
+f <- join.wlid.limits.ic.hiv %>%
+  mutate(SampleTestOrder = paste(Sample.Name, Test.order)) %>%
+  ggplot(aes(x=SampleTestOrder, y=LTR.RR)) + geom_point(aes(color=SampleType)) +
+  facet_wrap(~Serial.Number, nrow=1) +
+  theme(axis.text.x=element_blank())
+
+ggplotly(f, width=1000, height=500)
+
 save.image(file=paste0(params$OUTPUT_DIR, "/", params$ANA_ID, "dashboard.RData"))
+
 ```

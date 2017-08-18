@@ -676,7 +676,7 @@ def ajax_uploaded_recovery(request):
     file_save_path = os.path.join(media_path, file_name_generator)
 
     with open(file_save_path, "wb") as recovery_file:
-      recovery_headers = ["Run.ID", "Lot.Number", "POL.truth", "LTR.truth"]
+      recovery_headers = ["SampleType", "Lot.Number", "POL.truth", "LTR.truth"]
 
       csv_writer = csv.writer(recovery_file, delimiter=",")
       csv_writer.writerow(recovery_headers)
@@ -686,7 +686,7 @@ def ajax_uploaded_recovery(request):
           continue
         else:
           temp_data_storage = {
-            'runid':'',
+            'sampletype':'',
             'lot':'',
             'pol':'',
             'ltr':''
@@ -697,7 +697,7 @@ def ajax_uploaded_recovery(request):
             temp_data_storage[parse_value] = data_value
 
           line_to_write = [
-            temp_data_storage['runid'],
+            temp_data_storage['sampletype'],
             temp_data_storage['lot'],
             temp_data_storage['pol'],
             temp_data_storage['ltr']

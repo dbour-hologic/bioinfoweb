@@ -42,6 +42,10 @@ cat(dim(join.wlid.limits.ic.hiv), "\n")
 rmarkdown::render(params$RMD_FILE,
                   output_file=paste0(params$OUTPUT_DIR, "/", params$ANA_ID, ".html"))
 
+# rmarkdown::render("C:/Users/KS0316/Documents/qHIV-1 Report Generator/flexdashboard_test.Rmd",
+#                   output_file=paste0("C:/Users/KS0316/Documents/qHIV-1 Report Generator/AnalysisID1234", "/", "Analysis1234", ".html"))
+
+
 #Sample windows, local execution script
 # system(paste('Rscript wrapper.R "C:/Users/KS0316/Documents/qHIV-1 Report Generator/params4.txt"'))
 # system(paste('Rscript "C:/Users/KS0316/qHIV-1 Report Generator/wrapper.R" "C:/Users/KS0316/Documents/qHIV-1 Report Generator/params4.txt"'))

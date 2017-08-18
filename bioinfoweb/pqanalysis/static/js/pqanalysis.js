@@ -5,7 +5,10 @@ $(document).ready(function() {
 		return this.optional(element) || /^[a-z0-9]+$/i.test(value);
 	}),
 
-	$("#pqupload").validate({
+
+	$("#pqupload").submit(function(e) {
+		e.preventDefault();
+    }).validate({
 		rules: {
 			'analysis_id': {
 				required: true,
@@ -21,7 +24,7 @@ $(document).ready(function() {
 			}
 		},
 		messages: {
-			'analysis_id': 'Only letters and numbers allowed.'
+			'analysis_id': 'Only letters and numbers allowed!'
 		},
 		errorPlacement: function(error, element) {
 			if ( element.is(":radio") ) {
@@ -30,6 +33,10 @@ $(document).ready(function() {
 				error.insertAfter(element);
 			}
 
+		},
+		submitHandler: function(form) {
+			$("#page_loader").css('visibility', 'visible');
+			form.submit();
 		}
 	});
 
@@ -400,10 +407,6 @@ $(document).ready(function() {
 		}
 	});
 
-	// Show loader
-	function showLoader() {
-		$(".page_loader").show();
-	}
 
 	/*************************************************************
 	*
