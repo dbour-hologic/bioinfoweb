@@ -10,10 +10,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
 
-from .models import PqAttachment, Worklist, CombineResults, Limits, RecoveryRate
-from .forms import WorklistInputForm, LimitsInputForm, RecoveryRateInputForm
+from .models import PqAttachment, Worklist, CombineResults, Limits, RunRecovery
+from .forms import WorklistInputForm, LimitsInputForm, RunRecoveryForm
 
-from rcall.rcaller import R_Caller
+from rcall.rcaller import R_Caller, R_Caller_TMA
 
 
 def create_timestamp():
@@ -27,59 +27,77 @@ def add_attachment(request):
     may POST or GET the page for the pqanalysis to take place.
     """
     if request.method == "POST":
-        analysis_id = request.POST['analysis_id']
-        worklist_options = request.POST.get('file_upload_selection', False)
-        stats_options = request.POST.get('stats-option', "None")
-        limit_options = request.POST.get('file_limits_upload_selection', False)
-        assay_options = request.POST.getlist('assay-analysis')[0]
-        graph_options = request.POST.getlist('graph-options')[0]
-        ignoreflag_options = request.POST.getlist('ignoreflags')
-        combine_options = request.POST.get('combine-file')
-        submitter = request.POST['submitter']
+
+        get_assay_type = request.POST.get('assay-option-selection')
+
+        analysis_id = request.POST.get('analysis_id')
+        submitter = request.POST.get('submitter')
         files = request.FILES.getlist('file[]')
+
         # Create a unique_id to tie the files uploaded to a unique group identifier
         format_analysis_id = analysis_id + create_timestamp()
 
         for a_file in files:
-            instance = PqAttachment(
-              analysis_id=format_analysis_id,
-              file_name=a_file.name,
-              attachment=a_file,
-              submitter=submitter
+          instance = PqAttachment(
+            analysis_id=format_analysis_id,
+            file_name=a_file.name,
+            attachment=a_file,
+            submitter=submitter
           )
 
-        instance.save()
+          instance.save()
 
-        if combine_options:
-            return create_and_serve_combined_file(request, format_analysis_id)
+        if get_assay_type == 'fusion':
 
-        if ignoreflag_options:
-            ignoreflag_options = "TRUE"
+            worklist_options = request.POST.get('file_upload_selection', False)
+            stats_options = request.POST.get('stats-option', "None")
+            limit_options = request.POST.get('file_limits_upload_selection', False)
+            assay_options = request.POST.getlist('assay-analysis')[0]
+            graph_options = request.POST.getlist('graph-options')[0]
+            ignoreflag_options = request.POST.getlist('ignoreflags')
+            combine_options = request.POST.get('combine-file')
+
+            if combine_options:
+                return create_and_serve_combined_file(request, format_analysis_id)
+
+            if ignoreflag_options:
+                ignoreflag_options = "TRUE"
+            else:
+                ignoreflag_options = "FALSE"
+
+            return add_attachment_done(request,
+                                       submitter,
+                                       stats_options,
+                                       assay_options,
+                                       format_analysis_id,
+                                       worklist_options,
+                                       limit_options,
+                                       graph_options,
+                                       ignoreflag_options)
         else:
-            ignoreflag_options = "FALSE"
 
-        return add_attachment_done(request,
-                                   submitter,
-                                   stats_options,
-                                   assay_options,
-                                   format_analysis_id,
-                                   worklist_options,
-                                   limit_options,
-                                   graph_options,
-                                   ignoreflag_options)
+            worklist_options = request.POST.get('file_upload_selection_tma')
+            limit_options = request.POST.get('file_limits_upload_selection_tma')
+            recovery_options = request.POST.get('file_upload_selection_recovery')
+            assay_options = request.POST.getlist('assay-analysis')[0]
 
+            return add_attachment_done_tma(
+              request,
+              submitter,
+              format_analysis_id,
+              assay_options,
+              worklist_options,
+              limit_options,
+              recovery_options
+            )
 
-    worklist_form = WorklistInputForm()
-    limits_form = LimitsInputForm()
-    recovery_form = RecoveryRateInputForm()
-    print("hi", recovery_form)
-    print("hello", limits_form)
-    print("hola", worklist_form)
+    worklist_form = WorklistInputForm();
+    limits_form = LimitsInputForm();
+    recovery_form = RunRecoveryForm();
 
     return render(request, "pqanalysis/pqanalysis.html", {"worklist_form": worklist_form,
                                                           "limits_form": limits_form,
-                                                          "recovery_form": recovery_form
-                                                          })
+                                                          "recovery_form": recovery_form})
 
 
 def create_and_serve_combined_file(request, format_analysis_id):
@@ -113,7 +131,7 @@ def create_and_serve_combined_file(request, format_analysis_id):
 
       worklist_form = WorklistInputForm()
       limits_form = LimitsInputForm()
-      recovery_form = RecoveryRateInputForm()
+      recovery_form = RunRecoveryForm()
 
       return render(request, "pqanalysis/pqanalysis.html", {"error_msg": error_msg,
                                                             "worklist_form": worklist_form,
@@ -136,6 +154,51 @@ def create_and_serve_combined_file(request, format_analysis_id):
     return response
 
 
+# Used for TMA Only
+def add_attachment_done_tma(
+  request,
+  user_name,
+  format_analysis_id,
+  assay_option,
+  worklist_file,
+  limits_file,
+  recovery_file
+):
+    query_db = PqAttachment.objects.filter(analysis_id__iexact=format_analysis_id)
+    files_dir = os.path.join(settings.MEDIA_ROOT, "/".join(query_db.values()[0]['attachment'].split("/")[:-1]))
+
+    worklist_query = Worklist.objects.get(id=worklist_file)
+    worklist_path = os.path.join(settings.MEDIA_ROOT, str(worklist_query.file))
+    limits_query = Limits.objects.get(id=limits_file)
+    limits_path = os.path.join(settings.MEDIA_ROOT, str(limits_query.file))
+    recovery_query = RunRecovery.objects.get(id=recovery_file)
+    recovery_path = os.path.join(settings.MEDIA_ROOT, str(recovery_query.file))
+
+    r = R_Caller_TMA(user_name, assay_option, format_analysis_id, files_dir, worklist_path, limits_path, recovery_path)
+    logs = r.execute()
+
+    log_str = ""
+    run_completed = True
+
+
+    while True:
+      line = logs.stdout.readline()
+      log_str += line + "\n"
+
+      if "Execution halted" in line:
+        print("Found an error.")
+        run_completed = False
+        break
+      if line == '':
+        break
+
+    if not run_completed:
+      return render(request, "pqanalysis/pqerror.html", {"error_out": log_str})
+
+    return view_results(request)
+
+
+# Used for Fusion Only
 def add_attachment_done(request,
                         user_name,
                         stats_options,
@@ -159,11 +222,9 @@ def add_attachment_done(request,
     r = R_Caller(user_name, stats_options, assay, files_dir, format_analysis_id, graph_options)
 
     worklist_query = Worklist.objects.get(id=worklist_options)
-    worklist_filename = str(worklist_query.filename)
     worklist_path = os.path.join(settings.MEDIA_ROOT, str(worklist_query.file))
 
     limitslist_query = Limits.objects.get(id=limit_options)
-    limitslist_filename = str(limitslist_query.filename)
     limitslist_path = os.path.join(settings.MEDIA_ROOT, str(limitslist_query.file))
 
     logs = r.execute(default=False,
@@ -184,7 +245,6 @@ def add_attachment_done(request,
     while True:
 
       line = logs.stdout.readline()
-      print(line)
       log_str += line + "\n"
 
       if "Execution halted" in line:
@@ -198,7 +258,7 @@ def add_attachment_done(request,
     if not run_completed:
       return render(request, "pqanalysis/pqerror.html", {"error_out": log_str})
 
-    program_timed_out = shuttle_dir('rscripts')
+    # program_timed_out = shuttle_dir('rscripts')
 
     return view_results(request)
 
@@ -277,10 +337,26 @@ def get_worklist_update(request):
     for element in worklist_list.values():
       work_list_all.append(
         {'id': element['id'],
-         'filename': element['filename']}
+         'filename': element['filename'],
+         'filetype': element['worklist_type']}
       )
 
     return HttpResponse(json.dumps(work_list_all), content_type='application/json')
+
+
+@csrf_exempt
+def get_recovery_update(request):
+  if request.method == 'GET':
+    recovery_list = RunRecovery.objects.all()
+    recovery_list_all = []
+    for element in recovery_list.values():
+      recovery_list_all.append(
+        {
+          'id': element['id'],
+          'filename': element['filename']
+        }
+      )
+  return HttpResponse(json.dumps(recovery_list_all), content_type='application/json')
 
 
 @csrf_exempt
@@ -290,8 +366,11 @@ def get_limitslist_update(request):
     limits_list_all = []
     for element in limits_list.values():
       limits_list_all.append(
-        {'id': element['id'],
-         'filename': element['filename']}
+        {
+         'id': element['id'],
+         'filename': element['filename'],
+         'filetype': element['limits_type']
+        }
       )
 
   return HttpResponse(json.dumps(limits_list_all), content_type='application/json')
@@ -431,7 +510,7 @@ def limitslist_get(request, pk):
 
 
 @csrf_exempt
-def ajax_uploaded_limits(request):
+def ajax_uploaded_limits(request, type_of):
   import csv
 
   if request.is_ajax():
@@ -449,6 +528,9 @@ def ajax_uploaded_limits(request):
 
       limits_headers = ["sample.type", "Channel", "threshold", "direction"]
 
+      if type_of == 'tma':
+        limits_headers = ["SampleType", "Interpretation.2_min", "Interpretation.2_max", "GIC.TT_max"]
+
       csv_writer = csv.writer(limitslist_file, delimiter=",")
 
       csv_writer.writerow(limits_headers)
@@ -458,26 +540,52 @@ def ajax_uploaded_limits(request):
           continue
         else:
 
-          # Temporary storage to parse the JSON data into a predictable format
-          temp_data_storage = {
-            "name": "",
-            "channel": "",
-            "threshold": "",
-            "logic": ""
-          }
 
-          for category, data_value in value.iteritems():
-            parse_value = category.split(".")[1]
-            temp_data_storage[parse_value] = data_value
+          if type_of == 'fusion':
 
-          line_to_write = [temp_data_storage["name"],
-                           temp_data_storage["channel"],
-                           temp_data_storage["threshold"],
-                           temp_data_storage["logic"]]
+            # Temporary storage to parse the JSON data into a predictable format
+            temp_data_storage = {
+              "name": "",
+              "channel": "",
+              "threshold": "",
+              "logic": ""
+            }
 
-          csv_writer.writerow(line_to_write)
+            for category, data_value in value.iteritems():
+              parse_value = category.split(".")[1]
+              temp_data_storage[parse_value] = data_value
+
+            line_to_write = [temp_data_storage["name"],
+                             temp_data_storage["channel"],
+                             temp_data_storage["threshold"],
+                             temp_data_storage["logic"]]
+
+            csv_writer.writerow(line_to_write)
+
+          else:
+
+            # Temporary storage to parse the JSON data into a predictable format
+            temp_data_storage_tma = {
+              "name": "",
+              "minthreshold": "",
+              "maxthreshold": "",
+              "icthreshold": ""
+            }
+
+            for category, data_value in value.iteritems():
+              parse_value = category.split(".")[1]
+              temp_data_storage_tma[parse_value] = data_value
+
+            line_to_write = [
+              temp_data_storage_tma["name"],
+              temp_data_storage_tma["minthreshold"],
+              temp_data_storage_tma["maxthreshold"],
+              temp_data_storage_tma["icthreshold"]
+            ]
+            csv_writer.writerow(line_to_write)
 
       limits_save_file = Limits()
+      limits_save_file.limits_type = type_of
       limits_save_file.filename = limitslist_name
       limits_save_file.file = os.path.join("limits", file_name_generator)
       limits_save_file.save()
@@ -486,7 +594,7 @@ def ajax_uploaded_limits(request):
 
 
 @csrf_exempt
-def ajax_uploaded_worklist(request):
+def ajax_uploaded_worklist(request, type_of):
   import csv
 
   if request.is_ajax():
@@ -504,6 +612,9 @@ def ajax_uploaded_worklist(request):
 
       worklist_headers = ["term", "type", "logical vector"]
 
+      if type_of == 'tma':
+        worklist_headers = ["SearchTerm", "SampleType"]
+
       csv_writer = csv.writer(worklist_file, delimiter=",")
 
       csv_writer.writerow(worklist_headers)
@@ -520,17 +631,84 @@ def ajax_uploaded_worklist(request):
             "category": "",
           }
 
-          for category, data_value in value.iteritems():
-            parse_value = category.split(".")[1]
-            temp_data_storage[parse_value] = data_value
+          if type_of == 'fusion':
 
-          line_to_write = [temp_data_storage["name"], temp_data_storage["type"],
-                           temp_data_storage["category"]]
-          csv_writer.writerow(line_to_write)
+            for category, data_value in value.iteritems():
+              parse_value = category.split(".")[1]
+              temp_data_storage[parse_value] = data_value
+
+            line_to_write = [temp_data_storage["name"], temp_data_storage["type"],
+                             temp_data_storage["category"]]
+
+            csv_writer.writerow(line_to_write)
+
+
+          else:
+
+            for category, data_value in value.iteritems():
+
+              parse_value = category.split(".")[1]
+              temp_data_storage[parse_value] = data_value
+
+            line_to_write = [temp_data_storage["name"], temp_data_storage["type"]]
+            csv_writer.writerow(line_to_write)
 
       worklist_save_file = Worklist()
+      worklist_save_file.worklist_type = type_of
       worklist_save_file.filename = worklist_name
       worklist_save_file.file = os.path.join("worklist", file_name_generator)
       worklist_save_file.save()
 
   return HttpResponse("success")
+
+@csrf_exempt
+def ajax_uploaded_recovery(request):
+  import csv
+
+  if request.is_ajax():
+
+    recovery_response_data = json.loads(request.body)
+    media_path = os.path.join(settings.MEDIA_ROOT, "recovery")
+    recovery_name = recovery_response_data['json']['recovery_filename']
+    submission_name = recovery_response_data['json']['submitter_name']
+
+    file_name_generator = recovery_name + create_timestamp() + ".csv"
+    file_save_path = os.path.join(media_path, file_name_generator)
+
+    with open(file_save_path, "wb") as recovery_file:
+      recovery_headers = ["Run.ID", "Lot.Number", "POL.truth", "LTR.truth"]
+
+      csv_writer = csv.writer(recovery_file, delimiter=",")
+      csv_writer.writerow(recovery_headers)
+
+      for key, value in recovery_response_data['json'].iteritems():
+        if key == 'recovery_filename' or key == 'submitter_name':
+          continue
+        else:
+          temp_data_storage = {
+            'runid':'',
+            'lot':'',
+            'pol':'',
+            'ltr':''
+          }
+
+          for category, data_value in value.iteritems():
+            parse_value = category.split(".")[1]
+            temp_data_storage[parse_value] = data_value
+
+          line_to_write = [
+            temp_data_storage['runid'],
+            temp_data_storage['lot'],
+            temp_data_storage['pol'],
+            temp_data_storage['ltr']
+          ]
+
+          csv_writer.writerow(line_to_write)
+
+      recovery_save_file = RunRecovery()
+      recovery_save_file.filename = recovery_name
+      recovery_save_file.file = os.path.join("recovery", file_name_generator)
+      recovery_save_file.save()
+  return HttpResponse("success")
+
+

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Worklist, Limits, RecoveryRate
+from .models import Worklist, Limits, RunRecovery
 
 
 class WorklistAdmin(admin.ModelAdmin):
@@ -11,4 +11,5 @@ class LimitsAdmin(admin.ModelAdmin):
 
 admin.site.register(Worklist, WorklistAdmin)
 admin.site.register(Limits, LimitsAdmin)
-admin.site.register(RecoveryRate)
+admin.site.register(RunRecovery)
+
