@@ -746,7 +746,6 @@ $(document).ready(function() {
 			url: "prepopulate-limitslist/" + getValue,
 			success: function(fileData)
 			{
-				console.log(fileData);
 				parsed_JSON = JSON.parse(fileData);
 				addLimitslistRows(parsed_JSON.rows)
 			}
@@ -905,7 +904,6 @@ $(document).ready(function() {
 		return function() {
 
 			limitsListIndexTMA++;
-			console.log(limitsListIndexTMA);
 
 			var $template = $("#datagroup-template-limits-tma"),
 			$clone = $template
@@ -923,7 +921,7 @@ $(document).ready(function() {
 
 			$('.limitslist-input-tma').each(function() {
 				// Add a different rule to the name field which allows other characters
-				console.log($(this));
+
 				$(this).rules("add", {
 					required: true
 				});
@@ -1083,6 +1081,329 @@ $(document).ready(function() {
 
 		return json_data
 	}
+
+	// <--- Dynamic TMA Worklist Upload --->
+
+	/**
+	* Retrieves the selected worklist from dropdown and returns
+	* the file contents to the dynamic upload box. The optional
+	* primaryKey argument allows us to manually select which
+	* key to select.
+	**/
+	function dynamicWorklistTMARetrieve(primaryKey) {
+
+		var getValue;
+
+		if (typeof primaryKey === 'undefined') {
+			getValue = $("#id_file_upload_selection_tma option:selected").val();
+		} else {
+			getValue = primaryKey;
+		}
+
+
+		$.ajax({
+			type:"GET",
+			url: "prepopulate-worklist-tma/" + getValue,
+			success: function(fileData)
+			{
+				var parsed_JSON = JSON.parse(fileData);
+				addWorklistTMARows(parsed_JSON.rows)
+			}
+		});
+	}
+
+	/**
+	* Populates the worklist through worklist selection.
+	*/
+	$("#id_file_upload_selection_tma").change(function() {
+		dynamicWorklistTMARetrieve();
+	});
+
+	/**
+	 * Helper function to dynamically populate the worklist form with
+	 * previously uploaded worklist. The way it performs addition of
+	 * rows is the same as the manual 'add rows' button.
+	 **/
+	function addWorklistTMARows(getData) {
+
+
+		// 'Refreshes'/removes the old rows of data
+		$("#tmaForm > div").each(function(index, element) {
+			if ($(this).attr("data-worklist-index") != null) {
+				$(this).remove();
+			}
+		});
+
+		var worklistIndex = 0;
+
+		$.each(getData, function(index, value) {
+
+			var $template = $("#datagroup-template-tma"),
+			$clone = $template
+			.clone()
+			.removeClass("hide")
+			.removeAttr("id")
+			.attr("data-worklist-index", worklistIndex)
+			.insertBefore($template);
+
+			$clone
+			.find('[name="worklist-tma.name"]').attr('name', 'worklist-tma[' + worklistIndex + '].name').end()
+			.find('[name="worklist-tma.type"]').attr('name', 'worklist-tma[' + worklistIndex + '].type').end();
+
+			$("#worklist-upload-tma input[name='worklist-tma["+worklistIndex+"].name']").val(value.SearchTerm);
+			$("#worklist-upload-tma input[name='worklist-tma["+worklistIndex+"].type']").val(value.SampleType);
+
+			// Resets the first icon to a plus since template creates removal buttons
+			if (worklistIndex == 0) {
+
+				$("#tmaForm > [data-worklist-index=0] > div > button").attr('class', 'btn btn-default addButton');
+				$("#tmaForm > [data-worklist-index=0] > div > button > span").attr('class', 'glyphicon glyphicon-plus');
+			}
+
+			worklistIndex++;
+
+			$('.worklist-input-tma').each(function() {
+
+				// Add a different rule to the name field which allows other characters
+
+				$(this).rules("add", {
+					required: true,
+				});
+			});
+
+		});
+    }
+
+	/**
+	* Populates the default worklist through clicking. The
+	* default value can change depending on how its
+	* represented in the database.
+	*/
+	$("#load-worklist-tma-default").click(function() {
+		dynamicWorklistTMARetrieve();
+	});
+
+
+	// <--- Dynamic TMA Limits List Upload --->
+
+	/**
+	* Retrieves the selected limitslist from dropdown and returns
+	* the file contents to the dynamic upload box. The optional
+	* primaryKey argument allows us to manually select which
+	* key to select.
+	**/
+	function dynamicLimitsListTMARetrieve(primaryKey) {
+
+		var getValue;
+
+		if (typeof primaryKey === 'undefined') {
+			getValue = $("#id_file_limits_upload_selection_tma option:selected").val();
+		} else {
+			getValue = primaryKey;
+		}
+
+
+		$.ajax({
+			type:"GET",
+			url: "prepopulate-limitslist-tma/" + getValue,
+			success: function(fileData)
+			{
+				var parsed_JSON = JSON.parse(fileData);
+				addLimitsListTMARows(parsed_JSON.rows)
+			}
+		});
+	}
+
+	/**
+	* Populates the limits list through worklist selection.
+	*/
+	$("#id_file_limits_upload_selection_tma").change(function() {
+		dynamicLimitsListTMARetrieve();
+	});
+
+	/**
+	 * Helper function to dynamically populate the worklist form with
+	 * previously uploaded worklist. The way it performs addition of
+	 * rows is the same as the manual 'add rows' button.
+	 **/
+	function addLimitsListTMARows(getData) {
+
+
+		// 'Refreshes'/removes the old rows of data
+		$("#tmaLimitsForm > div").each(function(index, element) {
+			if ($(this).attr("data-limitslist-index") != null) {
+				$(this).remove();
+			}
+		});
+
+		var limitsIndex = 0;
+
+		$.each(getData, function(index, value) {
+
+			var $template = $("#datagroup-template-limits-tma"),
+			$clone = $template
+			.clone()
+			.removeClass("hide")
+			.removeAttr("id")
+			.attr("data-limitslist-index", limitsIndex)
+			.insertBefore($template);
+
+			$clone
+			.find('[name="limitslist-tma.name"]').attr('name', 'limitslist-tma[' + limitsIndex + '].name').end()
+			.find('[name="limitslist-tma.minthreshold"]').attr('name', 'limitslist-tma[' + limitsIndex + '].minthreshold').end()
+			.find('[name="limitslist-tma.maxthreshold"]').attr('name', 'limitslist-tma[' + limitsIndex + '].maxthreshold').end()
+			.find('[name="limitslist-tma.icthreshold"]').attr('name', 'limitslist-tma[' + limitsIndex + '].icthreshold').end();
+
+			$("#limits-upload-tma input[name='limitslist-tma["+limitsIndex+"].name']").val(value['SampleType']);
+			$("#limits-upload-tma input[name='limitslist-tma["+limitsIndex+"].minthreshold']").val(value['Interpretation.2_min']);
+			$("#limits-upload-tma input[name='limitslist-tma["+limitsIndex+"].maxthreshold']").val(value['Interpretation.2_max']);
+			$("#limits-upload-tma input[name='limitslist-tma["+limitsIndex+"].icthreshold']").val(value['GIC.TT_max']);
+
+			// Resets the first icon to a plus since template creates removal buttons
+			if (limitsIndex == 0) {
+
+				$("#tmaLimitsForm > [data-limitslist-index=0] > div > button").attr('class', 'btn btn-default addLimitsButton');
+				$("#tmaLimitsForm > [data-limitslist-index=0] > div > button > span").attr('class', 'glyphicon glyphicon-plus');
+			}
+
+			limitsIndex++;
+
+			$('.limitslist-input-tma').each(function() {
+				// Add a different rule to the name field which allows other characters
+				$(this).rules("add", {
+					required: true
+				});
+			});
+
+		});
+    }
+
+	/**
+	* Populates the default worklist through clicking. The
+	* default value can change depending on how its
+	* represented in the database.
+	*/
+	$("#load-limitslist-default-tma").click(function() {
+		dynamicLimitsListTMARetrieve();
+	});
+
+
+	// <--- Dynamic TMA Recovery List Upload --->
+
+	/**
+	* Retrieves the selected limitslist from dropdown and returns
+	* the file contents to the dynamic upload box. The optional
+	* primaryKey argument allows us to manually select which
+	* key to select.
+	**/
+	function dynamicRecoveryTMARetrieve(primaryKey) {
+
+		var getValue;
+
+		if (typeof primaryKey === 'undefined') {
+			getValue = $("#id_file_upload_selection_recovery option:selected").val();
+		} else {
+			getValue = primaryKey;
+		}
+
+
+		$.ajax({
+			type:"GET",
+			url: "prepopulate-recovery-tma/" + getValue,
+			success: function(fileData)
+			{
+				var parsed_JSON = JSON.parse(fileData);
+				addRecoveryTMARows(parsed_JSON.rows)
+			}
+		});
+	}
+
+	/**
+	* Populates the limits list through worklist selection.
+	*/
+	$("#id_file_upload_selection_recovery").change(function() {
+		dynamicRecoveryTMARetrieve();
+	});
+
+	/**
+	 * Helper function to dynamically populate the worklist form with
+	 * previously uploaded worklist. The way it performs addition of
+	 * rows is the same as the manual 'add rows' button.
+	 **/
+	function addRecoveryTMARows(getData) {
+
+
+		// 'Refreshes'/removes the old rows of data
+		$("#tmaRecoveryForm > div").each(function(index, element) {
+			if ($(this).attr("data-recovery-index") != null) {
+				$(this).remove();
+			}
+		});
+
+		var recoveryIndex = 0;
+
+		$.each(getData, function(index, value) {
+
+			var $template = $("#datagroup-template-recovery-tma"),
+			$clone = $template
+			.clone()
+			.removeClass("hide")
+			.removeAttr("id")
+			.attr("data-recovery-index", recoveryIndex)
+			.insertBefore($template);
+
+			$clone
+			.find('[name="recovery.sampletype"]').attr('name', 'recovery[' + recoveryIndex + '].sampletype').end()
+			.find('[name="recovery.lot"]').attr('name', 'recovery[' + recoveryIndex + '].lot').end()
+			.find('[name="recovery.pol"]').attr('name', 'recovery[' + recoveryIndex + '].pol').end()
+			.find('[name="recovery.ltr"]').attr('name', 'recovery[' + recoveryIndex + '].ltr').end();
+
+			$("#recovery-upload-tma input[name='recovery["+recoveryIndex+"].sampletype']").val(value['SampleType']);
+			$("#recovery-upload-tma input[name='recovery["+recoveryIndex+"].lot']").val(value['Lot.Number']);
+			$("#recovery-upload-tma input[name='recovery["+recoveryIndex+"].pol']").val(value['POL.truth']);
+			$("#recovery-upload-tma input[name='recovery["+recoveryIndex+"].ltr']").val(value['LTR.truth']);
+
+			// Resets the first icon to a plus since template creates removal buttons
+			if (recoveryIndex == 0) {
+
+				$("#tmaRecoveryForm > [data-recovery-index=0] > div > button").attr('class', 'btn btn-default addButton');
+				$("#tmaRecoveryForm > [data-recovery-index=0] > div > button > span").attr('class', 'glyphicon glyphicon-plus');
+			}
+
+			recoveryIndex++;
+
+			$('.recovery-input-tma').each(function() {
+
+				// Add a different rule to the name field which allows other characters
+				if (this.name.indexOf("lot") > -1) {
+					$(this).rules("add", {
+						required: false
+                    });
+				}
+				else if (this.name.indexOf("name") == -1) {
+
+					$(this).rules("add", {
+						required: true
+					});
+				}
+				else {
+					$(this).rules("add", {
+						required: true
+					});
+				}
+			});
+
+		});
+    }
+
+	/**
+	* Populates the default worklist through clicking. The
+	* default value can change depending on how its
+	* represented in the database.
+	*/
+	$("#load-recovery-default-tma").click(function() {
+		dynamicRecoveryTMARetrieve();
+	});
 
 // <--- Document on load --->
 });

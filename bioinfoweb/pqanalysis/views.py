@@ -1,6 +1,7 @@
 import os
 import datetime
 import json
+import csv
 
 from django.shortcuts import render, get_object_or_404
 from django.conf import settings
@@ -418,8 +419,40 @@ def worklist_upload(request):
     return HttpResponse('Only POST Accepted')
 
 
+def worklist_get_tma(request, pk):
+
+  # Return a representation of the file
+  json_return = {"header":[], "rows":[]}
+
+  if request.method == 'GET':
+    tma_file = get_object_or_404(Worklist, pk=pk)
+    media_path = os.path.join(settings.MEDIA_ROOT, tma_file.file.name)
+    with open(media_path) as f:
+      csv_reader = csv.reader(f, delimiter=',')
+      for num, lines in enumerate(csv_reader):
+        if num == 0:
+          json_return["header"].append({
+            "SearchTerm": "SearchTerm",
+            "SampleType": "SampleType"
+          })
+        else:
+          json_return["rows"].append({
+            "SearchTerm": lines[0],
+            "SampleType": lines[1]
+          })
+
+    to_json = json.dumps(json_return)
+    mimetype = "text/plain"
+
+    if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:
+      mimetype = "application/json"
+
+    return HttpResponse(to_json, content_type=mimetype)
+  return HttpResponse("Only GET Requests Allowed.")
+
+
 def worklist_get(request, pk):
-  import csv
+
 
   # Returns a representation of the file
   json_return = {"header": [], "rows": []}
@@ -496,6 +529,86 @@ def limitslist_get(request, pk):
             "channel": lines[1],
             "threshold": lines[2],
             "direction": lines[3]
+          })
+
+    to_json = json.dumps(json_return)
+    mimetype = "text/plain"
+
+    if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:
+      mimetype = "application/json"
+
+    return HttpResponse(to_json, content_type=mimetype)
+  else:
+    return HttpResponse("Only GET Requests Allowed")
+
+
+def limitslist_get_tma(request, pk):
+
+  json_return = {"header": [], "rows": []}
+
+  if request.method == 'GET':
+
+    file = get_object_or_404(Limits, pk=pk)
+
+    media_path = os.path.join(settings.MEDIA_ROOT, file.file.name)
+    with open(media_path) as f:
+      csv_reader = csv.reader(f, delimiter=",")
+      for num, lines in enumerate(csv_reader):
+
+        if num == 0:
+          json_return["header"].append({
+            "SampleType": "SampleType",
+            "Interpretation.2_min": "Interpretation.2_min",
+            "Interpretation.2_max": "Interpretation.2_max",
+            "GIC.TT_max": "GIC.TT_max",
+          })
+        else:
+
+          json_return["rows"].append({
+            "SampleType": lines[0],
+            "Interpretation.2_min": lines[1],
+            "Interpretation.2_max": lines[2],
+            "GIC.TT_max": lines[3]
+          })
+
+    to_json = json.dumps(json_return)
+    mimetype = "text/plain"
+
+    if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:
+      mimetype = "application/json"
+
+    return HttpResponse(to_json, content_type=mimetype)
+  else:
+    return HttpResponse("Only GET Requests Allowed")
+
+
+def recovery_get_tma(request, pk):
+
+  json_return = {"header": [], "rows": []}
+
+  if request.method == 'GET':
+
+    file = get_object_or_404(RunRecovery, pk=pk)
+
+    media_path = os.path.join(settings.MEDIA_ROOT, file.file.name)
+    with open(media_path) as f:
+      csv_reader = csv.reader(f, delimiter=",")
+      for num, lines in enumerate(csv_reader):
+
+        if num == 0:
+          json_return["header"].append({
+            "SampleType": "SampleType",
+            "Lot.Number": "Lot.Number",
+            "POL.truth": "POL.truth",
+            "LTR.truth": "LTR.truth",
+          })
+        else:
+
+          json_return["rows"].append({
+            "SampleType": lines[0],
+            "Lot.Number": lines[1],
+            "POL.truth": lines[2],
+            "LTR.truth": lines[3]
           })
 
     to_json = json.dumps(json_return)
