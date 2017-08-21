@@ -228,6 +228,10 @@
                                 <p class="help-block">The worklist is a label file specifing the negative and postive
                                     samples.
                                     <br>
+                                    <b>Tip:</b>
+                                    Selecting any of the previously uploaded worklists will load its content into the
+                                    worklist upload dialog.
+                                </p>
 
                                 {{ worklist_form.file_upload_selection_tma }}
 
@@ -251,8 +255,13 @@
                                 <p class="help-block">The limits list is a value cutoff file specifing the threshold
                                     ranges.
                                     <br>
+                                    <b>Tip:</b>
+                                    Selecting any of the previously uploaded limits will load its content into the
+                                    limits upload dialog.
+                                </p>
                                 {{ limits_form.file_limits_upload_selection_tma }}
                                 <br>
+
                                 <div class="row">
                                     <div class="col-xs-12">
 										<span class="btn btn-primary" data-target="#limits-upload-tma" data-toggle="modal">
@@ -268,6 +277,10 @@
                                 <b>Recovery</b>
                                 <p class="help-block">Set the recovery rate for the run.
                                     <br>
+                                    <b>Tip:</b>
+                                    Selecting any of the previously uploaded recovery will load its content into the
+                                    recovery upload dialog.
+                                </p>
                                 {{ recovery_form.file_upload_selection_recovery }}
                                 <br>
                                 <div class="row">
